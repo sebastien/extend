@@ -29,6 +29,10 @@
 | If there is a previous test, and it was not ended, this will also end the
 | previous test.
 	var test_id = TestCount
+	# We trigger the callbacks first so that we do not have problems with timing
+	# by introduce the callback execution time
+	when TestCount > 0 -> end(test_id - 1)
+	when OnTestStart -> OnTestStart(test_id, name)
 	CurrentTest = name
 	Results push {
 		tid:test_id
@@ -38,8 +42,6 @@
 		tests:[]
 	}
 	# console log ("Test " + test_id + ": " + name )
-	when OnTestStart -> OnTestStart(test_id, name)
-	when TestCount > 0 -> end(test_id-1)
 	TestCount  += 1
 	return test_id
 @end
@@ -50,10 +52,10 @@
 	when testID is Undefined -> testID = TestCount - 1
 	var test = Results[testID] 
 	when test ended -> return True
-	test end = new Date() getMilliseconds()
-	test run = (test end) - (test start)
+	test end   = new Date() getMilliseconds()
+	test run   = (test end) - (test start)
+	test ended = True
 	when OnTestEnd -> OnTestEnd(testID, test)
-	Results[testID] ended = True
 @end
 
 @function fail reason
@@ -61,7 +63,8 @@
 	# console log (" failure: " + reason)
 	var test_id = TestCount - 1
 	Results[ test_id ] tests push {result:"F", reason:reason}
-	Results[ test_id ] result = "F"
+	Results[ test_id ] status = "F"
+	# TODO: Remove callback execution time
 	when OnFailure -> OnFailure(test_id, Results[test_id] tests length - 1, reason)
 	return False
 @end
@@ -71,6 +74,7 @@
 	#console log (" success !")
 	var test_id = TestCount - 1
 	Results[ test_id ] tests push {result:"S"}
+	# TODO: Remove callback execution time
 	when OnSuccess -> OnSuccess(test_id, Results[test_id] tests length - 1)
 	return True
 @end

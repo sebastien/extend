@@ -4,11 +4,12 @@
 /*
 Things you cannot do in JavaScript
  - Easily access a class variable from an instance
- - Things get really dirty for methods/attributes/constructors with inheritance
+ - Things get really dirty for methods/attributes/inits with inheritance
    (super)
 */
 
-// TEST SETUP
+// TEST SETUP ________________________________________________________________
+// TODO: Convert to Sugar
 Testing.OnTestStart = function(testId, testName) {
 	var test_row = html.tr(
 		{"id":"test_" + testId, "class":"test testRunning"},
@@ -19,7 +20,6 @@ Testing.OnTestStart = function(testId, testName) {
 	)
 	$("#result").append(test_row)
 }
-
 Testing.OnTestEnd   = function(testId, test) {
 	var test_row = $("#test_" + testId)
 	$(test_row).removeClass("testRunning");
@@ -28,17 +28,14 @@ Testing.OnTestEnd   = function(testId, test) {
 	} else {
 		$(test_row).addClass("testFailed");
 	}
-	console.log(test)
 	$(".testTime", test_row).html(test.run + "ms")
-}
-
-Testing.OnSuccess = function( testId, num ) {
 }
 
 Testing.OnFailure = function( testId, num, reason ) {
 	$("#test_" + testId +" .assertions").removeClass("empty")
 	$("#test_" + testId +" .assertions").append(html.li({"class":"assertion assertionFailed"},"Assertion #" + num + " failed: " + reason))
 }
+// END SETUP
 
 // TEST 0
 Testing.test("JavaScript Inheritance Basics")
@@ -78,66 +75,169 @@ Testing.test("JavaScript Inheritance Basics")
 	A.prototype.pouet = A.pouet
 	Testing.asDefined(a.pouet)
 	Testing.asDefined(a.pouet(),"Pouet")
-
 Testing.end()
-/*
+
+// ===========================================================================
+// SINGLE CLASS TESTING
+// ===========================================================================
 
 // TEST 1
-Testing.test("ClassA declaration")
+Testing.test("C: Single class declaration: A=Extend.create(...)")
 	// SETUP
 	var ClassA = Extend.create({
-		constructor:function(){
-			this._id=this.Count++
+		init:function(){
+			this._id=this.getClass().Count++
+			console.log("CLASS " + this.getClass().getName())
+			console.log("Count " + this.getClass().Count)
 		},
 		methods:{
+			basehello:function(){
+				return "Hello:" + this._id
+			},
+			thishello:function(){
+				return this.hello()
+			},
 			hello:function(){
-				return "From A:" + this.id
+				return "Hello:" + this._id
 			}
 		},
 		operations:{
-			otherHello:function(){return "OtherHello"}
+			otherHello:function(){return "OtherHello"},
+			getCount:function(){return this.Count}
 		},
 		attributes:{Count:0},
 		name:"ClassA"
 	})
 	// TEST
 	Testing.value(ClassA.getName(), "ClassA")
+	Testing.asUndefined(ClassA.getParent()) 
 	Testing.value(ClassA.isClass(), true) 
+Testing.end()
 
 // TEST 2
-Testing.test("ClassA class attribute")
+Testing.test("C: Class attribute access: A.V")
 	Testing.value(ClassA.Count, 0) 
+Testing.end()
 
 // TEST 3
-Testing.test("ClassA class operation")
+Testing.test("C: Class operation: A.operation(...)")
 	Testing.value(ClassA.otherHello(), "OtherHello") 
+	Testing.value(ClassA.getCount(), ClassA.Count)
+Testing.end()
 
 // TEST 4
-Testing.test("ClassA instanciation")
+Testing.test("C: Class instanciation: var a = new A()")
 	var new_a = new ClassA()
+	Testing.value(new_a.getClass(), ClassA) 
 	Testing.value(new_a.isClass(), false) 
+Testing.end()
 
 // TEST 5
-Testing.test("ClassA instance attribute")
+Testing.test("C: Instance attribute: a.v")
 	Testing.value(new_a._id,0) 
+Testing.end()
 
 // TEST 6
-Testing.test("ClassA instance class attribute access")
+Testing.test("C: Class attribute from instance: a.getClass().V")
 	Testing.value(ClassA.Count,1) 
-	Testing.value(new_a.Count,1) 
+	Testing.value(new_a.getClass().Count,1) 
+Testing.end()
 
-Testing.test("ClassA instance operation")
-	// TODO
+// TEST 7
+Testing.test("C: Instance method: a.method()")
+	Testing.value(new_a._id,0) 
+	Testing.value(new_a.hello(),"Hello:0") 
+	Testing.value(new_a.basehello(),"Hello:0") 
+	Testing.value(new_a.thishello(),"Hello:0") 
+Testing.end()
 
+// ===========================================================================
+// SUBCLASS TESTING
+// ===========================================================================
 
-Testing.test("ClassB (extends A) declaration")
+// TEST 8
+Testing.test("SC: Subclass declaration: var B=Extend.create({parent:...})")
 	// SETUP
 	var ClassB = Extend.create({
+		name:"ClassB",
 		parent:ClassA,
 		methods:{
-			hello:function(){return "From B:" + this.id}
+			hello:function(){return "From B:" + this._id}
 		}
 	})
+	Testing.value(ClassB.getName(), "ClassB")
+	Testing.value(ClassB.getParent(), ClassA) 
+	Testing.value(ClassB.isClass(), true) 
+Testing.end()
+
+// TEST 9
+Testing.test("SC: Inhertied class attribute access: B.V ")
+	Testing.value(ClassA.Count, 1) 
+	Testing.value(ClassB.Count, 0) 
+Testing.end()
+
+// TEST 10
+Testing.test("SC: Inherited class operation: B.operation(...)")
+	Testing.value(ClassB.otherHello(), "OtherHello") 
+	Testing.value(ClassB.getCount(), 0)
+Testing.end()
+
+// TEST 11
+Testing.test("SC: Subclass instanciation: var b = new B()")
+	var new_b = new ClassB()
+	Testing.value(new_b.isClass(), false) 
+	Testing.value(new_b.getClass(), ClassB) 
+Testing.end()
+
+// TEST 11
+Testing.test("SC: Subclass instance attribute: b.v")
+	Testing.value(new_b._id,0) 
+Testing.end()
+
+// TEST 12
+Testing.test("SC: Class attribute from instance: a.getClass().V")
+	Testing.value(ClassB.Count,1) 
+	Testing.value(new_b.getClass().Count,1) 
+Testing.end()
+
+// TEST 12
+Testing.test("SC: Instance method: a.method()")
+	Testing.value(new_b.hello(),"From B:0") 
+
+// TEST 13
+Testing.test("SC: Inherited method: a.inheritedmethod()")
+	Testing.value(new_b.thishello(),"From B:0") 
+	Testing.value(new_b.basehello(),"Hello:0") 
+	new_b._id=10
+	Testing.value(new_b.thishello(),"From B:10") 
+	Testing.value(new_b.basehello(),"Hello:10") 
+Testing.end()
+
+// ===========================================================================
+// SUB/SUB/CLASS TESTING
+// ===========================================================================
+
+// TEST 13
+Testing.test("SSC: Sub-subclass declaration: var C=Extend.create({parent:B,...})")
+	// SETUP
+	var ClassC = Extend.create({
+		name:"ClassC",
+		parent:ClassB,
+		methods:{
+			hello:function(){return "From C:" + this._id}
+		}
+	})
+	Testing.value(ClassC.getName(), "ClassC")
+	Testing.value(ClassC.getParent(), ClassB) 
+	Testing.value(ClassC.isClass(), true) 
+Testing.end()
+
+// ===========================================================================
+// INTROSPECTION
+// ===========================================================================
+
+// isInstance
+// getMethod
 
 /*
 var ClassC = Class.create({

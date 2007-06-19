@@ -10,22 +10,36 @@ body {
 }
 
 table.testResults {
-	border: 1px solid #EEEEEE;
+	border: 2px solid #DDDDDD;
 	font-size: 10pt;
+}
+
+table.testResults tr td {
+	border: 4px solid #DDDDDD;
 }
 
 table.testResults tr.testSucceeded td.testId {
 	background: #C7E744;
 }
 
+table.testResults tr.testFailed td {
+	border: 4px solid #E75744;
+}
+
 table.testResults tr.testFailed td.testId {
 	background: #E75744;
+	color: white;
+	font-weight: bold;
 }
 
 .testResults ul.assertions {
 	list-style-type: square;
 	font-size: 0.9em;
 	color: #AAAAAA;
+}
+
+.testResults li.assertionFailed {
+	color: red;
 }
 
 .empty {
