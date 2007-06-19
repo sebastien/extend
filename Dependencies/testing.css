@@ -1,0 +1,33 @@
+html, body {
+	font: 10pt/13pt sans-serif;
+	color: #333333;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	padding: 20px;
+}
+
+table.testResults {
+	border: 1px solid #EEEEEE;
+	font-size: 10pt;
+}
+
+table.testResults tr.testSucceeded td.testId {
+	background: #C7E744;
+}
+
+table.testResults tr.testFailed td.testId {
+	background: #E75744;
+}
+
+.testResults ul.assertions {
+	list-style-type: square;
+	font-size: 0.9em;
+	color: #AAAAAA;
+}
+
+.empty {
+	display: none;
+}
