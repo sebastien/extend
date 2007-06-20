@@ -21,6 +21,8 @@ Class API
   'getName'
   'getParent'
   'getOperation'
+  'hasInstance(o:Object)'
+  'isSubclass(c:Class)'
 
 Instance API
 ============

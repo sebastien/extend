@@ -1,4 +1,6 @@
 @module Extend
+@version 1.99 (20-Jun-1997)
+
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
 | easy to develop highly structured JavaScript applications.
@@ -22,7 +24,9 @@
 
 @function _proxyFunction functionToWrap:Function, targetObject:Object
 	@embed JavaScript
-		return function(){return functionToWrap.apply(targetObject, arguments)}
+	|return function(){
+	|	return functionToWrap.apply(targetObject, arguments)
+	|}
 	@end
 @end
 
@@ -49,75 +53,87 @@
 	class_object _init        = Undefined
 	class_object getName      = {return class_object _name}
 	class_object getParent    = {return class_object _parent}
+	class_object isSubclass   = {c|
+		var parent = this
+		while parent
+			when parent == c -> return True
+			parent = parent getParent()
+		end
+		return False
+	}
+	class_object hasInstance   = {o|
+		return o getClass() isSubclass (class_object)
+	}
 	@embed JavaScript
-		if ( declaration.parent != undefined ) {
-			// We copy parent class attributes default values
-			for ( var name in declaration.parent._attributes ) {
-				class_object._attributes[name] = declaration.parent._attributes[name]
-				class_object[name] = declaration.parent._attributes[name]
-			}
-			// We proxy parent operation
-			for ( var name in declaration.parent._operations ) {
-				class_object._operations[name] = declaration.parent
-				class_object[name] = Extend._proxyFunction(declaration.parent[name],class_object)
-			}
-			// We proxy parent methods
-			for ( var name in declaration.parent._methods ) {
-				class_object._methods[name] = declaration.parent
-			}
-			if ( declaration.parent._init ) {
-				class_object._init = declaration.parent._init
-			}
-		}
-		if ( declaration.operations != undefined ) {
-			for ( var name in declaration.operations ) {
-				class_object[name] = declaration.operations[name]
-				class_object._operations[name] = class_object
-		}}
-		if ( declaration.methods != undefined ) {
-			for ( var name in declaration.methods ) {
-				class_object._methods[name] = class_object
-		}}
-		if ( declaration.attributes != undefined ) {
-			for ( var name in declaration.attributes ) {
-				class_object[name] = declaration.attributes[name]
-				class_object._attributes[name] = declaration.attributes[name]
-		}}
-		if ( declaration.init != undefined ) {
-			class_object._init = declaration.init
-		}
+	|if ( declaration.parent != undefined ) {
+	|	// We copy parent class attributes default values
+	|	for ( var name in declaration.parent._attributes ) {
+	|		class_object._attributes[name] = declaration.parent._attributes[name]
+	|		class_object[name] = declaration.parent._attributes[name]
+	|	}
+	|	// We proxy parent operation
+	|	for ( var name in declaration.parent._operations ) {
+	|		class_object._operations[name] = declaration.parent
+	|		class_object[name] = declaration.parent[name]
+	|	}
+	|	// We proxy parent methods
+	|	for ( var name in declaration.parent._methods ) {
+	|		class_object._methods[name] = declaration.parent
+	|	}
+	|	if ( declaration.parent._init ) {
+	|		class_object._init = declaration.parent._init
+	|	}
+	|}
+	|if ( declaration.operations != undefined ) {
+	|	for ( var name in declaration.operations ) {
+	|		class_object[name] = declaration.operations[name]
+	|		class_object._operations[name] = class_object
+	|}}
+	|if ( declaration.methods != undefined ) {
+	|	for ( var name in declaration.methods ) {
+	|		class_object._methods[name] = class_object
+	|}}
+	|if ( declaration.attributes != undefined ) {
+	|	for ( var name in declaration.attributes ) {
+	|		class_object[name] = declaration.attributes[name]
+	|		class_object._attributes[name] = declaration.attributes[name]
+	|}}
+	|if ( declaration.init != undefined ) {
+	|	class_object._init = declaration.init
+	|}
 	@end
 
 	var instance_proto             = {}
 	instance_proto isInstance      = Undefined
 	instance_proto getClass        = {return class_object}
 	instance_proto isClass         = {return False}
-	# FIXME: Uncommenting this will break the @embed
-	#instance_proto getSuperMethod  = {name|
-	#	var this_object  = target
-	#	var parent_proto = declaration parent prototype
-	#	return {parent_proto[name] apply (target, arguments)}
-	#}
+	instance_proto getSuperMethod  = {name|
+		var this_object  = target
+		var parent_proto = declaration parent prototype
+		return {parent_proto[name] apply (target, arguments)}
+	}
+	instance_proto isInstance      = {c|return c hasInstance(target)}
+
 	@embed JavaScript
-		if ( declaration.parent ) {
-			var parent_class = declaration.parent
-			for ( var name in parent_class._methods ) {
-				instance_proto[name] = declaration.parent.prototype[name]
-			}
-		}
-		if ( declaration.methods != undefined ) {
-			for ( var name in declaration.methods ) {
-				instance_proto[name] = declaration.methods[name]
-		}}
-		if ( declaration.parent != undefined ) {
-			console.log(declaration.parent._init)
-			instance_proto.init = declaration.parent._init
-		}
-		if ( declaration.init != undefined ) {
-			console.log( "" + declaration.init.valueOf())
-			console.log(typeof(declaration.init))
-			instance_proto.init = declaration.init
-		}
+	|if ( declaration.parent ) {
+	|	var parent_class = declaration.parent
+	|	for ( var name in parent_class._methods ) {
+	|		instance_proto[name] = declaration.parent.prototype[name]
+	|	}
+	|}
+	|if ( declaration.methods != undefined ) {
+	|	for ( var name in declaration.methods ) {
+	|		instance_proto[name] = declaration.methods[name]
+	|}}
+	|if ( declaration.parent != undefined ) {
+	|	console.log(declaration.parent._init)
+	|	instance_proto.init = declaration.parent._init
+	|}
+	|if ( declaration.init != undefined ) {
+	|	console.log( "" + declaration.init.valueOf())
+	|	console.log(typeof(declaration.init))
+	|	instance_proto.init = declaration.init
+	|}
 	@end
 	class_object prototype    = instance_proto
 	return class_object

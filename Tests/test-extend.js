@@ -103,7 +103,9 @@ Testing.test("C: Single class declaration: A=Extend.create(...)")
 		},
 		operations:{
 			otherHello:function(){return "OtherHello"},
-			getCount:function(){return this.Count}
+			getCount:function(){
+				return this.Count
+			}
 		},
 		attributes:{Count:0},
 		name:"ClassA"
@@ -189,23 +191,23 @@ Testing.test("SC: Subclass instanciation: var b = new B()")
 	Testing.value(new_b.getClass(), ClassB) 
 Testing.end()
 
-// TEST 11
+// TEST 12
 Testing.test("SC: Subclass instance attribute: b.v")
 	Testing.value(new_b._id,0) 
 Testing.end()
 
-// TEST 12
-Testing.test("SC: Class attribute from instance: a.getClass().V")
+// TEST 13
+Testing.test("SC: Class attribute from instance: b.getClass().V")
 	Testing.value(ClassB.Count,1) 
 	Testing.value(new_b.getClass().Count,1) 
 Testing.end()
 
-// TEST 12
-Testing.test("SC: Instance method: a.method()")
+// TEST 14
+Testing.test("SC: Instance method: b.method()")
 	Testing.value(new_b.hello(),"From B:0") 
 
-// TEST 13
-Testing.test("SC: Inherited method: a.inheritedmethod()")
+// TEST 15
+Testing.test("SC: Inherited method: b.inheritedmethod()")
 	Testing.value(new_b.thishello(),"From B:0") 
 	Testing.value(new_b.basehello(),"Hello:0") 
 	new_b._id=10
@@ -217,7 +219,7 @@ Testing.end()
 // SUB/SUB/CLASS TESTING
 // ===========================================================================
 
-// TEST 13
+// TEST 16
 Testing.test("SSC: Sub-subclass declaration: var C=Extend.create({parent:B,...})")
 	// SETUP
 	var ClassC = Extend.create({
@@ -229,7 +231,52 @@ Testing.test("SSC: Sub-subclass declaration: var C=Extend.create({parent:B,...})
 	})
 	Testing.value(ClassC.getName(), "ClassC")
 	Testing.value(ClassC.getParent(), ClassB) 
+	Testing.value(ClassC.getParent().getParent(), ClassA) 
 	Testing.value(ClassC.isClass(), true) 
+Testing.end()
+
+// TEST 17
+Testing.test("SSC: Inhertied class attribute access: C.V ")
+	Testing.value(ClassA.Count, 1) 
+	Testing.value(ClassB.Count, 1) 
+	Testing.value(ClassC.Count, 0) 
+Testing.end()
+
+// TEST 18
+Testing.test("SSC: Inherited class operation: C.operation(...)")
+	Testing.value(ClassC.otherHello(), "OtherHello") 
+	Testing.value(ClassC.getCount(), 0)
+Testing.end()
+
+// TEST 19
+Testing.test("SSC: Subclass instanciation: var c = new C()")
+	var new_c = new ClassC()
+	Testing.value(new_c.isClass(), false) 
+	Testing.value(new_c.getClass(), ClassC) 
+Testing.end()
+
+// TEST 20
+Testing.test("SSC: Subclass instance attribute: c.v")
+	Testing.value(new_c._id,0) 
+Testing.end()
+
+// TEST 21
+Testing.test("SSC: Class attribute from instance: c.getClass().V")
+	Testing.value(ClassC.Count,1) 
+	Testing.value(new_c.getClass().Count,1) 
+Testing.end()
+
+// TEST 22
+Testing.test("SSC: Instance method: c.method()")
+	Testing.value(new_c.hello(),"From C:0") 
+
+// TEST 23
+Testing.test("SSC: Inherited method: c.inheritedmethod()")
+	Testing.value(new_c.thishello(),"From C:0") 
+	Testing.value(new_c.basehello(),"Hello:0") 
+	new_c._id=11
+	Testing.value(new_c.thishello(),"From C:11") 
+	Testing.value(new_c.basehello(),"Hello:11") 
 Testing.end()
 
 // ===========================================================================
@@ -237,6 +284,17 @@ Testing.end()
 // ===========================================================================
 
 // isInstance
+
+// TEST 24
+Testing.test("I: object.isInstance(class)")
+	Testing.asTrue( new_a.isInstance(ClassA) )
+	Testing.asTrue( new_b.isInstance(ClassB) )
+	Testing.asTrue( new_c.isInstance(ClassC) )
+	Testing.asTrue( new_b.isInstance(ClassA) )
+	Testing.asTrue( new_c.isInstance(ClassB) )
+	Testing.asTrue( new_c.isInstance(ClassC) )
+Testing.end()
+
 // getMethod
 
 /*
