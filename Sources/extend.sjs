@@ -1,5 +1,5 @@
 @module Extend
-@version 1.99 (20-Jun-1997)
+@version 1.99 (21-Jun-1997)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -50,13 +50,12 @@
 	class_object isClass      = {return true}
 	class_object _parent      = declaration parent
 	class_object _name        = declaration name
-	class_object _attributes  = {}
-	class_object _operations  = {}
-	class_object _methods     = {}
-	class_object _init        = Undefined
+	class_object _attributes  = {all:{},inherited:{},own:{}}
+	class_object _operations  = {all:{},inherited:{},own:{},fullname:{}}
+	class_object _methods     = {all:{},inherited:{},own:{},fullname:{}}
 	class_object getName      = {return class_object _name}
 	class_object getParent    = {return class_object _parent}
-	class_object isSubclass   = {c|
+	class_object isSubclassOf = {c|
 		var parent = this
 		while parent
 			when parent == c -> return True
@@ -65,45 +64,51 @@
 		return False
 	}
 	class_object hasInstance   = {o|
-		return o getClass() isSubclass (class_object)
+		return o getClass() isSubclassOf (class_object)
 	}
+	
+	# TODO: There may be a way to inherit (using the prototype) from the parent
+	# class operations without having to duplicate them.
 	@embed JavaScript
 	|if ( declaration.parent != undefined ) {
 	|	// We copy parent class attributes default values
-	|	for ( var name in declaration.parent._attributes ) {
-	|		class_object._attributes[name] = declaration.parent._attributes[name]
-	|		class_object[name] = declaration.parent._attributes[name]
+	|	for ( var name in declaration.parent._attributes.all ) {
+	|		var attribute = declaration.parent._attributes.all[name]
+	|		class_object[name] = attribute
+	|		class_object._attributes.all[name] = attribute
+	|		class_object._attributes.inherited[name] = attribute
 	|	}
-	|	// We proxy parent operation
-	|	for ( var name in declaration.parent._operations ) {
-	|		class_object._operations[name] = declaration.parent
-	|		class_object[name] = declaration.parent[name]
+	|	// We proxy parent operations
+	|	for ( var name in declaration.parent._operations.full ) {
+	|		var operation = declaration.parent._operations.full[name]
+	|		class_object._operations.full[name] = operation
+	|		class_object[name] = operation
 	|	}
-	|	// We proxy parent methods
-	|	for ( var name in declaration.parent._methods ) {
-	|		class_object._methods[name] = declaration.parent
-	|	}
-	|	if ( declaration.parent._init ) {
-	|		class_object._init = declaration.parent._init
+	|	for ( var name in declaration.parent._operations.all ) {
+	|		var operation = declaration.parent[name]
+	|		class_object[name] = operation
+	|		class_object._operations.all[name] = operation
+	|		class_object._operations.inherited[name] = operation
 	|	}
 	|}
 	|if ( declaration.operations != undefined ) {
 	|	for ( var name in declaration.operations ) {
-	|		class_object[name] = declaration.operations[name]
-	|		class_object._operations[name] = class_object
-	|}}
-	|if ( declaration.methods != undefined ) {
-	|	for ( var name in declaration.methods ) {
-	|		class_object._methods[name] = class_object
-	|}}
+	|		var operation = declaration.operations[name]
+	|		class_object[name] = operation
+	|		class_object[full_name + "_" + name] = operation
+	|		class_object._operations.all[name] = operation
+	|		class_object._operations.all[name] = operation
+	|		class_object._operations.own[name] = operation
+	|		class_object._operations.fullname[full_name + "_" + name] = operation
+	|	}
+	|}
 	|if ( declaration.attributes != undefined ) {
 	|	for ( var name in declaration.attributes ) {
-	|		class_object[name] = declaration.attributes[name]
-	|		class_object._attributes[name] = declaration.attributes[name]
+	|		var attribute = declaration.attributes[name]
+	|		class_object[name] = attribute
+	|		class_object._attributes.all[name] = attribute
+	|		class_object._attributes.own[name] = attribute
 	|}}
-	|if ( declaration.init != undefined ) {
-	|	class_object._init = declaration.init
-	|}
 	@end
 
 	var instance_proto             = {}
@@ -122,23 +127,11 @@
 	instance_proto isInstance      = {c|return c hasInstance(target)}
 
 	@embed JavaScript
-	|if ( declaration.parent ) {
-	|	var parent_class = declaration.parent
-	|	for ( var name in parent_class._methods ) {
-	|		instance_proto[name] = declaration.parent.prototype[name]
-	|	}
-	|}
 	|if ( declaration.methods != undefined ) {
 	|	for ( var name in declaration.methods ) {
 	|		instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
 	|}}
-	|if ( declaration.parent != undefined ) {
-	|	console.log(declaration.parent._init)
-	|	instance_proto.init = declaration.parent._init
-	|}
 	|if ( declaration.init != undefined ) {
-	|	console.log( "" + declaration.init.valueOf())
-	|	console.log(typeof(declaration.init))
 	|	instance_proto.init = instance_proto[full_name + "_init"] = declaration.init
 	|}
 	@end

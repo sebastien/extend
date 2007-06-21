@@ -11,7 +11,6 @@ Things you cannot do in JavaScript
 // TEST SETUP ________________________________________________________________
 // TODO: Convert to Sugar
 Testing.OnTestStart = function(testId, testName) {
-	console.log("== TEST " + testId);
 	var test_row = html.tr(
 		{"id":"test_" + testId, "class":"test testRunning"},
 		html.td({"class":"testID"},"#" + testId),
@@ -87,10 +86,7 @@ Testing.test("C: Single class declaration: A=Extend.create(...)")
 	// SETUP
 	var ClassA = Extend.create({
 		init:function(){
-			console.log("CREATING NEW " + this.getClass().getName());
 			this._id=this.getClass().Count++
-			console.log("CLASS " + this.getClass().getName())
-			console.log("Count " + this.getClass().Count)
 		},
 		methods:{
 			basehello:function(){
@@ -131,11 +127,9 @@ Testing.end()
 
 // TEST 4
 Testing.test("C: Class instanciation: var a = new A()")
-	console.log("== NEW A");
 	var new_a = new ClassA()
 	Testing.value(new_a.getClass(), ClassA) 
 	Testing.value(new_a.isClass(), false) 
-	console.log("== END");
 Testing.end()
 
 // TEST 5
@@ -190,7 +184,6 @@ Testing.end()
 
 // TEST 11
 Testing.test("SC: Subclass instanciation: var b = new B()")
-	console.log("== NEW B");
 	var new_b = new ClassB()
 	Testing.value(new_b.isClass(), false) 
 	Testing.value(new_b.getClass(), ClassB) 
@@ -360,14 +353,51 @@ Testing.test("S: Super constructor: this.SuperClass_init()")
 
 Testing.end()
 
+// TEST 26
+Testing.test("S: Super operations: this.SuperClass_operation()")
+	var ClassSA = Extend.create({
+		name:"ClassSA",
+		attributes:{V:"A"},
+		operations:{doThis:function(){return this.V}}
+	})
+	var ClassSB = Extend.create({
+		name:"ClassSB",
+		parent:ClassSA,
+		attributes:{V:"B"},
+		operations:{doThat:function(){return this.ClassSA_doThis() +
+		this.doThis();}}
+	})
+	var ClassSC = Extend.create({
+		name:"ClassSC",
+		parent:ClassSB,
+		attributes:{V:"C"},
+		operations:{doThat:function(){return this.ClassSB_doThat() +
+		this.doThis();}}
+	})
+	Testing.value(ClassSA.doThis(), "A")
+	Testing.value(ClassSB.doThis(), "B")
+	Testing.value(ClassSC.doThis(), "C")
+	Testing.value(ClassSB.doThat(), "BB")
+	Testing.value(ClassSC.doThat(), "CCC")
+
+Testing.end()
 // ===========================================================================
 // INTROSPECTION
 // ===========================================================================
 
 // isInstance
 
-// TEST 26
-Testing.test("I: object.isInstance(class)")
+// TEST 27
+Testing.test("I: A.hasInstance(a)")
+	Testing.asTrue( ClassA.hasInstance(new_a) )
+	Testing.asTrue( ClassB.hasInstance(new_b) )
+	Testing.asTrue( ClassC.hasInstance(new_c) )
+	Testing.asTrue( ClassA.hasInstance(new_b) )
+	Testing.asTrue( ClassB.hasInstance(new_c) )
+Testing.end()
+
+// TEST 28
+Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_a.isInstance(ClassA) )
 	Testing.asTrue( new_b.isInstance(ClassB) )
 	Testing.asTrue( new_c.isInstance(ClassC) )
@@ -376,7 +406,59 @@ Testing.test("I: object.isInstance(class)")
 	Testing.asTrue( new_c.isInstance(ClassC) )
 Testing.end()
 
-// getMethod
+// TEST 28
+Testing.test("I: B.isSubclassOf(A)")
+	Testing.asTrue( ClassB.isSubclassOf(ClassA) )
+	Testing.asTrue( ClassC.isSubclassOf(ClassB) )
+	Testing.asTrue( ClassC.isSubclassOf(ClassA) )
+Testing.end()
+
+// TEST 28
+Testing.test("I: a.listtMethod(A)")
+	var ClassA = Extend.create({
+		name:"ClassA",
+		init:function(){this.a="a"},
+		attributes:{A:0},
+		methods:{ doA:function(){} },
+		operations:{ DoA:function(){} }
+	})
+	var ClassB = Extend.create({
+		name:"ClassB",
+		parent:ClassA,
+		init:function(){this.b="b"},
+		attributes:{B:0},
+		methods:{ doB:function(){} },
+		operations:{ DoB:function(){} }
+	})
+	var ClassC = Extend.create({
+		name:"ClassC",
+		parent:ClassB,
+		init:function(){this.c="c"},
+		attributes:{C:0},
+		methods:{ doC:function(){} },
+		operations:{ DoC:function(){} }
+	})
+
+	var a_all = ClassA.listMethods()
+	var a_own = ClassA.listMethods(true,false)
+	var a_inh = ClassA.listMethods(false,true)
+
+	Testing.asDefined( a_all.doA )
+	Testing.asValue( a_all, a_own )
+	Testing.asValue( a_inh, {} )
+
+	var b_all = ClassB.listMethods()
+	var b_own = ClassB.listMethods(true,false)
+	var b_inh = ClassB.listMethods(false,true)
+
+	Testing.asDefined(   b_all.doB )
+	Testing.asDefined(   b_all.doA )
+	Testing.asDefined(   b_own.doB )
+	Testing.asUndefined( b_own.doA )
+	Testing.asDefined(   b_inh.doA )
+	Testing.asUndefined( b_own.doB )
+
+Testing.end()
 
 /*
 var ClassC = Class.create({
