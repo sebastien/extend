@@ -25,7 +25,7 @@ $(EXTEND_DIST): $(EXTEND_SOURCE)
 
 $(API_DOC): $(EXTEND_SOURCE)
 	echo "Generating API documentation: $(API_DOC)"
-	sugar -a $(API_DOC) $(EXTEND_SOURCE) > /dev/null
+	$(SUGAR) -a $(API_DOC) $(EXTEND_SOURCE) > /dev/null
 
 $(DOC_README): README.txt
 	kiwi README.txt $(DOC_README)

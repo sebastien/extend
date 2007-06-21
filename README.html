@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Extend 2.0</title>
+<style><!-- 
+body {
+	margin-left: 10%;
+	margin-right: 10%;
+	padding: 20pt;
+	padding-top: 10pt;
+	background: rgb(255,255,255);
+	font:  10.5pt/15pt sans-serif;
+	color: rgb(80,80,80);
+}
+
+h1, h2, h3, h4 {
+	font-family: "Trebuchet MS",sans-serif;
+	color: rgb(22, 130, 178);
+	font-weight: normal;
+	padding-top: 0.5em;
+	cursor: pointer;
+}
+
+hr {
+	color: rgb(150, 220, 238);
+	background: rgb(150, 220, 238);
+	height: 1px;
+	border: 0;
+}
+
+
+b {
+	color: rgb(22,130,178);
+}
+
+strong {
+	color: rgb(103,183,0);
+}
+
+
+a:link, a:active, a:visited {
+	color: rgb(22,130,178);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: none;
+	background-color: #dbecf4;
+}
+
+aimg {
+	border: 0;
+}
+
+#header, #footer {
+	font-size: 7pt;
+	clear: both;
+	width: 100%;
+	color: rgb(177,208,223);
+}
+
+.kiwiContent {
+	text-align: left;
+}
+
+
+#footer {
+	padding-top:  30pt;
+	text-align: right;
+}
+
+/*  Kiwi-specific  */
+
+.title {
+	margin-bottom: 0;
+}
+
+.kiwiMeta {
+	width: 100%;
+	padding: 5pt;
+	margin-bottom:  2em;
+	border-top:  1px solid rgb(150, 220, 238);
+	background-color: rgb(250,250,250);
+}
+
+.kiwiMeta tr td {
+	color: rgb(22, 130, 178);
+}
+
+.kiwiMeta tr td.name {
+	font-weight: bold;
+}
+
+.kiwiContent h1, .kiwiContent h2{
+	padding-bottom: 5pt;
+	border-bottom:  1px dotted rgb(150, 220, 238);
+}
+
+.kiwiContent h1 {
+	font-size: 1.5em;
+	font-weight: normal;
+	padding-top: 1.5em;
+	padding-bottom: 0.5em;
+}
+
+.kiwiContent h2 {
+	font-size: 1.3em;
+}
+
+.kiwiContent h3 {
+	font-size: 1.1em;
+}
+
+.kiwiContent pre {
+	padding: 5pt;
+	border:  1px solid rgb(150, 220, 238);
+	padding-left: 20pt;
+	background-color: rgb(240,240,250);
+	font-size: 8pt;
+	color: rgb(22,130,178);
+}
+
+.kiwiContent code {
+	font-size: 8pt;
+	background-color: rgb(240,240,250);
+}
+
+.kiwiContent dt {
+	color: rgb(22,130,178);
+	font-weight: bold;
+}
+
+.kiwiContent dd {
+	border-left:  1px solid rgb(150, 220, 238);
+	padding-left: 20pt;
+	margin-bottom: 2em;
+}
+
+.kiwiContent dd pre {
+	border-left: 0px;
+}
+
+.kiwiContent ul {
+	padding-top: 0em;
+	margin-top: 0em;
+}
+
+.kiwiContent ul li {
+	padding-bottom: 0.2em;
+}
+
+.kiwiContent table {
+	border:  1px solid rgb(150, 220, 238);
+	padding: 0pt;
+}
+
+.kiwiContent table caption {
+	font-family: serif;
+	padding-top: 1em;
+	padding-bottom: 0.5em;
+	font-style: italic;
+	font-size: 90%;
+	color: rgb(22, 130, 178);
+}
+
+.kiwiContent table tbody {
+}
+
+.kiwiContent table tr {
+	margin: 0;
+}
+
+.kiwiContent table tr td {
+	margin: 0;
+	padding: 5pt;
+	font-size: 90%;
+	background-color: rgb(250,250,250);
+	border-bottom: 1px solid rgb(150, 220, 238);
+}
+
+.kiwiContent table tr td.lastRow {
+	border-bottom: none;
+}
+
+.kiwiContent table tr td.lastCol {
+	border-right: none;
+}
+
+.kiwiContent table tr.even td {
+	background-color: #FEFEFE;
+
+}
+
+.kiwiContent table tr.odd td {
+	background-color: rgb(240,240,240);
+}
+
+.kiwiContent .term {
+	color: rgb(22, 130, 178);
+	background: rgb(240, 250, 256);
+}
+
+.kiwiContent .quote {
+	font-style: italic;
+	color: rgb(120, 120, 120);
+}
+
+.kiwiContent .citation {
+	font-style: italic;
+	color: rgb(120, 120, 120);
+}
+
+.kiwiContent div[class^="ann"] {
+	margin-top: 5pt;
+	margin-bottom: 5pt;
+	padding: 5pt;
+	padding-left: 20pt;
+	color: rgb(100, 100, 100);
+}
+
+.kiwiContent div[class^="ann"] .title {
+	font-weight: bold;
+}
+
+.kiwiContent .annNote {
+	border:  1px solid rgb(103,183,0);
+	margin-top: 5pt;
+	margin-bottom: 5pt;
+	padding: 5pt;
+	padding-left: 20pt;
+	background: #fffbe4;
+	color: rgb(100, 100, 100);
+	border:  1px solid #dedac3;
+}
+
+.kiwiContent .annNote .title {
+	font-weight: bold;
+	display: none;
+}
+
+.kiwiReferences {
+	font:  8pt/12pt "Lucida Grande",Lucida,sans-serif;
+	margin-top: 10pt;
+	padding: 5pt;
+	border-top:  1px solid rgb(200, 200, 200);
+	background-color: rgb(250,250,250);
+	color: rgb(200, 200, 200);
+	font-size: 8pt;
+}
+.kiwiReferences a:link, .kiwiReferences a:active, .kiwiReferences a:visited {
+	color: rgb(150,150,150);
+}
+
+.kiwiReferences .entry {
+	padding-top: 5pt;
+	clear: both;
+}
+
+.kiwiReferences .entry .name {
+	float: left;
+	font-weight: bold;
+	padding-right: 5pt;
+}
+
+.kiwiReferences .entry .content {
+	text-align: right;
+}
+
+ --></style>
+</head>
+<body>
+<div
+	class="title"><h1>Extend 2.0</h1><h2>Developer Manual</h2></div><table class='kiwiMeta'><tr><td width='0px' class='name'>Author</td><td width='100%' class='value'>Sebastien Pierre &lt;sebastien@ivy.fr&gt;</td></tr><tr><td width='0px' class='name'>Revision</td><td width='100%' class='value'>21-Jun-2007</td></tr></table>
+<div class="kiwiContent"><div class='content'><p>Extend 2.0 is an evolution of the <a href="http://www.ivy.fr/js/extend/1">Extend 1.0</a> which implemented a flexible class-based OOP layer on top of the JavaScript prototype object model.</p><p>Extend 2.0 allows you to write nice and clean classes in JavaScript, features introspection and class meta-information, is mature and <a href="http://www.ivy.fr/js/extend/test.html">fully-tested</a>, and used as a base for our wonderful <a href="http://www.ivy.fr/sugar">Sugar language</a> runtime.</p><div class="section"><h1 class="heading">The problem</h1><div class="level1"><p>JavaScript being a prototype-based object language, it does not offer (in standard) a &ldquo;<span class='quote'>class-based</span>&rdquo; OOP layer. This can become a problem when you're writing medium to large system, where prototypes start to be cumbersome to manage.</p><p>The famous JavaScript <a href="http://www.prototypejs.com">Prototype library</a> provides a very basic way to create classes, but does not provide any inheritance between classes. Extensions such as <a href="#2">ExtendClass</a> and <a href="#3">ExtendClassFurther</a> tried to add sub-classing, but fail to have a flexible and reliable <code>super</code>-equivalent, which makes advanced JavaScript application development difficult.</p><p>Moreover, neither of these extensions allow meta-information specification to classes (such as class name, methods, parent class, etc), while this information is very useful for debugging and introspection.</p><p>Additionally, common cases such as handing an object method to a callback that may alter the <code>this</code> is not supported (<a href="http://www.jquery.com">jQuery</a> callback do that).</p></div></div><div class="section"><h1 class="heading">Introducing Extend</h1><div class="level1"><p>Extend 2.0 is a simplified, cleaner version of the Extend 1.X library, with the same design goals:</p><ul><li>Traditional class-based OOP layer for JavaScript </li><li>Notion of class attributes (attributes), methods and class methods (operations) </li><li>Introspection API to list attributes, methods, operations </li><li>Makes the difference between what is inherited and what is not inherited </li><li>Easy wrapping of object methods to be safely given as callbacks</li></ul><p>To start using <code>Extend</code>, simply add the following line to your HTML head section:</p><pre>&lt;script type="text/javascript" src="http://www.ivy.fr/js/extend.js"&gt;&lt;/script&gt;</pre><p>Once you've included the script, you can create classed by using the 'Extend.Class' function:</p><pre>var A = Extend.Class({
+  name:"A",
+  methods:{
+    helloWorld:function(){
+      return "Hello, World !";
+    }
+  }
+});
+alert(new A().helloWorld());</pre><p>The <code>Extend.Class</code> takes the following parameters, given in a dictionary:</p><ul><li><code>name</code> (<em>required</em>): a string representing the class name. In case you want the class name to reflect a package hierarchy (like <code>ui.widget.InputField</code>), you can use dots to join module names and class name.</li></ul><ul><li><code>parent</code>: the parent class (if any) of this class.</li></ul><ul><li><code>init</code>: the constructor function for this class.</li></ul><ul><li><code>methods</code>: a dictionary mapping method names to functions implementing the methods, where the <code>this</code> will refer to the current instance.</li></ul><ul><li><code>operations</code>: a dictionary mapping class methods (operation) names to functions. The <code>this</code> in these functions will refer to the class object, as returned by <code>Extend.Class</code>.</li></ul><ul><li><code>attributes</code>: a dictionary mapping class attributes names to values. Class attributes default values are inherited by sub-classes, and can be accessed directly (like <code>A.foo</code> if <code>foo</code> is a class attribute of <code>A</code>)</li></ul></div></div><div class="section"><h1 class="heading">Extend API</h1><div class="level1"><p>Extend offers a set of methods that can are available to Extend classes and instances created from Extend classes. These methods range from simple introspection (what is the class of an object, what is this class name, is this an object an instance of this class, etc) to more complex things (safely wrapping a method for callback, listing inherited methods, etc).</p><div class="section"><h2 class="heading">Object API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>false</code></div></dd><dt> <code>getClass</code></dt><dd><div class='content'>Returns the class object associated with this instance. You can use the class object to access class operations, class attributes, etc.</div></dd><dt> <code>getMethod(name:String)</code></dt><dd><div class='content'>In JavaScript, if you give a method as a callback by simply doing <code>object.method</code>, then you may have problems when the caller changes the <code>this</code> argument of the method. Using <code>getMethod</code> will ensure that the this is preserved. It's actually the equivalent of doing 'this.getClass().bindMethod(this, name)'.</div></dd><dt> <code>isInstance(c:Class)</code></dt><dd><div class='content'>Returns <code>true</code> if this instance is an instance of the given class, which must be either the class of this instance, or an ancestor of this instance class.</div></dd></dl></div></div><div class="section"><h2 class="heading">Class API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>true</code></div></dd><dt> <code>getName</code></dt><dd><div class='content'>Returns the class name, as given when creating the class.</div></dd><dt> <code>getParent</code></dt><dd><div class='content'>Returns the parent class for this class, or <code>undefined</code>.</div></dd><dt> <code>hasInstance(o:Object)</code></dt><dd><div class='content'>Tells if the given object is an instance of this class. This also includes the parent classes.</div></dd><dt> <code>isSubclassOf(c:Class)</code></dt><dd><div class='content'>Tells if this class is a subclass of the given class.</div></dd><dt> <code>listMethods(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Returns a dictionary that maps methods names to unbound methods, including by default the <code>own</code> methods and the <code>inherited</code> methods. Settings these two parameters to either <code>true</code> or <code>false</code> will allow to return the desired subset.</div></dd><dt> <code>listOperations(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class operations.</div></dd><dt> <code>listAttributes(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class attributes.</div></dd><dt> <code>bindMethod(o:Object, name:String)</code></dt><dd><div class='content'>Returns the method named <code>name</code> when it is bound to the given object. This method can be safely given as a callback, and even if the <code>this</code> is changed in a <code>method.apply(other_object, arguments)</code>, it will be preserved.</div></dd></dl></div></div></div></div><div class="section"><h1 class="heading">Examples</h1><div class="level1"><p>Step 1: Create a new class</p><pre>var Shape = Extend.Class(
+  name:"Shape",
+  init:function(){
+    this.points = [];
+  }
+  methods:{
+    addPoint:function(p){
+      this.points.push(p);
+    }
+    getPoints:function(){
+      return this.points;
+    }
+  }
+});</pre><p>Step 2: Create an instance of your class, and do stuff</p><pre>my_shape = new Shape();
+my_shape.addPoint([0,0]);
+my_shape.addPoint([1,0]);
+console.log(my_shape.getPoints().toSource());</pre><p>Step 3: Create a subclass</p><pre>var Rectangle = Extend.Class(
+  name:"Rectangle",
+  parent:"Shape",
+  init:function(){
+    this.points = [];
+  }
+  methods:{
+    addPoint:function(p){
+      this.points.push(p);
+    }
+    getPoints:function(){
+      return this.points;
+    }
+  }
+});</pre></div></div></div></div>
+<div class="kiwiReferences"><div class="entry"><div class="name"><a name="0">0</a></div><div class="content"> JavaScript Traps, Sébastien Pierre, June 2007
+      <a href="http://www.ivy.fr/notes/javascript-traps.html">tech note</a></div></div><div class="entry"><div class="name"><a name="1">1</a></div><div class="content"> Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
+      <a href="http://mckoss.com/jscript/object.htm">article</a></div></div><div class="entry"><div class="name"><a name="2">2</a></div><div class="content"> Prototype-based Programming Wikipedia Article,
+      <a href="http://en.wikipedia.org/wiki/Prototype-based_programming">wikipedia</a></div></div><div class="entry"><div class="name"><a name="3">3</a></div><div class="content"> Java Reflection API
+      <a href="http://java.sun.com/docs/books/tutorial/reflect/index.html">tutorial</a></div></div><div class="entry"><div class="name"><a name="4">4</a></div><div class="content"> Extend Class, Prototype library extension to add subclassing
+      <a href="http://wiki.script.aculo.us/scriptaculous/show/ExtendClass">wiki page</a></div></div><div class="entry"><div class="name"><a name="5">5</a></div><div class="content"> Extend Class Further, adding Ruby-like OO features to Prototype
+      <a href="http://wiki.script.aculo.us/scriptaculous/show/ExtendClassFurther">wiki page</a></div></div></div>
+</body>
+</html>
