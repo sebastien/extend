@@ -381,6 +381,7 @@ Testing.test("S: Super operations: this.SuperClass_operation()")
 	Testing.value(ClassSC.doThat(), "CCC")
 
 Testing.end()
+
 // ===========================================================================
 // INTROSPECTION
 // ===========================================================================
@@ -406,15 +407,36 @@ Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_c.isInstance(ClassC) )
 Testing.end()
 
-// TEST 28
+// TEST 29
 Testing.test("I: B.isSubclassOf(A)")
 	Testing.asTrue( ClassB.isSubclassOf(ClassA) )
 	Testing.asTrue( ClassC.isSubclassOf(ClassB) )
 	Testing.asTrue( ClassC.isSubclassOf(ClassA) )
 Testing.end()
 
-// TEST 28
-Testing.test("I: a.listtMethod(A)")
+function get_keys(dict) {
+	var res = []
+	for ( k in dict ) { res.push(k) }
+	return res;
+}
+
+function cmp_list(a,b) {
+	if ( a.length == b.length ) {
+		for ( var i=0 ; i<a.length ; i++ ) {
+			if ( a[i] != b[i] ) { return false};
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function same_keys(a,b) {
+	return cmp_list(get_keys(a),get_keys(b))
+}
+
+// TEST 30
+Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.create({
 		name:"ClassA",
 		init:function(){this.a="a"},
@@ -444,8 +466,8 @@ Testing.test("I: a.listtMethod(A)")
 	var a_inh = ClassA.listMethods(false,true)
 
 	Testing.asDefined( a_all.doA )
-	Testing.asValue( a_all, a_own )
-	Testing.asValue( a_inh, {} )
+	Testing.asTrue( same_keys(a_all, a_own) )
+	Testing.asTrue( same_keys(a_inh, {}) )
 
 	var b_all = ClassB.listMethods()
 	var b_own = ClassB.listMethods(true,false)
@@ -453,102 +475,99 @@ Testing.test("I: a.listtMethod(A)")
 
 	Testing.asDefined(   b_all.doB )
 	Testing.asDefined(   b_all.doA )
-	Testing.asDefined(   b_own.doB )
 	Testing.asUndefined( b_own.doA )
+	Testing.asDefined(   b_own.doB )
 	Testing.asDefined(   b_inh.doA )
-	Testing.asUndefined( b_own.doB )
+	Testing.asUndefined( b_inh.doB )
+
+	var c_all = ClassC.listMethods()
+	var c_own = ClassC.listMethods(true,false)
+	var c_inh = ClassC.listMethods(false,true)
+
+	Testing.asDefined(   c_all.doC )
+	Testing.asDefined(   c_all.doB )
+	Testing.asDefined(   c_all.doA )
+	Testing.asDefined(   c_own.doC )
+	Testing.asUndefined( c_own.doB )
+	Testing.asUndefined( c_own.doA )
+	Testing.asDefined(   c_inh.doA )
+	Testing.asDefined(   c_inh.doB )
+	Testing.asUndefined( c_inh.doC )
 
 Testing.end()
 
-/*
-var ClassC = Class.create({
-	CLASSDEF:{
-		name:  "ClassC",
-		parent: ClassB
-	},
-	hello: function() {
-		return ClassC.parentClass.method("hello").call(this) + ", again !"
-	}
-})
+// TEST 31
+Testing.test("I: a.listAttributes(A)")
+	var a_all = ClassA.listAttributes()
+	var a_own = ClassA.listAttributes(true,false)
+	var a_inh = ClassA.listAttributes(false,true)
 
-var a = new ClassA()
-var b = new ClassB()
-var c = new ClassC()
+	Testing.asDefined( a_all.A )
+	Testing.value( same_keys(a_all, a_own) )
+	Testing.value( same_keys(a_inh, {}) )
 
-var test = function( test, expected ) {
-	var result = eval(test)
-	var li   = document.createElement("li")
-	if ( result == expected ) {
-		var text = document.createTextNode("" + test + " == " + result)
-		li.appendChild(text)
-		document.getElementById("succeeded").appendChild(li)
-	}
-	else {
-		var text = document.createTextNode("" + test + ":" + expected + " != " + result)
-		li.appendChild(text)
-		document.getElementById("failed").appendChild(li)
-	}
-}
+	var b_all = ClassB.listAttributes()
+	var b_own = ClassB.listAttributes(true,false)
+	var b_inh = ClassB.listAttributes(false,true)
 
-test("ClassA.className", "ClassA")
-test("ClassB.className", "ClassB")
-test("ClassC.className", "ClassC")
-test("a.getClass()", ClassA)
-test("b.getClass()", ClassB)
-test("c.getClass()", ClassC)
+	Testing.asDefined(   b_all.B )
+	Testing.asDefined(   b_all.A )
+	Testing.asDefined(   b_own.B )
+	Testing.asUndefined( b_own.A )
+	Testing.asDefined(   b_inh.A )
+	Testing.asUndefined( b_inh.B )
 
-test("a.hello()", "Hello (0)")
-test("b.hello()", "Hello (1), world")
-test("c.hello()", "Hello (2), world, again !")
+	var c_all = ClassC.listAttributes()
+	var c_own = ClassC.listAttributes(true,false)
+	var c_inh = ClassC.listAttributes(false,true)
 
-ClassA.method("newHello", function() { return "New hello" })
-test("a.newHello()",'New hello')
-test("b.newHello()",'New hello')
-test("c.newHello()",'New hello')
+	Testing.asDefined(   c_all.C )
+	Testing.asDefined(   c_all.B )
+	Testing.asDefined(   c_all.A )
+	Testing.asDefined(   c_own.C )
+	Testing.asUndefined( c_own.B )
+	Testing.asUndefined( c_own.A )
+	Testing.asDefined(   c_inh.A )
+	Testing.asDefined(   c_inh.B )
+	Testing.asUndefined( c_inh.C )
+Testing.end()
 
-test("ClassA.inherited.newHello",undefined)
-test("ClassB.inherited.newHello",ClassA)
-test("ClassC.inherited.newHello",ClassA)
 
-ClassB.method("newHello", function() { return "Other hello" })
+// TEST 32
+Testing.test("I: a.listOperations(A)")
+	var a_all = ClassA.listOperations()
+	var a_own = ClassA.listOperations(true,false)
+	var a_inh = ClassA.listOperations(false,true)
 
-test("ClassA.inherited.newHello",undefined)
-test("ClassB.inherited.newHello",undefined)
-test("ClassC.inherited.newHello",ClassB)
+	Testing.asDefined( a_all.DoA )
+	Testing.value(  same_keys(a_all, a_own) )
+	Testing.value(  same_keys(a_inh, {}) )
 
-test("a.newHello()",'New hello')
-test("b.newHello()",'Other hello')
-test("c.newHello()",'Other hello')
-test("b.parentCall('newHello')",'New hello')
-test("c.parentCall('newHello')",'Other hello')
+	var b_all = ClassB.listOperations()
+	var b_own = ClassB.listOperations(true,false)
+	var b_inh = ClassB.listOperations(false,true)
 
-test("a.newHello()",'New hello')
-test("b.newHello()",'Other hello')
-test("c.newHello()",'Other hello')
+	Testing.asDefined(   b_all.DoB )
+	Testing.asDefined(   b_all.DoA )
+	Testing.asDefined(   b_own.DoB )
+	Testing.asUndefined( b_own.DoA )
+	Testing.asDefined(   b_inh.DoA )
+	Testing.asUndefined( b_inh.DoB )
 
-var ClassD = Class.create({
-	CLASSDEF:{
-		name:  "ClassD"
-	},
-	newHello: function() {
-		return "Completely different hello !"
-	}
-})
+	var c_all = ClassC.listOperations()
+	var c_own = ClassC.listOperations(true,false)
+	var c_inh = ClassC.listOperations(false,true)
 
-ClassB.reparent(ClassD)
-ClassB.method("newHello", Extend.DELETE)
+	Testing.asDefined(   c_all.DoC )
+	Testing.asDefined(   c_all.DoB )
+	Testing.asDefined(   c_all.DoA )
+	Testing.asDefined(   c_own.DoC )
+	Testing.asUndefined( c_own.DoB )
+	Testing.asUndefined( c_own.DoA )
+	Testing.asDefined(   c_inh.DoA )
+	Testing.asDefined(   c_inh.DoB )
+	Testing.asUndefined( c_inh.DoC )
 
-test("ClassB.parentClass.className",ClassD.className)
-test("ClassC.parentClass.className",ClassB.className)
-test("ClassC.parentClass.parentClass.className",ClassD.className)
+Testing.end()
 
-test("b.getClass().className",    ClassB.className)
-test("b.parentClass().className", ClassD.className)
-
-test("c.getClass().className",    ClassC.className)
-test("c.parentClass().className", ClassB.className)
-
-test("a.newHello()",'New hello')
-test("b.newHello()",'Completely different hello !')
-test("c.newHello()",'Completely different hello !')
-*/
+// EOF

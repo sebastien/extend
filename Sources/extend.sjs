@@ -1,5 +1,5 @@
 @module Extend
-@version 1.99 (21-Jun-1997)
+@version 1.99 (21-Jun-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -66,22 +66,53 @@
 	class_object hasInstance   = {o|
 		return o getClass() isSubclassOf (class_object)
 	}
-	
+	class_object listMethods   = {o,i|
+		when o is Undefined -> o = True
+		when i is Undefined -> i = True
+		when o and i
+			return class_object _methods all
+		when (not o) and i
+			return class_object _methods inherited
+		when o and (not i)
+			return class_object _methods own
+		otherwise
+			return {}
+		end
+	}
+	class_object listOperations   = {o,i|
+		when o is Undefined -> o = True
+		when i is Undefined -> i = True
+		when o and i
+			return class_object _operations all
+		when (not o) and i
+			return class_object _operations inherited
+		when o and (not i)
+			return class_object _operations own
+		otherwise
+			return {}
+		end
+	}
+	class_object listAttributes   = {o,i|
+		when o is Undefined -> o = True
+		when i is Undefined -> i = True
+		when o and i
+			return class_object _attributes all
+		when (not o) and i
+			return class_object _attributes inherited
+		when o and (not i)
+			return class_object _attributes own
+		otherwise
+			return {}
+		end
+	}
 	# TODO: There may be a way to inherit (using the prototype) from the parent
 	# class operations without having to duplicate them.
 	@embed JavaScript
 	|if ( declaration.parent != undefined ) {
-	|	// We copy parent class attributes default values
-	|	for ( var name in declaration.parent._attributes.all ) {
-	|		var attribute = declaration.parent._attributes.all[name]
-	|		class_object[name] = attribute
-	|		class_object._attributes.all[name] = attribute
-	|		class_object._attributes.inherited[name] = attribute
-	|	}
 	|	// We proxy parent operations
-	|	for ( var name in declaration.parent._operations.full ) {
-	|		var operation = declaration.parent._operations.full[name]
-	|		class_object._operations.full[name] = operation
+	|	for ( var name in declaration.parent._operations.fullname ) {
+	|		var operation = declaration.parent._operations.fullname[name]
+	|		class_object._operations.fullname[name] = operation
 	|		class_object[name] = operation
 	|	}
 	|	for ( var name in declaration.parent._operations.all ) {
@@ -89,6 +120,18 @@
 	|		class_object[name] = operation
 	|		class_object._operations.all[name] = operation
 	|		class_object._operations.inherited[name] = operation
+	|	}
+	|	for ( var name in declaration.parent._methods.all ) {
+	|		var method = declaration.parent._methods.all[name]
+	|		class_object._methods.all[name] = method
+	|		class_object._methods.inherited[name] = method
+	|	}
+	|	// We copy parent class attributes default values
+	|	for ( var name in declaration.parent._attributes.all ) {
+	|		var attribute = declaration.parent._attributes.all[name]
+	|		class_object[name] = attribute
+	|		class_object._attributes.all[name] = attribute
+	|		class_object._attributes.inherited[name] = attribute
 	|	}
 	|}
 	|if ( declaration.operations != undefined ) {
@@ -102,13 +145,21 @@
 	|		class_object._operations.fullname[full_name + "_" + name] = operation
 	|	}
 	|}
+	|if ( declaration.methods != undefined ) {
+	|	for ( var name in declaration.methods ) {
+	|		var method = declaration.methods[name]
+	|		class_object._methods.all[name] = method
+	|		class_object._methods.own[name] = method
+	|	}
+	|}
 	|if ( declaration.attributes != undefined ) {
 	|	for ( var name in declaration.attributes ) {
 	|		var attribute = declaration.attributes[name]
 	|		class_object[name] = attribute
 	|		class_object._attributes.all[name] = attribute
 	|		class_object._attributes.own[name] = attribute
-	|}}
+	|	}
+	|}
 	@end
 
 	var instance_proto             = {}
@@ -135,7 +186,8 @@
 	|	instance_proto.init = instance_proto[full_name + "_init"] = declaration.init
 	|}
 	@end
-	class_object prototype    = instance_proto
+
+	class_object prototype = instance_proto
 	return class_object
 
 @end
