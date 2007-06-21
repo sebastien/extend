@@ -41,8 +41,11 @@
 | - 'parent', with a reference to a parent class (created with Extend)
 | - 'name', an optional name for this class
 |
+	var full_name    = declaration name
 	var class_object = {
-		target init apply (target, arguments)
+		when not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
+			return target init apply (target, arguments)
+		end
 	}
 	class_object isClass      = {return true}
 	class_object _parent      = declaration parent
@@ -104,6 +107,10 @@
 	@end
 
 	var instance_proto             = {}
+	when declaration parent
+		instance_proto = new declaration parent ("__Extend_SubClass__")
+		instance_proto constructor = class_object
+	end
 	instance_proto isInstance      = Undefined
 	instance_proto getClass        = {return class_object}
 	instance_proto isClass         = {return False}
@@ -123,7 +130,7 @@
 	|}
 	|if ( declaration.methods != undefined ) {
 	|	for ( var name in declaration.methods ) {
-	|		instance_proto[name] = declaration.methods[name]
+	|		instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
 	|}}
 	|if ( declaration.parent != undefined ) {
 	|	console.log(declaration.parent._init)
@@ -132,7 +139,7 @@
 	|if ( declaration.init != undefined ) {
 	|	console.log( "" + declaration.init.valueOf())
 	|	console.log(typeof(declaration.init))
-	|	instance_proto.init = declaration.init
+	|	instance_proto.init = instance_proto[full_name + "_init"] = declaration.init
 	|}
 	@end
 	class_object prototype    = instance_proto

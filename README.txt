@@ -1,10 +1,15 @@
 == Extend 2.0
 == Developer Manual
 
+
+The problem
+===========
+
+  There are a couple of OOP layers existing for JavaScript, 
 Class API
 =========
 
-  Features
+  Features:
 
   - Attributes are inherited from parent classes, but they are not shared among
     classes.
@@ -37,6 +42,9 @@ Instance API
     'this' argument of the method. Using 'getMethod' will ensure that the this
     is preserved.
   
+  'getSuperConstructor'::
+    Returns the constructor from this instance parent class.
+
   'getSuperMethod(name:String)'::
     Returns a method borrowed from the parent class (which must be defined or an
     exception will be fired) and returns it so that it will be executed with
@@ -47,6 +55,35 @@ Instance API
     must be either the class of this instance, or an ancestor of this instance
     class.
 
+Examples
+========
+
+  Step 1: Create a new class
+
+  >   var Shape = Extend.Class(
+  >     name:"Shape",
+  >     init:function(){
+  >       this.points = [];
+  >     }
+  >     methods:{
+  >       addPoint:function(p){
+  >         this.points.push(p);
+  >       }
+  >       getPoints:function(){
+  >         return this.points;
+  >       }
+  >     }
+  >   };
+
+  >   )
+
+--
+
+ [1] Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
+     <http://mckoss.com/jscript/object.htm>
+
+ [2] Prototype-based Programming Wikipedia Article,
+     <http://en.wikipedia.org/wiki/Prototype-based_programming>
 
 
-# vim: syn=kiwi ts=2 sw=2 et
+# EOF vim: syn=kiwi ts=2 sw=2 et

@@ -11,6 +11,7 @@ Things you cannot do in JavaScript
 // TEST SETUP ________________________________________________________________
 // TODO: Convert to Sugar
 Testing.OnTestStart = function(testId, testName) {
+	console.log("== TEST " + testId);
 	var test_row = html.tr(
 		{"id":"test_" + testId, "class":"test testRunning"},
 		html.td({"class":"testID"},"#" + testId),
@@ -86,6 +87,7 @@ Testing.test("C: Single class declaration: A=Extend.create(...)")
 	// SETUP
 	var ClassA = Extend.create({
 		init:function(){
+			console.log("CREATING NEW " + this.getClass().getName());
 			this._id=this.getClass().Count++
 			console.log("CLASS " + this.getClass().getName())
 			console.log("Count " + this.getClass().Count)
@@ -129,9 +131,11 @@ Testing.end()
 
 // TEST 4
 Testing.test("C: Class instanciation: var a = new A()")
+	console.log("== NEW A");
 	var new_a = new ClassA()
 	Testing.value(new_a.getClass(), ClassA) 
 	Testing.value(new_a.isClass(), false) 
+	console.log("== END");
 Testing.end()
 
 // TEST 5
@@ -186,6 +190,7 @@ Testing.end()
 
 // TEST 11
 Testing.test("SC: Subclass instanciation: var b = new B()")
+	console.log("== NEW B");
 	var new_b = new ClassB()
 	Testing.value(new_b.isClass(), false) 
 	Testing.value(new_b.getClass(), ClassB) 
@@ -280,12 +285,88 @@ Testing.test("SSC: Inherited method: c.inheritedmethod()")
 Testing.end()
 
 // ===========================================================================
+// SUPER KEYWORD
+// ===========================================================================
+
+// TEST 24
+Testing.test("S: Super methods: this.SuperClass_method()")
+	var ClassSA = Extend.create({
+		name:"ClassSA",
+		init:function(){this.a="a"},
+		methods:{doThis:function(){return "doThis:SA:" + this.a}}
+	})
+	var ClassSB = Extend.create({
+		name:"ClassSB",
+		parent:ClassSA,
+		init:function(){this.a="b"},
+		methods:{doThis:function(){return this.ClassSA_doThis() + ":SB"}}
+	})
+	var ClassSC = Extend.create({
+		name:"ClassSC",
+		parent:ClassSB,
+		init:function(){this.a="c"},
+		methods:{
+			doThis:function(){return this.ClassSB_doThis() + ":SC"},
+			doThat:function(){return this.ClassSA_doThis() + ":SC"}
+		}
+	})
+	var new_sa = new ClassSA()
+	var new_sb = new ClassSB()
+	var new_sc = new ClassSC()
+	Testing.value(new_sa.doThis(), "doThis:SA:a")
+	Testing.value(new_sb.doThis(), "doThis:SA:b:SB")
+	Testing.value(new_sc.doThis(), "doThis:SA:c:SB:SC")
+	Testing.value(new_sc.doThat(), "doThis:SA:c:SC")
+Testing.end()
+
+// TEST 25
+Testing.test("S: Super constructor: this.SuperClass_init()")
+	var ClassSA = Extend.create({
+		name:"ClassSA",
+		init:function(){this.a="a"},
+	})
+	var ClassSB = Extend.create({
+		name:"ClassSB",
+		parent:ClassSA,
+		init:function(){
+			this.ClassSA_init();
+			this.b="b"
+		}
+	})
+	var ClassSC = Extend.create({
+		name:"ClassSC",
+		parent:ClassSB,
+		init:function(){
+			this.ClassSB_init()
+			this.c="c"
+		},
+		methods:{
+			doThis:function(){return this.ClassSB_doThis() + ":SC"},
+			doThat:function(){return this.ClassSA_doThis() + ":SC"}
+		}
+	})
+	var new_sa = new ClassSA()
+	var new_sb = new ClassSB()
+	var new_sc = new ClassSC()
+	Testing.value(new_sa.a, "a")
+	Testing.asUndefined(new_sa.b)
+	Testing.asUndefined(new_sa.c)
+	Testing.value(new_sb.a, "a")
+	Testing.value(new_sb.b, "b")
+	Testing.asUndefined(new_sb.c)
+	Testing.value(new_sc.a, "a")
+	Testing.value(new_sc.b, "b")
+	Testing.value(new_sc.c, "c")
+
+Testing.end()
+
+// ===========================================================================
 // INTROSPECTION
 // ===========================================================================
 
 // isInstance
 
-// TEST 24
+// TEST 26
 Testing.test("I: object.isInstance(class)")
 	Testing.asTrue( new_a.isInstance(ClassA) )
 	Testing.asTrue( new_b.isInstance(ClassB) )

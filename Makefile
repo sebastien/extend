@@ -5,12 +5,13 @@ PAMELA=pamela-web
 EXTEND_SOURCE=Sources/extend.sjs
 EXTEND_DIST=Sources/extend.js
 API_DOC=Documentation/extend.html
+DOC_README=README.html
 
 .PHONY: doc
 
 # Generic rules ______________________________________________________________
 
-doc: $(API_DOC):
+doc: $(API_DOC) $(DOC_README)
 	echo "Documentation ready."
 
 dist: $(EXTEND_DIST) doc
@@ -25,5 +26,8 @@ $(EXTEND_DIST): $(EXTEND_SOURCE)
 $(API_DOC): $(EXTEND_SOURCE)
 	echo "Generating API documentation: $(API_DOC)"
 	sugar -a $(API_DOC) $(EXTEND_SOURCE) > /dev/null
+
+$(DOC_README): README.txt
+	kiwi README.txt $(DOC_README)
 
 # EOF
