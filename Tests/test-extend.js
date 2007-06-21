@@ -82,9 +82,9 @@ Testing.end()
 // ===========================================================================
 
 // TEST 1
-Testing.test("C: Single class declaration: A=Extend.create(...)")
+Testing.test("C: Single class declaration: A=Extend.Class(...)")
 	// SETUP
-	var ClassA = Extend.create({
+	var ClassA = Extend.Class({
 		init:function(){
 			this._id=this.getClass().Count++
 		},
@@ -156,9 +156,9 @@ Testing.end()
 // ===========================================================================
 
 // TEST 8
-Testing.test("SC: Subclass declaration: var B=Extend.create({parent:...})")
+Testing.test("SC: Subclass declaration: var B=Extend.Class({parent:...})")
 	// SETUP
-	var ClassB = Extend.create({
+	var ClassB = Extend.Class({
 		name:"ClassB",
 		parent:ClassA,
 		methods:{
@@ -218,9 +218,9 @@ Testing.end()
 // ===========================================================================
 
 // TEST 16
-Testing.test("SSC: Sub-subclass declaration: var C=Extend.create({parent:B,...})")
+Testing.test("SSC: Sub-subclass declaration: var C=Extend.Class({parent:B,...})")
 	// SETUP
-	var ClassC = Extend.create({
+	var ClassC = Extend.Class({
 		name:"ClassC",
 		parent:ClassB,
 		methods:{
@@ -283,18 +283,18 @@ Testing.end()
 
 // TEST 24
 Testing.test("S: Super methods: this.SuperClass_method()")
-	var ClassSA = Extend.create({
+	var ClassSA = Extend.Class({
 		name:"ClassSA",
 		init:function(){this.a="a"},
 		methods:{doThis:function(){return "doThis:SA:" + this.a}}
 	})
-	var ClassSB = Extend.create({
+	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
 		init:function(){this.a="b"},
 		methods:{doThis:function(){return this.ClassSA_doThis() + ":SB"}}
 	})
-	var ClassSC = Extend.create({
+	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
 		init:function(){this.a="c"},
@@ -314,11 +314,11 @@ Testing.end()
 
 // TEST 25
 Testing.test("S: Super constructor: this.SuperClass_init()")
-	var ClassSA = Extend.create({
+	var ClassSA = Extend.Class({
 		name:"ClassSA",
-		init:function(){this.a="a"},
+		init:function(){this.a="a"}
 	})
-	var ClassSB = Extend.create({
+	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
 		init:function(){
@@ -326,7 +326,7 @@ Testing.test("S: Super constructor: this.SuperClass_init()")
 			this.b="b"
 		}
 	})
-	var ClassSC = Extend.create({
+	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
 		init:function(){
@@ -355,19 +355,19 @@ Testing.end()
 
 // TEST 26
 Testing.test("S: Super operations: this.SuperClass_operation()")
-	var ClassSA = Extend.create({
+	var ClassSA = Extend.Class({
 		name:"ClassSA",
 		attributes:{V:"A"},
 		operations:{doThis:function(){return this.V}}
 	})
-	var ClassSB = Extend.create({
+	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
 		attributes:{V:"B"},
 		operations:{doThat:function(){return this.ClassSA_doThis() +
 		this.doThis();}}
 	})
-	var ClassSC = Extend.create({
+	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
 		attributes:{V:"C"},
@@ -437,14 +437,14 @@ function same_keys(a,b) {
 
 // TEST 30
 Testing.test("I: a.listMethods(A)")
-	var ClassA = Extend.create({
+	var ClassA = Extend.Class({
 		name:"ClassA",
 		init:function(){this.a="a"},
 		attributes:{A:0},
 		methods:{ doA:function(){} },
 		operations:{ DoA:function(){} }
 	})
-	var ClassB = Extend.create({
+	var ClassB = Extend.Class({
 		name:"ClassB",
 		parent:ClassA,
 		init:function(){this.b="b"},
@@ -452,7 +452,7 @@ Testing.test("I: a.listMethods(A)")
 		methods:{ doB:function(){} },
 		operations:{ DoB:function(){} }
 	})
-	var ClassC = Extend.create({
+	var ClassC = Extend.Class({
 		name:"ClassC",
 		parent:ClassB,
 		init:function(){this.c="c"},
@@ -569,5 +569,39 @@ Testing.test("I: a.listOperations(A)")
 	Testing.asUndefined( c_inh.DoC )
 
 Testing.end()
+
+// TEST 33
+Testing.test("I: a.listMethods(A)")
+	var ClassA = Extend.Class({
+		name:"ClassA",
+		init:function(){this.a="a"},
+		attributes:{A:0},
+		methods:{ doA:function(){return this.a} },
+		operations:{ DoA:function(){} }
+	})
+	var ClassB = Extend.Class({
+		name:"ClassB",
+		parent:ClassA,
+		init:function(){this.b="b"},
+		attributes:{B:0},
+		methods:{ doB:function(){this.b} },
+		operations:{ DoB:function(){} }
+	})
+	var ClassC = Extend.Class({
+		name:"ClassC",
+		parent:ClassB,
+		init:function(){this.c="c"},
+		attributes:{C:0},
+		methods:{ doC:function(){this.c} },
+		operations:{ DoC:function(){} }
+	})
+
+	var new_a = new ClassA();
+	var new_a_doA = new_a.getMethod("doA")
+	Testing.value(new_a.doA.apply({a:"not a"}, []), "not a")
+	Testing.value(new_a_doA.apply({a:"not a"}, []), "a")
+
+Testing.end()
+
 
 // EOF

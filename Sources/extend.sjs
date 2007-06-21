@@ -8,38 +8,34 @@
 | Classes are created using extend by giving a dictionary that contains the
 | following keys:
 |
+| - 'name', an optional name for this class
+| - 'parent', with a reference to a parent class (created with Extend)
 | - 'init', with a function to be used as a init
+| - 'methods', with a dictionary of instance methods
 | - 'attributes', with a dictionary of class attributes
 | - 'operations', with a dictionary of class operations
-| - 'methods', with a dictionary of instance methods
-| - 'parent', with a reference to a parent class (created with Extend)
-| - 'name', an optional name for this class
 |
 | Extend 2.0 is a rewritten, simplified version of the Extend 1 library. It is
 | not compatible with the previous versions, but the API will be stable from
 | this release.
+|
+| You can get more information at the Extend [project
+| page](http://www.ivy.fr/js/extend).
 
 # TODO: Add a class registry (needs @shared on Modules)
 # TODO: Add a class prototype
 
-@function _proxyFunction functionToWrap:Function, targetObject:Object
-	@embed JavaScript
-	|return function(){
-	|	return functionToWrap.apply(targetObject, arguments)
-	|}
-	@end
-@end
 
-@function create declaration
+@function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
 | following keys:
 |
+| - 'name', an optional name for this class
+| - 'parent', with a reference to a parent class (created with Extend)
 | - 'init', with a function to be used as a init
+| - 'methods', with a dictionary of instance methods
 | - 'attributes', with a dictionary of class attributes
 | - 'operations', with a dictionary of class operations
-| - 'methods', with a dictionary of instance methods
-| - 'parent', with a reference to a parent class (created with Extend)
-| - 'name', an optional name for this class
 |
 	var full_name    = declaration name
 	var class_object = {
@@ -65,6 +61,11 @@
 	}
 	class_object hasInstance   = {o|
 		return o getClass() isSubclassOf (class_object)
+	}
+	class_object bindMethod = {object, methodName|
+		var this_method = object [methodName]
+		# FIXME: Throw exception if this_method is not defined
+		return { return this_method apply (object, arguments) }
 	}
 	class_object listMethods   = {o,i|
 		when o is Undefined -> o = True
@@ -170,10 +171,9 @@
 	instance_proto isInstance      = Undefined
 	instance_proto getClass        = {return class_object}
 	instance_proto isClass         = {return False}
-	instance_proto getSuperMethod  = {name|
-		var this_object  = target
-		var parent_proto = declaration parent prototype
-		return {parent_proto[name] apply (target, arguments)}
+	instance_proto getMethod       = {methodName|
+		var this_object = target
+		return class_object bindMethod(this_object, methodName)
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
 

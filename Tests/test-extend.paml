@@ -5,6 +5,7 @@
 		<script(src=../Dependencies/jquery-1.1.2.js)
 		<script(src=../Dependencies/html.js)
 		<script(src=../Dependencies/testing.sjs)
+		<script(src=../Dependencies/jspark.js)
 		<script(src=../Sources/extend.sjs)
 	<body
 		<h1:Extend 2.0 Test Suite

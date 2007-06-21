@@ -1,96 +1,159 @@
 == Extend 2.0
 == Developer Manual
+-- Author: Sebastien Pierre <sebastien@ivy.fr>
+-- Revision: 21-Jun-2007
 
+
+Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/js/extend/1)
+which implemented a flexible class-based OOP layer on top of the JavaScript
+prototype object model.
+
+Extend 2.0 allows you to write nice and clean classes in JavaScript, features
+introspection and class meta-information, is mature and
+[fully-tested](http://www.ivy.fr/js/extend/test.html), and used as a base for
+our wonderful [Sugar language](http://www.ivy.fr/sugar) runtime.
 
 The problem
 ===========
 
-  There are a couple of OOP layers existing for JavaScript, 
+  JavaScript being a prototype-based object language, it does not offer (in
+  standard) a ''class-based'' OOP layer. This can become a problem when you're
+  writing medium to large system, where prototypes start to be cumbersome to
+  manage.
 
-  - When giving methods to callbacks
+  The famous JavaScript [Prototype library](http://www.prototypejs.com)
+  provides a very basic way to create classes, but does not provide any
+  inheritance between classes.  Extensions such as [ExtendClass][2] and
+  [ExtendClassFurther][3] tried to add sub-classing, but fail to have a
+  flexible and reliable `super`-equivalent, which makes advanced JavaScript
+  application development difficult.
 
+  Moreover, neither of these extensions allow meta-information specification
+  to classes (such as class name, methods, parent class, etc), while this
+  information is very useful for debugging and introspection.
 
-The solution
-============
+  Additionally, common cases such as handing an object method to a callback
+  that may alter the 'this' is not supported ([jQuery](http://www.jquery.com)
+  callback do that).
 
+Introducing Extend
+==================
 
-  - Traditional OOP layer
-  - Difference between method and bound method
-  - Reflection to list attributes, methods, operations
-  - Make the difference between inherited and non-inherited methods
+  Extend 2.0 is a simplified, cleaner version of the Extend 1.X library, with
+  the same design goals:
 
-Class API
-=========
+  - Traditional class-based OOP layer for JavaScript
+  - Notion of class attributes (attributes), methods and class methods (operations)
+  - Introspection API to list attributes, methods, operations
+  - Makes the difference between what is inherited and what is not inherited
+  - Easy wrapping of object methods to be safely given as callbacks
 
-  Features:
+  To start using 'Extend', simply add the following line to your HTML head
+  section:
 
-  - Attributes are inherited from parent classes, but they are not shared among
-    classes.
-    |
-    >   var A=Extend.create({attributes:{A:10})
-    >   var B=Extend.create({parent:A})
-    >   console.log("A.A == B.A" + (A.A == B.A))
-    >   A.A = 20
-    >   console.log("A.A != B.A" + (A.A != B.A))
-    |
-    In this example, you can see that even if you change 'A.A', 'B.A' won't be
-    affected, but they share the same default value.
+  >   <script type="text/javascript" src="http://www.ivy.fr/js/extend.js"></script>
 
-  'getName'::
-    Returns the class name, as given when creating the class.
- 
-  'getParent'::
-    Returns the parent class for this class, or 'undefined'.
+  Once you've included the script, you can create classed by using the
+  'Extend.Class' function:
 
-  'hasInstance(o:Object)'::
-    Tells if the given object is an instance of this class. This also includes
-    the parent classes.
+  >   var A = Extend.Class({
+  >     name:"A",
+  >     methods:{
+  >       helloWorld:function(){
+  >         return "Hello, World !";
+  >       }
+  >     }
+  >   });
+  >   alert(new A().helloWorld());
 
-  'isSubclassOf(c:Class)'::
-    Tells if this class is a subclass of the given class.
+  The 'Extend.Class' takes the following parameters, given in a dictionary:
 
-  'listMethods(own:Boolean=True, inherited:Boolean=True)'::
-    Returns a dictionary that maps methods names to unbound methods, including
-    by default the 'own' methods and the 'inherited' methods. Settings these two
-    parameters to either 'true' or 'false' will allow to return the desired
-    subset.
+  - 'name' (*required*): a string representing the class name. In case you want
+    the class name to reflect a package hierarchy (like 'ui.widget.InputField'),
+    you can use dots to join module names and class name.
 
-  'listOperations(own:Boolean=True, inherited:Boolean=True)'::
-    Same as 'listMethods', but with class operations.
+  - 'parent': the parent class (if any) of this class.
 
-  'listAttributes(own:Boolean=True, inherited:Boolean=True)'::
-    Same as 'listMethods', but with class attributes.
+  - 'init': the constructor function for this class.
 
-  'bindMethod(o:Object, name:String)'::
-    Returns the method named 'name' when it is bound to the given object. This
-    method can be safely given as a callback, and even if the 'this' is changed
-    in a 'method.apply(other_object, arguments)', it will be preserved.
+  - 'methods': a dictionary mapping method names to functions implementing the
+     methods, where the 'this' will refer to the current instance.
 
-Instance API
-============
+  - 'operations': a dictionary mapping class methods (operation) names to
+     functions. The 'this' in these functions will refer to the class object, as
+     returned by 'Extend.Class'.
 
-  'getClass'::
-    Returns the class object associated with this instance. You can use the
-    class object to access class operations, class attributes, etc.
+  - 'attributes': a dictionary mapping class attributes names to values. Class
+    attributes default values are inherited by sub-classes, and can be accessed
+    directly (like 'A.foo' if 'foo' is a class attribute of 'A')
 
-  'getMethod(name:String)'::
-    In JavaScript, if you give a method as a callback by simply doing
-    'object.method', then you may have problems when the caller changes the
-    'this' argument of the method. Using 'getMethod' will ensure that the this
-    is preserved.
+Extend API
+==========
 
-  'getSuperConstructor(parent:Class)'::
-    Returns the constructor from this instance parent class.
+  Extend offers a set of methods that can are available to Extend classes and
+  instances created from Extend classes. These methods range from simple
+  introspection (what is the class of an object, what is this class name, is
+  this an object an instance of this class, etc) to more complex things
+  (safely wrapping a method for callback, listing inherited methods, etc).
 
-  'getSuperMethod(parent:Class, name:String)'::
-    Returns a method borrowed from the parent class (which must be defined or an
-    exception will be fired) and returns it so that it will be executed with
-    this instance.
+  Object API
+  ----------
 
-  'isInstance(c:Class)'::
-    Returns 'true' if this instance is an instance of the given class, which
-    must be either the class of this instance, or an ancestor of this instance
-    class.
+    'isClass'::
+      Tells if the given object is class or not. This returns 'false'
+
+    'getClass'::
+      Returns the class object associated with this instance. You can use the
+      class object to access class operations, class attributes, etc.
+
+    'getMethod(name:String)'::
+      In JavaScript, if you give a method as a callback by simply doing
+      'object.method', then you may have problems when the caller changes the
+      'this' argument of the method. Using 'getMethod' will ensure that the this
+      is preserved. It's actually the equivalent of doing
+      'this.getClass().bindMethod(this, name)'.
+
+    'isInstance(c:Class)'::
+      Returns 'true' if this instance is an instance of the given class, which
+      must be either the class of this instance, or an ancestor of this instance
+      class.
+
+  Class API
+  ---------
+
+    'isClass'::
+      Tells if the given object is class or not. This returns 'true'
+
+    'getName'::
+      Returns the class name, as given when creating the class.
+
+    'getParent'::
+      Returns the parent class for this class, or 'undefined'.
+
+    'hasInstance(o:Object)'::
+      Tells if the given object is an instance of this class. This also includes
+      the parent classes.
+
+    'isSubclassOf(c:Class)'::
+      Tells if this class is a subclass of the given class.
+
+    'listMethods(own:Boolean=True, inherited:Boolean=True)'::
+      Returns a dictionary that maps methods names to unbound methods, including
+      by default the 'own' methods and the 'inherited' methods. Settings these
+      two parameters to either 'true' or 'false' will allow to return the
+      desired subset.
+
+    'listOperations(own:Boolean=True, inherited:Boolean=True)'::
+      Same as 'listMethods', but with class operations.
+
+    'listAttributes(own:Boolean=True, inherited:Boolean=True)'::
+      Same as 'listMethods', but with class attributes.
+
+    'bindMethod(o:Object, name:String)'::
+      Returns the method named 'name' when it is bound to the given object. This
+      method can be safely given as a callback, and even if the 'this' is
+      changed in a 'method.apply(other_object, arguments)', it will be
+      preserved.
 
 Examples
 ========
@@ -110,23 +173,52 @@ Examples
   >         return this.points;
   >       }
   >     }
-  >   };
+  >   });
 
-  >   )
+  Step 2: Create an instance of your class, and do stuff
 
---
+  >   my_shape = new Shape();
+  >   my_shape.addPoint([0,0]);
+  >   my_shape.addPoint([1,0]);
+  >   console.log(my_shape.getPoints().toSource());
+
+  Step 3: Create a subclass
+
+  >   var Rectangle = Extend.Class(
+  >     name:"Rectangle",
+  >     parent:"Shape",
+  >     init:function(){
+  >       this.points = [];
+  >     }
+  >     methods:{
+  >       addPoint:function(p){
+  >         this.points.push(p);
+  >       }
+  >       getPoints:function(){
+  >         return this.points;
+  >       }
+  >     }
+  >   });
+
+# --
  
- [0] JavaScript Traps, Sébastien Pierre, June 2007
-     <http://www.ivy.fr/notes/javascript-traps.html>
+ [0]: JavaScript Traps, Sébastien Pierre, June 2007
+      [tech note](http://www.ivy.fr/notes/javascript-traps.html)
 
- [1] Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
-     <http://mckoss.com/jscript/object.htm>
+ [1]: Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
+      [article](http://mckoss.com/jscript/object.htm)
 
- [2] Prototype-based Programming Wikipedia Article,
-     <http://en.wikipedia.org/wiki/Prototype-based_programming>
+ [2]: Prototype-based Programming Wikipedia Article,
+      [wikipedia](http://en.wikipedia.org/wiki/Prototype-based_programming)
 
- [3] Java Reflection API
-     <http://java.sun.com/docs/books/tutorial/reflect/index.html>
+ [3]: Java Reflection API
+      [tutorial](http://java.sun.com/docs/books/tutorial/reflect/index.html)
+
+ [4]: Extend Class, Prototype library extension to add subclassing
+      [wiki page](http://wiki.script.aculo.us/scriptaculous/show/ExtendClass)
+
+ [5]: Extend Class Further, adding Ruby-like OO features to Prototype
+      [wiki page](http://wiki.script.aculo.us/scriptaculous/show/ExtendClassFurther)
 
 
 # EOF vim: syn=kiwi ts=2 sw=2 et
