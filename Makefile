@@ -1,31 +1,43 @@
 # Extend Makefile (19-Jun-2007)
-
+# TODO: Replace all this with source/target shortcuts
+#
 SUGAR=sugar
-PAMELA=pamela-web
+PAMELA=pamela
+PAMELAWEB=pamela-web
 EXTEND_SOURCE=Sources/extend.sjs
 EXTEND_DIST=Sources/extend.js
+EXTEND_SUGAR_DIST=Sources/extend+sugar.js
 API_DOC=Documentation/extend.html
+API_DOC_SUGAR=Documentation/extend+sugar.html
 DOC_README=README.html
+TEST_EXTEND=Tests/test-extend.html
 
 .PHONY: doc
 
 # Generic rules ______________________________________________________________
 
-doc: $(API_DOC) $(DOC_README)
-	echo "Documentation ready."
+all: doc dist
+	@echo
 
-dist: $(EXTEND_DIST) doc
-	echo "Distribution ready.
+doc: $(API_DOC) $(API_DOC_SUGAR) $(DOC_README)
+	@echo "Documentation ready."
+
+dist: $(EXTEND_DIST) $(EXTEND_SUGAR_DIST)
+	@echo "Distribution ready."
 
 # Specific rules _____________________________________________________________
 
 $(EXTEND_DIST): $(EXTEND_SOURCE)
-	echo "Compiling Sugar to JavaScript $(EXTEND_DIST)"
-	$(SUGAR) -ljs $(EXTEND_SOURCE) > $(EXTEND_DIST)
+	$(SUGAR) -ljs $< > $@
+
+$(EXTEND_SUGAR_DIST): $(EXTEND_SOURCE)
+	$(SUGAR) -ljs -DSUGAR_RUNTIME $< > $@
 
 $(API_DOC): $(EXTEND_SOURCE)
-	echo "Generating API documentation: $(API_DOC)"
-	$(SUGAR) -a $(API_DOC) $(EXTEND_SOURCE) > /dev/null
+	$(SUGAR) -a $@ $< > /dev/null
+
+$(API_DOC_SUGAR): $(EXTEND_SOURCE)
+	$(SUGAR) -DSUGAR_RUNTIME -a $@ $< > /dev/null
 
 $(DOC_README): README.txt
 	kiwi README.txt $(DOC_README)

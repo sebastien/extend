@@ -1,5 +1,5 @@
 @module Extend
-@version 1.99 (21-Jun-2007)
+@version 1.99 (26-Jun-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -24,6 +24,7 @@
 
 # TODO: Add a class registry (needs @shared on Modules)
 # TODO: Add a class prototype
+# TODO: Add isA, instanceOf
 
 
 @function Class declaration
@@ -37,6 +38,43 @@
 | - 'attributes', with a dictionary of class attributes
 | - 'operations', with a dictionary of class operations
 |
+| Invoking the 'Class' function will return you a _Class Object_ that
+| implements the following API:
+|
+| - 'isClass()' returns *true*( (because this is an object, not a class)
+| - 'getName()' returns the class name, as a string
+| - 'getParent()' returns a reference to the parent class
+| - 'hasInstance(o)' tells if the given object is an instance of this class
+| - 'isSubclassOf(c)' tells if the given class is a subclass of this class
+| - 'listMethods()' returns a dictionary of *methods* available for this class
+| - 'listOperations()' returns a dictionary of *operations* (class methods)
+| - 'listAttributes()' returns a dictionary of *class attributes*
+| - 'bindMethod(o,n)' binds the method with the given name to the given object
+|
+| When you instanciate your class, objects will have the following methods
+| available:
+|
+| - 'isClass()' returns *true*( (because this is an object, not a class)
+| - 'getClass()' returns the class of this instance
+| - 'getMethod(n)' returns the bound method which name is 'n'
+| - 'isInstance(c)' tells if this object is an instance of the given class
+|
+| Using the 'Class' function is very easy (in *Sugar*):
+|
+| >   var MyClass = Extend Class {
+| >      name:"MyClass"
+| >      init:{
+| >         self message = "Hello, world !"
+| >      }
+| >      methods:{
+| >        helloWorld:{print (message)}
+| >      }
+| >   }
+|
+| instanciating the class is very easy too
+|
+| >   var my_instance = new MyClass()
+
 	var full_name    = declaration name
 	var class_object = {
 		when not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
@@ -192,10 +230,99 @@
 
 @end
 
-@function protocol pdata
+@function Protocol pdata
 @end
 
-@function singleton sdata
+@function Singleton sdata
+@end
+
+@specific SUGAR_RUNTIME
+| This contains specific code that is useful to [Sugar](http://www.ivy.fr/sugar)
+
+	@function range:List start:Number, end:Number, step:Number?
+	| Creates a new list composed of elements in the given range, determined by
+	| the 'start' index and the 'end' index. This function will automatically
+	| find the proper step (wether '+1' or '-1') depending on the bounds you
+	| specify.
+		# TODO: Create a big array (1...100) and use subsets instead
+		var result = []
+		@embed JavaScript
+		| if (start < end ) {
+		|   for ( var i=start ; i<end ; i++ ) {
+		|     res.push(i);
+		|   }
+		| }
+		| else if (start > end ) {
+		|   for ( var i=start ; i>end ; i-- ) {
+		|     res.push(i);
+		|   }
+		| }
+		@end
+		return result
+	@end
+
+	@function iterate value:any, callback:Function, context:Object
+	| Iterates on the given values. If 'value' is an array, the _callback_ will be
+	| invoked on each item (giving the 'value[i], i' as argument) until the callback
+	| returns 'false'. If 'value' is a dictionary, the callback will be applied
+	| on the values (giving 'value[k], k' as argument). Otherwise the object is
+	| expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
+	| enable the iteration.
+		@embed JavaScript
+		|  if ( value.length != undefined ) {
+		|    var length = undefined
+		|    // Is it an object with the length() and get() protocol ?
+		|    if ( typeof(value.length) == "function" ) {
+		|      length = value.length()
+		|      for ( var i=0 ; i<length ; i++ ) {
+		|        var cont = callback.call(context, value.get(i), i)
+		|        if ( cont == false ) { i = length + 1 };
+		|      }
+		|    // Or a plain array ?
+		|    } else {
+		|      length = value.length
+		|      for ( var i=0 ; i<length ; i++ ) {
+		|       var cont = callback.call(context, value[i], i);
+		|       if ( cont == false ) { i = length + 1 };
+		|      }
+		|    }
+		|  } else {
+		|    for ( var k in value ) {
+		|      var cont = callback.call(context, value[k], k);
+		|      if ( cont == false ) { i = length + 1 };
+		|    }
+		|  }
+		@end
+	@end
+
+	@function print args...
+	| Prints the given arguments to the JavaScript console (available in Safari
+	| and in Mozilla if you've installed FireBug). If 'console' is not defined,
+	| this won't do anything.
+	|
+	| When objects are given as arguments, they will be printed using the
+	| 'toSource' method they offer.
+	|
+	| Example:
+	|
+	| >    Extend print ("Here is a dict:", {a:1,b:2,c:3})
+	|
+	| will output
+	|
+	| >    "Here is a dict: {a:1,b:2,c:3}"
+		@embed JavaScript
+		| if (typeof(console)=="undefined"){return;}
+		| var res = ""
+		| for ( var i=0 ; i<arguments.length ; i++ ) {
+		|   var val = arguments[i]
+		|   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
+		|   if ( i<arguments.length-1 ) { res += val + " " }
+		|   else { res += val }
+		| }
+		| console.log(res)
+		@end
+	@end
+
 @end
 
 # EOF vim: syn=sugar sw=4 ts=4 noet

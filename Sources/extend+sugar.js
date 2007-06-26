@@ -276,6 +276,87 @@ Extend.Protocol=	function(pdata){
 Extend.Singleton=	function(sdata){
 		var __this__=Extend;
 	}
+Extend.range=	function(start, end, step){
+		// Creates a new list composed of elements in the given range, determined by
+		// the 'start' index and the 'end' index. This function will automatically
+		// find the proper step (wether '+1' or '-1') depending on the bounds you
+		// specify.
+		var __this__=Extend;
+		var result=[];
+		 if (start < end ) {
+		   for ( var i=start ; i<end ; i++ ) {
+		     res.push(i);
+		   }
+		 }
+		 else if (start > end ) {
+		   for ( var i=start ; i>end ; i-- ) {
+		     res.push(i);
+		   }
+		 }
+		
+		return result
+	}
+Extend.iterate=	function(value, callback, context){
+		// Iterates on the given values. If 'value' is an array, the _callback_ will be
+		// invoked on each item (giving the 'value[i], i' as argument) until the callback
+		// returns 'false'. If 'value' is a dictionary, the callback will be applied
+		// on the values (giving 'value[k], k' as argument). Otherwise the object is
+		// expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
+		// enable the iteration.
+		var __this__=Extend;
+		  if ( value.length != undefined ) {
+		    var length = undefined
+		    // Is it an object with the length() and get() protocol ?
+		    if ( typeof(value.length) == "function" ) {
+		      length = value.length()
+		      for ( var i=0 ; i<length ; i++ ) {
+		        var cont = callback.call(context, value.get(i), i)
+		        if ( cont == false ) { i = length + 1 };
+		      }
+		    // Or a plain array ?
+		    } else {
+		      length = value.length
+		      for ( var i=0 ; i<length ; i++ ) {
+		       var cont = callback.call(context, value[i], i);
+		       if ( cont == false ) { i = length + 1 };
+		      }
+		    }
+		  } else {
+		    for ( var k in value ) {
+		      var cont = callback.call(context, value[k], k);
+		      if ( cont == false ) { i = length + 1 };
+		    }
+		  }
+		
+	}
+Extend.print=	function(args){
+		// Prints the given arguments to the JavaScript console (available in Safari
+		// and in Mozilla if you've installed FireBug). If 'console' is not defined,
+		// this won't do anything.
+		// 
+		// When objects are given as arguments, they will be printed using the
+		// 'toSource' method they offer.
+		// 
+		// Example:
+		// 
+		// >    Extend print ("Here is a dict:", {a:1,b:2,c:3})
+		// 
+		// will output
+		// 
+		// >    "Here is a dict: {a:1,b:2,c:3}"
+		var __this__=Extend;
+		args = arguments.slice(0)
+		 if (typeof(console)=="undefined"){return;}
+		 var res = ""
+		 for ( var i=0 ; i<arguments.length ; i++ ) {
+		   var val = arguments[i]
+		   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
+		   if ( i<arguments.length-1 ) { res += val + " " }
+		   else { res += val }
+		 }
+		 console.log(res)
+		
+	}
 Extend.initialize=	function(){
 		var __this__=Extend;
 	}
