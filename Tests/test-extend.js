@@ -353,7 +353,39 @@ Testing.test("S: Super constructor: this.SuperClass_init()")
 
 Testing.end()
 
+
 // TEST 26
+Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
+	var ClassSA = Extend.Class({
+		name:"A",
+		methods:{doThis:function(){return this.getClass().getName() + ":" + "A"}}
+	})
+	var ClassSB = Extend.Class({
+		name:"B",
+		parent:ClassSA,
+		methods:{doThis:function(){return this.getSuper(ClassSA).doThis() + "B"}}
+	})
+	var ClassSC = Extend.Class({
+		name:"C",
+		parent:ClassSB,
+		attributes:{V:"C"},
+		methods:{doThis:function(){return this.getSuper(ClassSB).doThis() + "C"}}
+	})
+	var ClassSD = Extend.Class({
+		name:"D",
+		parent:ClassSC
+	})
+	var new_sa = new ClassSA()
+	var new_sb = new ClassSB()
+	var new_sc = new ClassSC()
+	var new_sd = new ClassSD()
+	Testing.value(new_sa.doThis(),   "A:A")
+	Testing.value(new_sb.doThis(),   "B:AB")
+	Testing.value(new_sc.doThis(),   "C:ABC")
+	Testing.value(new_sd.doThis(),   "D:ABC")
+Testing.end()
+
+// TEST 27
 Testing.test("S: Super operations: this.SuperClass_operation()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
@@ -381,14 +413,13 @@ Testing.test("S: Super operations: this.SuperClass_operation()")
 	Testing.value(ClassSC.doThat(), "CCC")
 
 Testing.end()
-
 // ===========================================================================
 // INTROSPECTION
 // ===========================================================================
 
 // isInstance
 
-// TEST 27
+// TEST 28
 Testing.test("I: A.hasInstance(a)")
 	Testing.asTrue( ClassA.hasInstance(new_a) )
 	Testing.asTrue( ClassB.hasInstance(new_b) )
@@ -397,7 +428,7 @@ Testing.test("I: A.hasInstance(a)")
 	Testing.asTrue( ClassB.hasInstance(new_c) )
 Testing.end()
 
-// TEST 28
+// TEST 29
 Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_a.isInstance(ClassA) )
 	Testing.asTrue( new_b.isInstance(ClassB) )
@@ -407,7 +438,7 @@ Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_c.isInstance(ClassC) )
 Testing.end()
 
-// TEST 29
+// TEST 30
 Testing.test("I: B.isSubclassOf(A)")
 	Testing.asTrue( ClassB.isSubclassOf(ClassA) )
 	Testing.asTrue( ClassC.isSubclassOf(ClassB) )
@@ -435,7 +466,7 @@ function same_keys(a,b) {
 	return cmp_list(get_keys(a),get_keys(b))
 }
 
-// TEST 30
+// TEST 31
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
@@ -496,7 +527,7 @@ Testing.test("I: a.listMethods(A)")
 
 Testing.end()
 
-// TEST 31
+// TEST 32
 Testing.test("I: a.listAttributes(A)")
 	var a_all = ClassA.listAttributes()
 	var a_own = ClassA.listAttributes(true,false)
@@ -533,7 +564,7 @@ Testing.test("I: a.listAttributes(A)")
 Testing.end()
 
 
-// TEST 32
+// TEST 33
 Testing.test("I: a.listOperations(A)")
 	var a_all = ClassA.listOperations()
 	var a_own = ClassA.listOperations(true,false)
@@ -570,7 +601,7 @@ Testing.test("I: a.listOperations(A)")
 
 Testing.end()
 
-// TEST 33
+// TEST 34
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
@@ -602,6 +633,5 @@ Testing.test("I: a.listMethods(A)")
 	Testing.value(new_a_doA.apply({a:"not a"}, []), "a")
 
 Testing.end()
-
 
 // EOF

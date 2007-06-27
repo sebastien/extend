@@ -1,7 +1,7 @@
 == Extend 2.0
 == Developer Manual
 -- Author: Sebastien Pierre <sebastien@ivy.fr>
--- Revision: 21-Jun-2007
+-- Revision: 27-Jun-2007
 
 
 Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/js/extend/1)
@@ -87,6 +87,19 @@ Introducing Extend
     attributes default values are inherited by sub-classes, and can be accessed
     directly (like 'A.foo' if 'foo' is a class attribute of 'A')
 
+  In methods, you 'this' will (obviously) point to the current instance. If you
+  want to access the method 'foo' defined in class 'A', when you are in class
+  'B' subclass of 'A', you can do:
+
+  >   this.getSuper(A).foo()
+
+  or use the faster option:
+
+  >   this.A_foo()
+
+  where 'A' is the name you gave to the class 'A'.
+
+
 Extend API
 ==========
 
@@ -112,6 +125,11 @@ Extend API
       'this' argument of the method. Using 'getMethod' will ensure that the this
       is preserved. It's actually the equivalent of doing
       'this.getClass().bindMethod(this, name)'.
+
+    'getSuper(c:Class)'::
+      Returns a proxy that will use the current object as state, but where every
+      operation defined in the proxy will use the implementation defined in the
+      given class.
 
     'isInstance(c:Class)'::
       Returns 'true' if this instance is an instance of the given class, which
@@ -149,11 +167,23 @@ Extend API
     'listAttributes(own:Boolean=True, inherited:Boolean=True)'::
       Same as 'listMethods', but with class attributes.
 
+    'getOperation(name:String)'::
+      Returns the class operation with the given name wrapped so that the 'this'
+      will be preserved even if you use 'operation.apply(other_object,
+      arguments)' (pretty much like 'bindMethod').
+
     'bindMethod(o:Object, name:String)'::
       Returns the method named 'name' when it is bound to the given object. This
       method can be safely given as a callback, and even if the 'this' is
       changed in a 'method.apply(other_object, arguments)', it will be
       preserved.
+
+    'proxyWithState(o:Object)'::
+      Returns an object that will have the same operations and attributes
+      defined in this class, but will use the given object as _state_ (as
+      'this' or 'self'). Doing 'o getClass() getParent() proxyWithState(o)' is
+      the equivalent of creating a 'super' keyword where you can invoke methods
+      from the parent.
 
 Examples
 ========
@@ -200,10 +230,108 @@ Examples
   >     }
   >   });
 
+Note about 'super'
+==================
+
+  While the prototype-based object model is very flexible, it has some problems
+  when you try to simulate class-based objects, particularly when you try to
+  simulate the 'super' keyword.
+
+  The operational semantics of the 'super' keyword are well defined in the [Java
+  Language Specification][6]
+
+      <<<Suppose that a field access expression 'super'*.name*
+      appears within class 'C', and the immediate superclass of 'C' is class 'S'. Then
+      super.name is treated exactly as if it had been the expression
+      '((S)this).'*name*; thus, it refers to the field named name of the current
+      object, but with the current object viewed as an instance of the
+      superclass. Thus it can access the field named name that is visible in
+      class 'S', even if that field is hidden by a declaration of a field named
+      name in class 'C'.>>> (section 15.11.2)
+
+  which defines the semantics for _field access_ (aka. object attributes or
+  slots), but the semantics for method invocation (at least in Java) are a bit
+  different:
+
+      <<<The casts to types T1 and T2 do not change the method that is invoked,
+      because the instance method to be invoked is chosen according to the
+      run-time class of the object referred to be this. A cast does not change
+      the class of an object; it only checks that the class is compatible with
+      the specified type.>>> (section 15.12.4.9 of the JLS)
+
+  In the case of JavaScript, we can consider the ''method invocation'' case as the
+  generic case, as everything is decided at run-time. So if we rephrase this,
+  what 'super.'*name* does is to select the method named *name* in the parent
+  class, and execute it with the current object as target ('this').
+
+  In JavaScript, you could define:
+
+  >   this.getSuperMethod(SuperClass, "hello")
+
+  that would return a function that would do
+
+  >   function(){SuperClass["hello"].apply(o,arguments)}
+  
+  where 'o' is the object which was the target for 'getSuperMethod'. We could go
+  further and define:
+
+  >   this.getSuper().hello()
+
+  where 'getSuper' would return an _object proxy_ that has slots that correspond
+  to methods defined in the 'this' object parent class.
+
+  So if you have something like:
+
+  >   var A = Extend.Class({name:"A",
+  >     methods:{hello:function(){return "A"}}
+  >   })
+  >   var B = Extend.Class({name:"B",parent:A,
+  >       methods:{hello:function(){return this.getSuper().hello()+"B"}}
+  >   })
+
+  Then '(new A()).hello()' would be 'A' and '(new B()).hello())' would be 'B'.
+
+  However, let's introduce C:
+
+  >   var C = Extend.Class({name:"C",parent:C,
+  >       methods:{hello:function(){return this.getSuper().hello()+"C"}}
+  >   })
+
+  Then when invoking '(new C()).hello()', 'this.getSuper()' will return a proxy
+  to the 'hello' method of 'B'. However, when B is executed the statement
+  'this.getSuper()' will return the same proxy, and the 'hello' method (defined
+  in 'B') will be invoked recursively, making the program enter an infinite
+  loop.
+
+  The reason for that is that the 'getSuper' is a method belonging to 'this', so
+  the 'this.getSuper().hello()' defined in 'B', when invoked from
+  'this.getSuper().hello()' defined in 'C' will actually still resolve to the
+  'hello' defined in 'B' and not the one defined in 'C'.
+
+  If we could separate an object state from its operations, and particularly
+  the resolution of fields and the resolution of methods, then we could solve
+  this easily:
+
+  - fields are always resolved in the target ('this')
+  - operations are resolved in the context of the current class
+
+  The workaround for this is to *explicitly state the parent class* when using
+  'getSuper':
+
+  >   var B = Extend.Class({name:"B",parent:A,
+  >       methods:{hello:function(){return this.getSuper(A).hello()+"B"}}
+  >   })
+  >   var C = Extend.Class({name:"C",parent:C,
+  >       methods:{hello:function(){return this.getSuper(B).hello()+"C"}}
+  >   })
+
+  In this case you have no ambiguity, but this makes the mechanism of using
+  'super' a bit more verbose.
+
 # --
  
- [0]: JavaScript Traps, Sébastien Pierre, June 2007
-      [tech note](http://www.ivy.fr/notes/javascript-traps.html)
+ [0]: JavaScript Gotchas, Sébastien Pierre, June 2007
+      [tech note](http://www.ivy.fr/notes/javascript-gotchas.html)
 
  [1]: Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
       [article](http://mckoss.com/jscript/object.htm)
@@ -219,6 +347,9 @@ Examples
 
  [5]: Extend Class Further, adding Ruby-like OO features to Prototype
       [wiki page](http://wiki.script.aculo.us/scriptaculous/show/ExtendClassFurther)
+
+ [6]: Java Language Specification, Third Edition,
+      [section 15.11.2](http://tinyurl.com/2hggtq)
 
 
 # EOF vim: syn=kiwi ts=2 sw=2 et

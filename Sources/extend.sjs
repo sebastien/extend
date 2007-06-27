@@ -1,5 +1,5 @@
 @module Extend
-@version 1.99 (26-Jun-2007)
+@version 1.99 (27-Jun-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -44,12 +44,15 @@
 | - 'isClass()' returns *true*( (because this is an object, not a class)
 | - 'getName()' returns the class name, as a string
 | - 'getParent()' returns a reference to the parent class
+| - 'getOperation(n)' returns the operation with the given name
 | - 'hasInstance(o)' tells if the given object is an instance of this class
 | - 'isSubclassOf(c)' tells if the given class is a subclass of this class
 | - 'listMethods()' returns a dictionary of *methods* available for this class
 | - 'listOperations()' returns a dictionary of *operations* (class methods)
 | - 'listAttributes()' returns a dictionary of *class attributes*
 | - 'bindMethod(o,n)' binds the method with the given name to the given object
+| - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
+|    it was an instance of this class (useful for implementing 'super')
 |
 | When you instanciate your class, objects will have the following methods
 | available:
@@ -78,7 +81,7 @@
 	var full_name    = declaration name
 	var class_object = {
 		when not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
-			return target init apply (target, arguments)
+			when target init -> return target init apply (target, arguments)
 		end
 	}
 	class_object isClass      = {return true}
@@ -104,6 +107,11 @@
 		var this_method = object [methodName]
 		# FIXME: Throw exception if this_method is not defined
 		return { return this_method apply (object, arguments) }
+	}
+	class_object getOperation = {name|
+		var this_operation = object [name]
+		# FIXME: Throw exception if this_method is not defined
+		return { return this_operation apply (class_object, arguments) }
 	}
 	class_object listMethods   = {o,i|
 		when o is Undefined -> o = True
@@ -144,6 +152,24 @@
 			return {}
 		end
 	}
+	class_object proxyWithState = {o|
+		var proxy        = {}
+		var constr       = Undefined
+		var wrapper      = {f|return {return f apply(o,arguments)}}
+		var proxy_object = {return constr apply(undefined, arguments)}
+		proxy_object prototype = proxy
+		@embed JavaScript
+		| for (var key in class_object.prototype) {
+		|  var w = wrapper(class_object.prototype[key])
+		|  if (key == "init") { constr=w }
+		|  proxy[key] = w
+		|  // This should not be necessary
+		|  proxy_object[key] = w
+		| }
+		@end
+		return proxy_object
+	}
+
 	# TODO: There may be a way to inherit (using the prototype) from the parent
 	# class operations without having to duplicate them.
 	@embed JavaScript
@@ -214,6 +240,8 @@
 		return class_object bindMethod(this_object, methodName)
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
+	when declaration init -> instance_proto init = declaration init 
+	instance_proto getSuper        = {c|return c proxyWithState(target)}
 
 	@embed JavaScript
 	|if ( declaration.methods != undefined ) {
@@ -295,9 +323,21 @@
 		@end
 	@end
 
+	@function sliceArguments args, index
+	| This is a utility function that will return the rest of the given
+	| arguments list, without using the 'slice' operation which is only
+	| available to arrays.
+		var res = []
+		@embed JavaScript
+		| while (index<args.length) { res.push(args[index++]) }
+		@end
+		return res
+	@end
+
 	@function print args...
 	| Prints the given arguments to the JavaScript console (available in Safari
-	| and in Mozilla if you've installed FireBug). If 'console' is not defined,
+	| and in Mozilla if you've installed FireBug), or using the 'print' command
+	| in SpiderMonkey. If neither 'console' or 'print' is defined,
 	| this won't do anything.
 	|
 	| When objects are given as arguments, they will be printed using the
@@ -311,15 +351,16 @@
 	|
 	| >    "Here is a dict: {a:1,b:2,c:3}"
 		@embed JavaScript
-		| if (typeof(console)=="undefined"){return;}
+		| if (typeof(console)=="undefined"&&typeof(print)=="undefined"){return;}
 		| var res = ""
-		| for ( var i=0 ; i<arguments.length ; i++ ) {
-		|   var val = arguments[i]
+		| for ( var i=0 ; i<args.length ; i++ ) {
+		|   var val = args[i]
 		|   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
-		|   if ( i<arguments.length-1 ) { res += val + " " }
+		|   if ( i<args.length-1 ) { res += val + " " }
 		|   else { res += val }
 		| }
-		| console.log(res)
+		| if(typeof(console)!="undefined"){console.log(res);}
+		| if(typeof(print)!="undefined"){print(res);}
 		@end
 	@end
 

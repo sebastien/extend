@@ -35,12 +35,15 @@ Extend.Class=	function(declaration){
 		// - 'isClass()' returns *true*( (because this is an object, not a class)
 		// - 'getName()' returns the class name, as a string
 		// - 'getParent()' returns a reference to the parent class
+		// - 'getOperation(n)' returns the operation with the given name
 		// - 'hasInstance(o)' tells if the given object is an instance of this class
 		// - 'isSubclassOf(c)' tells if the given class is a subclass of this class
 		// - 'listMethods()' returns a dictionary of *methods* available for this class
 		// - 'listOperations()' returns a dictionary of *operations* (class methods)
 		// - 'listAttributes()' returns a dictionary of *class attributes*
 		// - 'bindMethod(o,n)' binds the method with the given name to the given object
+		// - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
+		// it was an instance of this class (useful for implementing 'super')
 		// 
 		// When you instanciate your class, objects will have the following methods
 		// available:
@@ -70,7 +73,10 @@ Extend.Class=	function(declaration){
 		var class_object=function(){
 			if ( (! ((arguments.length == 1) && (arguments[0] == "__Extend_SubClass__"))) )
 			{
-				return this.init.apply(this, arguments)
+				if ( this.init )
+				{
+					return this.init.apply(this, arguments)
+				}
 			}
 		};
 		class_object.isClass = function(){
@@ -106,6 +112,12 @@ Extend.Class=	function(declaration){
 			var this_method=object[methodName];
 			return function(){
 				return this_method.apply(object, arguments)
+			}
+		};
+		class_object.getOperation = function(name){
+			var this_operation=object[name];
+			return function(){
+				return this_operation.apply(class_object, arguments)
 			}
 		};
 		class_object.listMethods = function(o, i){
@@ -186,6 +198,28 @@ Extend.Class=	function(declaration){
 				return {}
 			}
 		};
+		class_object.proxyWithState = function(o){
+			var proxy={};
+			var constr=undefined;
+			var wrapper=function(f){
+				return function(){
+					return f.apply(o, arguments)
+				}
+			};
+			var proxy_object=function(){
+				return constr.apply(undefined, arguments)
+			};
+			proxy_object.prototype = proxy;
+			 for (var key in class_object.prototype) {
+			  var w = wrapper(class_object.prototype[key])
+			  if (key == "init") { constr=w }
+			  proxy[key] = w
+			  // This should not be necessary
+			  proxy_object[key] = w
+			 }
+			
+			return proxy_object
+		};
 		if ( declaration.parent != undefined ) {
 			// We proxy parent operations
 			for ( var name in declaration.parent._operations.fullname ) {
@@ -259,6 +293,11 @@ Extend.Class=	function(declaration){
 		instance_proto.isInstance = function(c){
 			return c.hasInstance(this)
 		};
+		if ( declaration.init )
+		{instance_proto.init = declaration.init;}
+		instance_proto.getSuper = function(c){
+			return c.proxyWithState(this)
+		};
 		if ( declaration.methods != undefined ) {
 			for ( var name in declaration.methods ) {
 				instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
@@ -329,9 +368,20 @@ Extend.iterate=	function(value, callback, context){
 		  }
 		
 	}
+Extend.sliceArguments=	function(args, index){
+		// This is a utility function that will return the rest of the given
+		// arguments list, without using the 'slice' operation which is only
+		// available to arrays.
+		var __this__=Extend;
+		var res=[];
+		 while (index<args.length) { res.push(args[index++]) }
+		
+		return res
+	}
 Extend.print=	function(args){
 		// Prints the given arguments to the JavaScript console (available in Safari
-		// and in Mozilla if you've installed FireBug). If 'console' is not defined,
+		// and in Mozilla if you've installed FireBug), or using the 'print' command
+		// in SpiderMonkey. If neither 'console' or 'print' is defined,
 		// this won't do anything.
 		// 
 		// When objects are given as arguments, they will be printed using the
@@ -345,16 +395,17 @@ Extend.print=	function(args){
 		// 
 		// >    "Here is a dict: {a:1,b:2,c:3}"
 		var __this__=Extend;
-		args = arguments.slice(0)
-		 if (typeof(console)=="undefined"){return;}
+		args = Extend.sliceArguments(arguments,0)
+		 if (typeof(console)=="undefined"&&typeof(print)=="undefined"){return;}
 		 var res = ""
-		 for ( var i=0 ; i<arguments.length ; i++ ) {
-		   var val = arguments[i]
+		 for ( var i=0 ; i<args.length ; i++ ) {
+		   var val = args[i]
 		   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
-		   if ( i<arguments.length-1 ) { res += val + " " }
+		   if ( i<args.length-1 ) { res += val + " " }
 		   else { res += val }
 		 }
-		 console.log(res)
+		 if(typeof(console)!="undefined"){console.log(res);}
+		 if(typeof(print)!="undefined"){print(res);}
 		
 	}
 Extend.initialize=	function(){

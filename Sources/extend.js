@@ -35,12 +35,15 @@ Extend.Class=	function(declaration){
 		// - 'isClass()' returns *true*( (because this is an object, not a class)
 		// - 'getName()' returns the class name, as a string
 		// - 'getParent()' returns a reference to the parent class
+		// - 'getOperation(n)' returns the operation with the given name
 		// - 'hasInstance(o)' tells if the given object is an instance of this class
 		// - 'isSubclassOf(c)' tells if the given class is a subclass of this class
 		// - 'listMethods()' returns a dictionary of *methods* available for this class
 		// - 'listOperations()' returns a dictionary of *operations* (class methods)
 		// - 'listAttributes()' returns a dictionary of *class attributes*
 		// - 'bindMethod(o,n)' binds the method with the given name to the given object
+		// - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
+		// it was an instance of this class (useful for implementing 'super')
 		// 
 		// When you instanciate your class, objects will have the following methods
 		// available:
@@ -70,7 +73,10 @@ Extend.Class=	function(declaration){
 		var class_object=function(){
 			if ( (! ((arguments.length == 1) && (arguments[0] == "__Extend_SubClass__"))) )
 			{
-				return this.init.apply(this, arguments)
+				if ( this.init )
+				{
+					return this.init.apply(this, arguments)
+				}
 			}
 		};
 		class_object.isClass = function(){
@@ -106,6 +112,12 @@ Extend.Class=	function(declaration){
 			var this_method=object[methodName];
 			return function(){
 				return this_method.apply(object, arguments)
+			}
+		};
+		class_object.getOperation = function(name){
+			var this_operation=object[name];
+			return function(){
+				return this_operation.apply(class_object, arguments)
 			}
 		};
 		class_object.listMethods = function(o, i){
@@ -186,6 +198,28 @@ Extend.Class=	function(declaration){
 				return {}
 			}
 		};
+		class_object.proxyWithState = function(o){
+			var proxy={};
+			var constr=undefined;
+			var wrapper=function(f){
+				return function(){
+					return f.apply(o, arguments)
+				}
+			};
+			var proxy_object=function(){
+				return constr.apply(undefined, arguments)
+			};
+			proxy_object.prototype = proxy;
+			 for (var key in class_object.prototype) {
+			  var w = wrapper(class_object.prototype[key])
+			  if (key == "init") { constr=w }
+			  proxy[key] = w
+			  // This should not be necessary
+			  proxy_object[key] = w
+			 }
+			
+			return proxy_object
+		};
 		if ( declaration.parent != undefined ) {
 			// We proxy parent operations
 			for ( var name in declaration.parent._operations.fullname ) {
@@ -258,6 +292,11 @@ Extend.Class=	function(declaration){
 		};
 		instance_proto.isInstance = function(c){
 			return c.hasInstance(this)
+		};
+		if ( declaration.init )
+		{instance_proto.init = declaration.init;}
+		instance_proto.getSuper = function(c){
+			return c.proxyWithState(this)
 		};
 		if ( declaration.methods != undefined ) {
 			for ( var name in declaration.methods ) {
