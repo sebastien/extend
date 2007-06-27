@@ -218,6 +218,9 @@ Extend.Class=	function(declaration){
 			  proxy_object[key] = w
 			 }
 			
+			proxy_object.getSuper = function(){
+				return class_object.getParent().proxyWithState(o)
+			};
 			return proxy_object
 		};
 		if ( declaration.parent != undefined ) {

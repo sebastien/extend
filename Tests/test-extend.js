@@ -369,7 +369,12 @@ Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 		name:"C",
 		parent:ClassSB,
 		attributes:{V:"C"},
-		methods:{doThis:function(){return this.getSuper(ClassSB).doThis() + "C"}}
+		methods:{
+			doThis:function(){return this.getSuper(ClassSB).doThis() + "C"},
+			doA:function(){
+				return this.getSuper(ClassSB).getSuper().doThis()
+			},
+		}
 	})
 	var ClassSD = Extend.Class({
 		name:"D",
@@ -383,6 +388,7 @@ Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	Testing.value(new_sb.doThis(),   "B:AB")
 	Testing.value(new_sc.doThis(),   "C:ABC")
 	Testing.value(new_sd.doThis(),   "D:ABC")
+	Testing.value(new_sd.doA(),      "D:A")
 Testing.end()
 
 // TEST 27

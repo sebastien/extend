@@ -167,6 +167,9 @@
 		|  proxy_object[key] = w
 		| }
 		@end
+		proxy_object getSuper = {
+			return class_object getParent() proxyWithState(o)
+		}
 		return proxy_object
 	}
 
