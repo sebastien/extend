@@ -398,7 +398,7 @@
 		|   else { res += val }
 		| }
 		| if(typeof(console)!="undefined"){console.log(res);}
-		| if(typeof(print)!="undefined"){print(res);}
+		| else if(typeof(document)=="undefined"&&typeof(print)!="undefined"){print(res);}
 		@end
 	@end
 
