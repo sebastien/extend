@@ -327,12 +327,12 @@ Extend.range=	function(start, end, step){
 		var result=[];
 		 if (start < end ) {
 		   for ( var i=start ; i<end ; i++ ) {
-		     res.push(i);
+		     result.push(i);
 		   }
 		 }
 		 else if (start > end ) {
 		   for ( var i=start ; i>end ; i-- ) {
-		     res.push(i);
+		     result.push(i);
 		   }
 		 }
 		
@@ -411,7 +411,7 @@ Extend.print=	function(args){
 		 if(typeof(print)!="undefined"){print(res);}
 		
 	}
-Extend.initialize=	function(){
+Extend.init=	function(){
 		var __this__=Extend;
 	}
-Extend.initialize()
+Extend.init()

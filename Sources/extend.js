@@ -318,7 +318,7 @@ Extend.Protocol=	function(pdata){
 Extend.Singleton=	function(sdata){
 		var __this__=Extend;
 	}
-Extend.initialize=	function(){
+Extend.init=	function(){
 		var __this__=Extend;
 	}
-Extend.initialize()
+Extend.init()

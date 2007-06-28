@@ -280,12 +280,12 @@
 		@embed JavaScript
 		| if (start < end ) {
 		|   for ( var i=start ; i<end ; i++ ) {
-		|     res.push(i);
+		|     result.push(i);
 		|   }
 		| }
 		| else if (start > end ) {
 		|   for ( var i=start ; i>end ; i-- ) {
-		|     res.push(i);
+		|     result.push(i);
 		|   }
 		| }
 		@end
