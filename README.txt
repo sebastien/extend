@@ -43,7 +43,7 @@ Introducing Extend
   the same design goals:
 
   - Traditional class-based OOP layer for JavaScript
-  - Notion of class attributes (attributes), methods and class methods (operations)
+  - Notion of class attributes (shared), methods and class methods (operations)
   - Introspection API to list attributes, methods, operations
   - Makes the difference between what is inherited and what is not inherited
   - Easy wrapping of object methods to be safely given as callbacks
@@ -76,16 +76,19 @@ Introducing Extend
 
   - 'init': the constructor function for this class.
 
+  - 'properties': a dictionary mapping instance declaring attributes
+    (properties) (and their optional default values).
+
   - 'methods': a dictionary mapping method names to functions implementing the
      methods, where the 'this' will refer to the current instance.
+
+  - 'shared': a dictionary mapping class attributes names to values. Class
+    attributes default values are inherited by sub-classes, and can be accessed
+    directly (like 'A.foo' if 'foo' is a class attribute of 'A')
 
   - 'operations': a dictionary mapping class methods (operation) names to
      functions. The 'this' in these functions will refer to the class object, as
      returned by 'Extend.Class'.
-
-  - 'attributes': a dictionary mapping class attributes names to values. Class
-    attributes default values are inherited by sub-classes, and can be accessed
-    directly (like 'A.foo' if 'foo' is a class attribute of 'A')
 
   In methods, you 'this' will (obviously) point to the current instance. If you
   want to access the method 'foo' defined in class 'A', when you are in class
@@ -164,7 +167,7 @@ Extend API
     'listOperations(own:Boolean=True, inherited:Boolean=True)'::
       Same as 'listMethods', but with class operations.
 
-    'listAttributes(own:Boolean=True, inherited:Boolean=True)'::
+    'listShared(own:Boolean=True, inherited:Boolean=True)'::
       Same as 'listMethods', but with class attributes.
 
     'getOperation(name:String)'::

@@ -105,7 +105,7 @@ Testing.test("C: Single class declaration: A=Extend.Class(...)")
 				return this.Count
 			}
 		},
-		attributes:{Count:0},
+		shared:{Count:0},
 		name:"ClassA"
 	})
 	// TEST
@@ -368,7 +368,7 @@ Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var ClassSC = Extend.Class({
 		name:"C",
 		parent:ClassSB,
-		attributes:{V:"C"},
+		shared:{V:"C"},
 		methods:{
 			doThis:function(){return this.getSuper(ClassSB).doThis() + "C"},
 			doA:function(){
@@ -395,20 +395,20 @@ Testing.end()
 Testing.test("S: Super operations: this.SuperClass_operation()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
-		attributes:{V:"A"},
+		shared:{V:"A"},
 		operations:{doThis:function(){return this.V}}
 	})
 	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
-		attributes:{V:"B"},
+		shared:{V:"B"},
 		operations:{doThat:function(){return this.ClassSA_doThis() +
 		this.doThis();}}
 	})
 	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
-		attributes:{V:"C"},
+		shared:{V:"C"},
 		operations:{doThat:function(){return this.ClassSB_doThat() +
 		this.doThis();}}
 	})
@@ -477,7 +477,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
 		init:function(){this.a="a"},
-		attributes:{A:0},
+		shared:{A:0},
 		methods:{ doA:function(){} },
 		operations:{ DoA:function(){} }
 	})
@@ -485,7 +485,7 @@ Testing.test("I: a.listMethods(A)")
 		name:"ClassB",
 		parent:ClassA,
 		init:function(){this.b="b"},
-		attributes:{B:0},
+		shared:{B:0},
 		methods:{ doB:function(){} },
 		operations:{ DoB:function(){} }
 	})
@@ -493,7 +493,7 @@ Testing.test("I: a.listMethods(A)")
 		name:"ClassC",
 		parent:ClassB,
 		init:function(){this.c="c"},
-		attributes:{C:0},
+		shared:{C:0},
 		methods:{ doC:function(){} },
 		operations:{ DoC:function(){} }
 	})
@@ -534,18 +534,18 @@ Testing.test("I: a.listMethods(A)")
 Testing.end()
 
 // TEST 32
-Testing.test("I: a.listAttributes(A)")
-	var a_all = ClassA.listAttributes()
-	var a_own = ClassA.listAttributes(true,false)
-	var a_inh = ClassA.listAttributes(false,true)
+Testing.test("I: a.listShared(A)")
+	var a_all = ClassA.listShared()
+	var a_own = ClassA.listShared(true,false)
+	var a_inh = ClassA.listShared(false,true)
 
 	Testing.asDefined( a_all.A )
 	Testing.value( same_keys(a_all, a_own) )
 	Testing.value( same_keys(a_inh, {}) )
 
-	var b_all = ClassB.listAttributes()
-	var b_own = ClassB.listAttributes(true,false)
-	var b_inh = ClassB.listAttributes(false,true)
+	var b_all = ClassB.listShared()
+	var b_own = ClassB.listShared(true,false)
+	var b_inh = ClassB.listShared(false,true)
 
 	Testing.asDefined(   b_all.B )
 	Testing.asDefined(   b_all.A )
@@ -554,9 +554,9 @@ Testing.test("I: a.listAttributes(A)")
 	Testing.asDefined(   b_inh.A )
 	Testing.asUndefined( b_inh.B )
 
-	var c_all = ClassC.listAttributes()
-	var c_own = ClassC.listAttributes(true,false)
-	var c_inh = ClassC.listAttributes(false,true)
+	var c_all = ClassC.listShared()
+	var c_own = ClassC.listShared(true,false)
+	var c_inh = ClassC.listShared(false,true)
 
 	Testing.asDefined(   c_all.C )
 	Testing.asDefined(   c_all.B )
@@ -612,7 +612,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
 		init:function(){this.a="a"},
-		attributes:{A:0},
+		shared:{A:0},
 		methods:{ doA:function(){return this.a} },
 		operations:{ DoA:function(){} }
 	})
@@ -620,7 +620,7 @@ Testing.test("I: a.listMethods(A)")
 		name:"ClassB",
 		parent:ClassA,
 		init:function(){this.b="b"},
-		attributes:{B:0},
+		shared:{B:0},
 		methods:{ doB:function(){this.b} },
 		operations:{ DoB:function(){} }
 	})
@@ -628,7 +628,7 @@ Testing.test("I: a.listMethods(A)")
 		name:"ClassC",
 		parent:ClassB,
 		init:function(){this.c="c"},
-		attributes:{C:0},
+		shared:{C:0},
 		methods:{ doC:function(){this.c} },
 		operations:{ DoC:function(){} }
 	})
