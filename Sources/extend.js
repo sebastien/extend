@@ -43,6 +43,7 @@ Extend.Class=	function(declaration){
 		// - 'listMethods()' returns a dictionary of *methods* available for this class
 		// - 'listOperations()' returns a dictionary of *operations* (class methods)
 		// - 'listShared()' returns a dictionary of *class attributes*
+		// - 'listProperties()' returns a dictionary of *instance attributes*
 		// - 'bindMethod(o,n)' binds the method with the given name to the given object
 		// - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
 		// it was an instance of this class (useful for implementing 'super')
@@ -75,6 +76,11 @@ Extend.Class=	function(declaration){
 		var class_object=function(){
 			if ( (! ((arguments.length == 1) && (arguments[0] == "__Extend_SubClass__"))) )
 			{
+				 var properties = class_object.listProperties()
+				 for ( var prop in properties ) {
+				   this[prop] = properties[prop];
+				 }
+				
 				if ( this.init )
 				{
 					return this.init.apply(this, arguments)
@@ -86,6 +92,7 @@ Extend.Class=	function(declaration){
 		};
 		class_object._parent = declaration.parent;
 		class_object._name = declaration.name;
+		class_object._properties = {"all":{}, "inherited":{}, "own":{}};
 		class_object._shared = {"all":{}, "inherited":{}, "own":{}};
 		class_object._operations = {"all":{}, "inherited":{}, "own":{}, "fullname":{}};
 		class_object._methods = {"all":{}, "inherited":{}, "own":{}, "fullname":{}};
@@ -200,6 +207,32 @@ Extend.Class=	function(declaration){
 				return {}
 			}
 		};
+		class_object.listProperties = function(o, i){
+			if ( (o == undefined) )
+			{
+				o = true;
+			}
+			if ( (i == undefined) )
+			{
+				i = true;
+			}
+			if ( (o && i) )
+			{
+				return class_object._properties.all
+			}
+			else if ( ((! o) && i) )
+			{
+				return class_object._properties.inherited
+			}
+			else if ( (o && (! i)) )
+			{
+				return class_object._properties.own
+			}
+			else if ( true )
+			{
+				return {}
+			}
+		};
 		class_object.proxyWithState = function(o){
 			var proxy={};
 			var constr=undefined;
@@ -209,7 +242,7 @@ Extend.Class=	function(declaration){
 				}
 			};
 			var proxy_object=function(){
-				return constr.apply(undefined, arguments)
+				return class_object.prototype.init.apply(o, arguments)
 			};
 			proxy_object.prototype = proxy;
 			 for (var key in class_object.prototype) {
@@ -250,6 +283,12 @@ Extend.Class=	function(declaration){
 				class_object._shared.all[name] = attribute
 				class_object._shared.inherited[name] = attribute
 			}
+			// We copy parent instance attributes default values
+			for ( var name in declaration.parent._properties.all ) {
+				var prop = declaration.parent._properties.all[name]
+				class_object._properties.all[name] = prop
+				class_object._properties.inherited[name] = prop
+			}
 		}
 		if ( declaration.operations != undefined ) {
 			for ( var name in declaration.operations ) {
@@ -275,6 +314,13 @@ Extend.Class=	function(declaration){
 				class_object[name] = attribute
 				class_object._shared.all[name] = attribute
 				class_object._shared.own[name] = attribute
+			}
+		}
+		if ( declaration.properties != undefined ) {
+			for ( var name in declaration.properties ) {
+				var attribute = declaration.properties[name]
+				class_object._properties.all[name] = attribute
+				class_object._properties.own[name] = attribute
 			}
 		}
 		

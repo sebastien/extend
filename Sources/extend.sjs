@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.11 (28-Jun-2007)
+@version 1.9.12 (28-Jun-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -27,7 +27,6 @@
 # TODO: Add a class prototype
 # TODO: Add isA, instanceOf
 
-
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
 | following keys:
@@ -52,6 +51,7 @@
 | - 'listMethods()' returns a dictionary of *methods* available for this class
 | - 'listOperations()' returns a dictionary of *operations* (class methods)
 | - 'listShared()' returns a dictionary of *class attributes*
+| - 'listProperties()' returns a dictionary of *instance attributes*
 | - 'bindMethod(o,n)' binds the method with the given name to the given object
 | - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
 |    it was an instance of this class (useful for implementing 'super')
@@ -83,12 +83,19 @@
 	var full_name    = declaration name
 	var class_object = {
 		when not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
+			@embed JavaScript
+			| var properties = class_object.listProperties()
+			| for ( var prop in properties ) {
+			|   this[prop] = properties[prop];
+			| }
+			@end
 			when target init -> return target init apply (target, arguments)
 		end
 	}
 	class_object isClass      = {return true}
 	class_object _parent      = declaration parent
 	class_object _name        = declaration name
+	class_object _properties  = {all:{},inherited:{},own:{}}
 	class_object _shared      = {all:{},inherited:{},own:{}}
 	class_object _operations  = {all:{},inherited:{},own:{},fullname:{}}
 	class_object _methods     = {all:{},inherited:{},own:{},fullname:{}}
@@ -154,11 +161,24 @@
 			return {}
 		end
 	}
+	class_object listProperties   = {o,i|
+		when o is Undefined -> o = True
+		when i is Undefined -> i = True
+		when o and i
+			return class_object _properties all
+		when (not o) and i
+			return class_object _properties inherited
+		when o and (not i)
+			return class_object _properties own
+		otherwise
+			return {}
+		end
+	}
 	class_object proxyWithState = {o|
 		var proxy        = {}
 		var constr       = Undefined
 		var wrapper      = {f|return {return f apply(o,arguments)}}
-		var proxy_object = {return constr apply(undefined, arguments)}
+		var proxy_object = {return class_object prototype init apply(o, arguments)}
 		proxy_object prototype = proxy
 		@embed JavaScript
 		| for (var key in class_object.prototype) {
@@ -203,6 +223,12 @@
 	|		class_object._shared.all[name] = attribute
 	|		class_object._shared.inherited[name] = attribute
 	|	}
+	|	// We copy parent instance attributes default values
+	|	for ( var name in declaration.parent._properties.all ) {
+	|		var prop = declaration.parent._properties.all[name]
+	|		class_object._properties.all[name] = prop
+	|		class_object._properties.inherited[name] = prop
+	|	}
 	|}
 	|if ( declaration.operations != undefined ) {
 	|	for ( var name in declaration.operations ) {
@@ -228,6 +254,13 @@
 	|		class_object[name] = attribute
 	|		class_object._shared.all[name] = attribute
 	|		class_object._shared.own[name] = attribute
+	|	}
+	|}
+	|if ( declaration.properties != undefined ) {
+	|	for ( var name in declaration.properties ) {
+	|		var attribute = declaration.properties[name]
+	|		class_object._properties.all[name] = attribute
+	|		class_object._properties.own[name] = attribute
 	|	}
 	|}
 	@end

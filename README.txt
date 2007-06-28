@@ -1,7 +1,7 @@
 == Extend 2.0
 == Developer Manual
 -- Author: Sebastien Pierre <sebastien@ivy.fr>
--- Revision: 27-Jun-2007
+-- Revision: 28-Jun-2007
 
 
 Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/js/extend/1)
@@ -168,7 +168,10 @@ Extend API
       Same as 'listMethods', but with class operations.
 
     'listShared(own:Boolean=True, inherited:Boolean=True)'::
-      Same as 'listMethods', but with class attributes.
+      Same as 'listMethods', but with class attributes (''shared'').
+
+    'listProperties(own:Boolean=True, inherited:Boolean=True)'::
+      Same as 'listMethods', but with instance attributes (''properties'').
 
     'getOperation(name:String)'::
       Returns the class operation with the given name wrapped so that the 'this'

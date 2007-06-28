@@ -353,8 +353,43 @@ Testing.test("S: Super constructor: this.SuperClass_init()")
 
 Testing.end()
 
-
 // TEST 26
+Testing.test("S: Super constructor: this.getSuper(parentClass)()")
+	var ClassSA = Extend.Class({
+		name:"ClassSA",
+		init:function(){this.a="a"}
+	})
+	var ClassSB = Extend.Class({
+		name:"ClassSB",
+		parent:ClassSA,
+		init:function(){
+			this.getSuper(ClassSA)()
+			this.b="b"
+		}
+	})
+	var ClassSC = Extend.Class({
+		name:"ClassSC",
+		parent:ClassSB,
+		init:function(){
+			this.getSuper(ClassSB)()
+			this.c="c"
+		}
+	})
+	var new_sa = new ClassSA()
+	var new_sb = new ClassSB()
+	var new_sc = new ClassSC()
+	Testing.value(new_sa.a, "a")
+	Testing.asUndefined(new_sa.b)
+	Testing.asUndefined(new_sa.c)
+	Testing.value(new_sb.a, "a")
+	Testing.value(new_sb.b, "b")
+	Testing.asUndefined(new_sb.c)
+	Testing.value(new_sc.a, "a")
+	Testing.value(new_sc.b, "b")
+	Testing.value(new_sc.c, "c")
+Testing.end()
+
+// TEST 27
 Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var ClassSA = Extend.Class({
 		name:"A",
@@ -391,7 +426,7 @@ Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	Testing.value(new_sd.doA(),      "D:A")
 Testing.end()
 
-// TEST 27
+// TEST 28
 Testing.test("S: Super operations: this.SuperClass_operation()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
@@ -425,7 +460,7 @@ Testing.end()
 
 // isInstance
 
-// TEST 28
+// TEST 29
 Testing.test("I: A.hasInstance(a)")
 	Testing.asTrue( ClassA.hasInstance(new_a) )
 	Testing.asTrue( ClassB.hasInstance(new_b) )
@@ -434,7 +469,7 @@ Testing.test("I: A.hasInstance(a)")
 	Testing.asTrue( ClassB.hasInstance(new_c) )
 Testing.end()
 
-// TEST 29
+// TEST 30
 Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_a.isInstance(ClassA) )
 	Testing.asTrue( new_b.isInstance(ClassB) )
@@ -444,7 +479,7 @@ Testing.test("I: a.isInstance(A)")
 	Testing.asTrue( new_c.isInstance(ClassC) )
 Testing.end()
 
-// TEST 30
+// TEST 31
 Testing.test("I: B.isSubclassOf(A)")
 	Testing.asTrue( ClassB.isSubclassOf(ClassA) )
 	Testing.asTrue( ClassC.isSubclassOf(ClassB) )
@@ -472,7 +507,7 @@ function same_keys(a,b) {
 	return cmp_list(get_keys(a),get_keys(b))
 }
 
-// TEST 31
+// TEST 32
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
@@ -533,7 +568,7 @@ Testing.test("I: a.listMethods(A)")
 
 Testing.end()
 
-// TEST 32
+// TEST 33
 Testing.test("I: a.listShared(A)")
 	var a_all = ClassA.listShared()
 	var a_own = ClassA.listShared(true,false)
@@ -570,7 +605,7 @@ Testing.test("I: a.listShared(A)")
 Testing.end()
 
 
-// TEST 33
+// TEST 34
 Testing.test("I: a.listOperations(A)")
 	var a_all = ClassA.listOperations()
 	var a_own = ClassA.listOperations(true,false)
@@ -607,7 +642,100 @@ Testing.test("I: a.listOperations(A)")
 
 Testing.end()
 
-// TEST 34
+// TEST 35
+Testing.test("I: a.listProperties(A)")
+	var ClassA = Extend.Class({
+		name:"ClassA",
+		init:function(){this.check=this.c},
+		properties:{a:0,b:1,c:2}
+	})
+	var ClassB = Extend.Class({
+		name:"ClassB",
+		parent:ClassA,
+		init:function(){this.check=this.d},
+		properties:{d:3}
+	})
+	var ClassC = Extend.Class({
+		name:"ClassC",
+		parent:ClassB,
+		properties:{e:4}
+	})
+
+	var new_a = new ClassA();
+	var new_b = new ClassB();
+	var new_c = new ClassC();
+
+	var a_all = ClassA.listProperties()
+	var a_own = ClassA.listProperties(true,false)
+	var a_inh = ClassA.listProperties(false,true)
+
+	Testing.asDefined( a_all.a )
+	Testing.asDefined( a_all.b )
+	Testing.asDefined( a_all.c )
+	Testing.value(  same_keys(a_all, a_own) )
+	Testing.value(  same_keys(a_inh, {}) )
+
+	Testing.value(new_a.a, 0)
+	Testing.value(new_a.b, 1)
+	Testing.value(new_a.c, 2)
+	Testing.value(new_a.check, 2)
+
+	var b_all = ClassB.listProperties()
+	var b_own = ClassB.listProperties(true,false)
+	var b_inh = ClassB.listProperties(false,true)
+
+	Testing.asDefined( b_all.a )
+	Testing.asDefined( b_all.b )
+	Testing.asDefined( b_all.c )
+	Testing.asDefined( b_all.d )
+
+	Testing.asUndefined( b_own.a )
+	Testing.asUndefined( b_own.b )
+	Testing.asUndefined( b_own.c )
+	Testing.asDefined(   b_own.d )
+
+	Testing.asDefined(   b_inh.a )
+	Testing.asDefined(   b_inh.b )
+	Testing.asDefined(   b_inh.c )
+	Testing.asUndefined( b_inh.d )
+
+	Testing.value(new_b.a, 0)
+	Testing.value(new_b.b, 1)
+	Testing.value(new_b.c, 2)
+	Testing.value(new_b.d, 3)
+	Testing.value(new_b.check, 3)
+
+	var c_all = ClassC.listProperties()
+	var c_own = ClassC.listProperties(true,false)
+	var c_inh = ClassC.listProperties(false,true)
+
+	Testing.asDefined( c_all.a )
+	Testing.asDefined( c_all.b )
+	Testing.asDefined( c_all.c )
+	Testing.asDefined( c_all.d )
+
+	Testing.asUndefined( c_own.a )
+	Testing.asUndefined( c_own.b )
+	Testing.asUndefined( c_own.c )
+	Testing.asUndefined( c_own.d )
+	Testing.asDefined(   c_own.e )
+
+	Testing.asDefined(   c_inh.a )
+	Testing.asDefined(   c_inh.b )
+	Testing.asDefined(   c_inh.c )
+	Testing.asDefined(   c_inh.d )
+	Testing.asUndefined( c_inh.e )
+
+	Testing.value(new_c.a, 0)
+	Testing.value(new_c.b, 1)
+	Testing.value(new_c.c, 2)
+	Testing.value(new_c.d, 3)
+	Testing.value(new_c.e, 4)
+	Testing.value(new_c.check, 3)
+
+Testing.end()
+
+// TEST 36
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
