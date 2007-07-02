@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.12 (28-Jun-2007)
+@version 1.9.13 (02-Jul-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -118,7 +118,7 @@
 		return { return this_method apply (object, arguments) }
 	}
 	class_object getOperation = {name|
-		var this_operation = object [name]
+		var this_operation = class_object [name]
 		# FIXME: Throw exception if this_method is not defined
 		return { return this_operation apply (class_object, arguments) }
 	}

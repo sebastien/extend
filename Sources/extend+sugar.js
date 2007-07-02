@@ -124,7 +124,7 @@ Extend.Class=	function(declaration){
 			}
 		};
 		class_object.getOperation = function(name){
-			var this_operation=object[name];
+			var this_operation=class_object[name];
 			return function(){
 				return this_operation.apply(class_object, arguments)
 			}
