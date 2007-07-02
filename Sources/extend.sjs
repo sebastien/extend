@@ -335,6 +335,7 @@
 	| expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
 	| enable the iteration.
 		@embed JavaScript
+		|  if ( !value ) { return }
 		|  if ( value.length != undefined ) {
 		|    var length = undefined
 		|    // Is it an object with the length() and get() protocol ?
