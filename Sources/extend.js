@@ -19,6 +19,7 @@
 // You can get more information at the Extend [project
 // page](http://www.ivy.fr/js/extend).
 var Extend={}
+Extend._VERSION_='1.9.14';
 Extend.Class=	function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
 		// following keys:
@@ -120,7 +121,36 @@ Extend.Class=	function(declaration){
 		class_object.bindMethod = function(object, methodName){
 			var this_method=object[methodName];
 			return function(){
-				return this_method.apply(object, arguments)
+				var a=arguments;
+				if ( (a.length == 0) )
+				{
+					return this_method.call(object, this)
+				}
+				else if ( (a.length == 1) )
+				{
+					return this_method.call(object, a[0], this)
+				}
+				else if ( (a.length == 2) )
+				{
+					return this_method.call(object, a[0], a[1], this)
+				}
+				else if ( (a.length == 3) )
+				{
+					return this_method.call(object, a[0], a[1], a[2], this)
+				}
+				else if ( (a.length == 4) )
+				{
+					return this_method.call(object, a[0], a[1], a[2], a[3], this)
+				}
+				else if ( (a.length == 5) )
+				{
+					return this_method.call(object, a[0], a[1], a[2], a[3], a[4], this)
+				}
+				else if ( true )
+				{
+					var args=[];
+					return this_method.apply(object, args)
+				}
 			}
 		};
 		class_object.getOperation = function(name){

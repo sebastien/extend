@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.13 (02-Jul-2007)
+@version 1.9.14 (09-Jul-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -115,7 +115,25 @@
 	class_object bindMethod = {object, methodName|
 		var this_method = object [methodName]
 		# FIXME: Throw exception if this_method is not defined
-		return { return this_method apply (object, arguments) }
+		return {
+			var a = arguments
+			when a length == 0
+				return this_method call (object, target)
+			when a length == 1
+				return this_method call (object, a[0], target)
+			when a length == 2
+				return this_method call (object, a[0], a[1], target)
+			when a length == 3
+				return this_method call (object, a[0], a[1], a[2], target)
+			when a length == 4
+				return this_method call (object, a[0], a[1], a[2], a[3], target)
+			when a length == 5
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
+			otherwise
+				var args=[] ; args concat(arguments) ; args push(target)
+				return this_method apply (object, args)
+			end
+		}
 	}
 	class_object getOperation = {name|
 		var this_operation = class_object [name]
