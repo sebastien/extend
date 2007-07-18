@@ -1,0 +1,14 @@
+== Extend Roadmap
+
+Version 2.1::
+
+	[ ] Support for extending non Extend-produced classes
+	[ ] Support for extending Java classes when using Rhino
+	[ ] Singleton construct support
+
+Version 2.0::
+
+	[X] Complete rewrite (in Sugar) of Extend 1
+	[X] Integration of LambdaFactory runtime support
+
+# EOF
