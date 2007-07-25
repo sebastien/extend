@@ -9,7 +9,8 @@ EXTEND_DIST=Sources/extend.js
 EXTEND_SUGAR_DIST=Sources/extend+sugar.js
 API_DOC=Documentation/extend.html
 API_DOC_SUGAR=Documentation/extend+sugar.html
-DOC_README=README.html
+DOC_TEXT=$(shell echo *.txt)
+DOC_HTML=$(DOC_TEXT:.txt=.html)
 TEST_EXTEND=Tests/test-extend.html
 
 .PHONY: doc
@@ -19,7 +20,7 @@ TEST_EXTEND=Tests/test-extend.html
 all: doc dist
 	@echo
 
-doc: $(API_DOC) $(API_DOC_SUGAR) $(DOC_README)
+doc: $(API_DOC) $(API_DOC_SUGAR) $(DOC_HTML)
 	@echo "Documentation ready."
 
 dist: $(EXTEND_DIST) $(EXTEND_SUGAR_DIST)
@@ -39,7 +40,7 @@ $(API_DOC): $(EXTEND_SOURCE)
 $(API_DOC_SUGAR): $(EXTEND_SOURCE)
 	$(SUGAR) -DSUGAR_RUNTIME -a $@ $< > /dev/null
 
-$(DOC_README): README.txt
-	kiwi README.txt $(DOC_README)
+%.html: %.txt
+	kiwi $< $@
 
 # EOF

@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.14 (09-Jul-2007)
+@version 1.9.15 (25-Jul-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -10,7 +10,7 @@
 |
 | - 'name', an optional name for this class
 | - 'parent', with a reference to a parent class (created with Extend)
-| - 'init', with a function to be used as a init
+| - 'initialize', with a function to be used as a constructor
 | - 'properties', with a dictionary of instance attributes
 | - 'methods', with a dictionary of instance methods
 | - 'shared', with a dictionary of class attributes
@@ -33,7 +33,7 @@
 |
 | - 'name', an optional name for this class
 | - 'parent', with a reference to a parent class (created with Extend)
-| - 'init', with a function to be used as a init
+| - 'initialize', with a function to be used as a constructor
 | - 'properties', with a dictionary of instance attributes
 | - 'methods', with a dictionary of instance methods
 | - 'shared', with a dictionary of class attributes
@@ -68,7 +68,7 @@
 |
 | >   var MyClass = Extend Class {
 | >      name:"MyClass"
-| >      init:{
+| >      initialize:{
 | >         self message = "Hello, world !"
 | >      }
 | >      methods:{
@@ -89,7 +89,7 @@
 			|   this[prop] = properties[prop];
 			| }
 			@end
-			when target init -> return target init apply (target, arguments)
+			when target initialize -> return target initialize apply (target, arguments)
 		end
 	}
 	class_object isClass      = {return true}
@@ -196,12 +196,12 @@
 		var proxy        = {}
 		var constr       = Undefined
 		var wrapper      = {f|return {return f apply(o,arguments)}}
-		var proxy_object = {return class_object prototype init apply(o, arguments)}
+		var proxy_object = {return class_object prototype initialize apply(o, arguments)}
 		proxy_object prototype = proxy
 		@embed JavaScript
 		| for (var key in class_object.prototype) {
 		|  var w = wrapper(class_object.prototype[key])
-		|  if (key == "init") { constr=w }
+		|  if (key == "initialize") { constr=w }
 		|  proxy[key] = w
 		|  // This should not be necessary
 		|  proxy_object[key] = w
@@ -296,7 +296,7 @@
 		return class_object bindMethod(this_object, methodName)
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
-	when declaration init -> instance_proto init = declaration init 
+	when declaration initialize -> instance_proto initialize = declaration initialize 
 	instance_proto getSuper        = {c|return c proxyWithState(target)}
 
 	@embed JavaScript
@@ -304,8 +304,8 @@
 	|	for ( var name in declaration.methods ) {
 	|		instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
 	|}}
-	|if ( declaration.init != undefined ) {
-	|	instance_proto.init = instance_proto[full_name + "_init"] = declaration.init
+	|if ( declaration.initialize != undefined ) {
+	|	instance_proto.initialize = instance_proto[full_name + "_initialize"] = declaration.initialize
 	|}
 	@end
 

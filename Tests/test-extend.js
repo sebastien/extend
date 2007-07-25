@@ -85,7 +85,7 @@ Testing.end()
 Testing.test("C: Single class declaration: A=Extend.Class(...)")
 	// SETUP
 	var ClassA = Extend.Class({
-		init:function(){
+		initialize:function(){
 			this._id=this.getClass().Count++
 		},
 		methods:{
@@ -285,19 +285,19 @@ Testing.end()
 Testing.test("S: Super methods: this.SuperClass_method()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
-		init:function(){this.a="a"},
+		initialize:function(){this.a="a"},
 		methods:{doThis:function(){return "doThis:SA:" + this.a}}
 	})
 	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
-		init:function(){this.a="b"},
+		initialize:function(){this.a="b"},
 		methods:{doThis:function(){return this.ClassSA_doThis() + ":SB"}}
 	})
 	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
-		init:function(){this.a="c"},
+		initialize:function(){this.a="c"},
 		methods:{
 			doThis:function(){return this.ClassSB_doThis() + ":SC"},
 			doThat:function(){return this.ClassSA_doThis() + ":SC"}
@@ -313,24 +313,24 @@ Testing.test("S: Super methods: this.SuperClass_method()")
 Testing.end()
 
 // TEST 25
-Testing.test("S: Super constructor: this.SuperClass_init()")
+Testing.test("S: Super constructor: this.SuperClass_initialize()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
-		init:function(){this.a="a"}
+		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
-		init:function(){
-			this.ClassSA_init();
+		initialize:function(){
+			this.ClassSA_initialize();
 			this.b="b"
 		}
 	})
 	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
-		init:function(){
-			this.ClassSB_init()
+		initialize:function(){
+			this.ClassSB_initialize()
 			this.c="c"
 		},
 		methods:{
@@ -357,12 +357,12 @@ Testing.end()
 Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var ClassSA = Extend.Class({
 		name:"ClassSA",
-		init:function(){this.a="a"}
+		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
 		name:"ClassSB",
 		parent:ClassSA,
-		init:function(){
+		initialize:function(){
 			this.getSuper(ClassSA)()
 			this.b="b"
 		}
@@ -370,7 +370,7 @@ Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var ClassSC = Extend.Class({
 		name:"ClassSC",
 		parent:ClassSB,
-		init:function(){
+		initialize:function(){
 			this.getSuper(ClassSB)()
 			this.c="c"
 		}
@@ -511,7 +511,7 @@ function same_keys(a,b) {
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
-		init:function(){this.a="a"},
+		initialize:function(){this.a="a"},
 		shared:{A:0},
 		methods:{ doA:function(){} },
 		operations:{ DoA:function(){} }
@@ -519,7 +519,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassB = Extend.Class({
 		name:"ClassB",
 		parent:ClassA,
-		init:function(){this.b="b"},
+		initialize:function(){this.b="b"},
 		shared:{B:0},
 		methods:{ doB:function(){} },
 		operations:{ DoB:function(){} }
@@ -527,7 +527,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassC = Extend.Class({
 		name:"ClassC",
 		parent:ClassB,
-		init:function(){this.c="c"},
+		initialize:function(){this.c="c"},
 		shared:{C:0},
 		methods:{ doC:function(){} },
 		operations:{ DoC:function(){} }
@@ -646,13 +646,13 @@ Testing.end()
 Testing.test("I: a.listProperties(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
-		init:function(){this.check=this.c},
+		initialize:function(){this.check=this.c},
 		properties:{a:0,b:1,c:2}
 	})
 	var ClassB = Extend.Class({
 		name:"ClassB",
 		parent:ClassA,
-		init:function(){this.check=this.d},
+		initialize:function(){this.check=this.d},
 		properties:{d:3}
 	})
 	var ClassC = Extend.Class({
@@ -739,7 +739,7 @@ Testing.end()
 Testing.test("I: a.listMethods(A)")
 	var ClassA = Extend.Class({
 		name:"ClassA",
-		init:function(){this.a="a"},
+		initialize:function(){this.a="a"},
 		shared:{A:0},
 		methods:{ doA:function(){return this.a} },
 		operations:{ DoA:function(){} }
@@ -747,7 +747,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassB = Extend.Class({
 		name:"ClassB",
 		parent:ClassA,
-		init:function(){this.b="b"},
+		initialize:function(){this.b="b"},
 		shared:{B:0},
 		methods:{ doB:function(){this.b} },
 		operations:{ DoB:function(){} }
@@ -755,7 +755,7 @@ Testing.test("I: a.listMethods(A)")
 	var ClassC = Extend.Class({
 		name:"ClassC",
 		parent:ClassB,
-		init:function(){this.c="c"},
+		initialize:function(){this.c="c"},
 		shared:{C:0},
 		methods:{ doC:function(){this.c} },
 		operations:{ DoC:function(){} }
