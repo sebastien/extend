@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.15 (25-Jul-2007)
+@version 1.9.16 (15-Aug-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -26,6 +26,12 @@
 # TODO: Add a class registry (needs @shared on Modules)
 # TODO: Add a class prototype
 # TODO: Add isA, instanceOf
+
+@specific ActionScript
+	@shared console  = Undefined
+	@shared document = Undefined
+@end
+
 
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
@@ -82,14 +88,14 @@
 
 	var full_name    = declaration name
 	var class_object = {
-		when not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
+		if not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
 			@embed JavaScript
 			| var properties = class_object.listProperties()
 			| for ( var prop in properties ) {
 			|   this[prop] = properties[prop];
 			| }
 			@end
-			when target initialize -> return target initialize apply (target, arguments)
+			if target initialize -> return target initialize apply (target, arguments)
 		end
 	}
 	class_object isClass      = {return true}
@@ -104,7 +110,7 @@
 	class_object isSubclassOf = {c|
 		var parent = this
 		while parent
-			when parent == c -> return True
+			if parent == c -> return True
 			parent = parent getParent()
 		end
 		return False
@@ -117,19 +123,19 @@
 		# FIXME: Throw exception if this_method is not defined
 		return {
 			var a = arguments
-			when a length == 0
+			if a length == 0
 				return this_method call (object, target)
-			when a length == 1
+			if a length == 1
 				return this_method call (object, a[0], target)
-			when a length == 2
+			if a length == 2
 				return this_method call (object, a[0], a[1], target)
-			when a length == 3
+			if a length == 3
 				return this_method call (object, a[0], a[1], a[2], target)
-			when a length == 4
+			if a length == 4
 				return this_method call (object, a[0], a[1], a[2], a[3], target)
-			when a length == 5
+			if a length == 5
 				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
-			otherwise
+			else
 				var args=[] ; args concat(arguments) ; args push(target)
 				return this_method apply (object, args)
 			end
@@ -141,54 +147,54 @@
 		return { return this_operation apply (class_object, arguments) }
 	}
 	class_object listMethods   = {o,i|
-		when o is Undefined -> o = True
-		when i is Undefined -> i = True
-		when o and i
+		if o is Undefined -> o = True
+		if i is Undefined -> i = True
+		if o and i
 			return class_object _methods all
-		when (not o) and i
+		if (not o) and i
 			return class_object _methods inherited
-		when o and (not i)
+		if o and (not i)
 			return class_object _methods own
-		otherwise
+		else
 			return {}
 		end
 	}
 	class_object listOperations   = {o,i|
-		when o is Undefined -> o = True
-		when i is Undefined -> i = True
-		when o and i
+		if o is Undefined -> o = True
+		if i is Undefined -> i = True
+		if o and i
 			return class_object _operations all
-		when (not o) and i
+		if (not o) and i
 			return class_object _operations inherited
-		when o and (not i)
+		if o and (not i)
 			return class_object _operations own
-		otherwise
+		else
 			return {}
 		end
 	}
 	class_object listShared   = {o,i|
-		when o is Undefined -> o = True
-		when i is Undefined -> i = True
-		when o and i
+		if o is Undefined -> o = True
+		if i is Undefined -> i = True
+		if o and i
 			return class_object _shared all
-		when (not o) and i
+		if (not o) and i
 			return class_object _shared inherited
-		when o and (not i)
+		if o and (not i)
 			return class_object _shared own
-		otherwise
+		else
 			return {}
 		end
 	}
 	class_object listProperties   = {o,i|
-		when o is Undefined -> o = True
-		when i is Undefined -> i = True
-		when o and i
+		if o is Undefined -> o = True
+		if i is Undefined -> i = True
+		if o and i
 			return class_object _properties all
-		when (not o) and i
+		if (not o) and i
 			return class_object _properties inherited
-		when o and (not i)
+		if o and (not i)
 			return class_object _properties own
-		otherwise
+		else
 			return {}
 		end
 	}
@@ -284,7 +290,7 @@
 	@end
 
 	var instance_proto             = {}
-	when declaration parent
+	if declaration parent
 		instance_proto = new declaration parent ("__Extend_SubClass__")
 		instance_proto constructor = class_object
 	end
@@ -296,7 +302,7 @@
 		return class_object bindMethod(this_object, methodName)
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
-	when declaration initialize -> instance_proto initialize = declaration initialize 
+	if declaration initialize -> instance_proto initialize = declaration initialize 
 	instance_proto getSuper        = {c|return c proxyWithState(target)}
 
 	@embed JavaScript

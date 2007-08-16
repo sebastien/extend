@@ -26,13 +26,16 @@ doc: $(API_DOC) $(API_DOC_SUGAR) $(DOC_HTML)
 dist: $(EXTEND_DIST) $(EXTEND_SUGAR_DIST)
 	@echo "Distribution ready."
 
+clean:
+	rm $(EXTEND_DIST) $(EXTEND_SUGAR_DIST) $(API_DOC) $(API_DOC_SUGAR)
+
 # Specific rules _____________________________________________________________
 
 $(EXTEND_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -ljs $< > $@
+	$(SUGAR) -cljs $< > $@
 
 $(EXTEND_SUGAR_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -ljs -DSUGAR_RUNTIME $< > $@
+	$(SUGAR) -cljs -DSUGAR_RUNTIME $< > $@
 
 $(API_DOC): $(EXTEND_SOURCE)
 	$(SUGAR) -a $@ $< > /dev/null

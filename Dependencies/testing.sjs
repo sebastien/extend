@@ -12,13 +12,13 @@
 @shared Results:List       = []
 
 
-| Callback invoked when a test is started
+| Callback invoked if a test is started
 @shared OnTestStart:Function  = Undefined
-| Callback invoked when a test is ended
+| Callback invoked if a test is ended
 @shared OnTestEnd:Function    = Undefined
-| Callback invoked when a test assertion fails
+| Callback invoked if a test assertion fails
 @shared OnFailure:Function    = Undefined
-| Callback invoked when a test assertion succeeds
+| Callback invoked if a test assertion succeeds
 @shared OnSuccess:Function    = Undefined
 
 @function test:Integer name
@@ -31,8 +31,8 @@
 	var test_id = TestCount
 	# We trigger the callbacks first so that we do not have problems with timing
 	# by introduce the callback execution time
-	when TestCount > 0 -> end(test_id - 1)
-	when OnTestStart -> OnTestStart(test_id, name)
+	if TestCount > 0 -> end(test_id - 1)
+	if OnTestStart -> OnTestStart(test_id, name)
 	CurrentTest = name
 	Results push {
 		tid:test_id
@@ -49,13 +49,13 @@
 @function end testID
 | Ends the test with the given 'testID' (or the last test if no ID was given).
 | Note that a test can only be ended once.
-	when testID is Undefined -> testID = TestCount - 1
+	if testID is Undefined -> testID = TestCount - 1
 	var test = Results[testID] 
-	when test ended -> return True
+	if test ended -> return True
 	test end   = new Date() getMilliseconds()
 	test run   = (test end) - (test start)
 	test ended = True
-	when OnTestEnd -> OnTestEnd(testID, test)
+	if OnTestEnd -> OnTestEnd(testID, test)
 @end
 
 @function fail reason
@@ -65,7 +65,7 @@
 	Results[ test_id ] tests push {result:"F", reason:reason}
 	Results[ test_id ] status = "F"
 	# TODO: Remove callback execution time
-	when OnFailure -> OnFailure(test_id, Results[test_id] tests length - 1, reason)
+	if OnFailure -> OnFailure(test_id, Results[test_id] tests length - 1, reason)
 	return False
 @end
 
@@ -75,7 +75,7 @@
 	var test_id = TestCount - 1
 	Results[ test_id ] tests push {result:"S"}
 	# TODO: Remove callback execution time
-	when OnSuccess -> OnSuccess(test_id, Results[test_id] tests length - 1)
+	if OnSuccess -> OnSuccess(test_id, Results[test_id] tests length - 1)
 	return True
 @end
 
@@ -101,9 +101,9 @@
 
 @function unlike value, other
 | Unsures that the given 'value' is different from the 'other' value
-	when value == other
+	if value == other
 		fail ("Values are expected to be different '" + value + "' vs '" + other + "'")
-	otherwise
+	else
 		succeed()
 	end
 @end
@@ -111,18 +111,18 @@
 @function value value, expected
 | Succeeds if the given value is non-null or if the given value equals the other
 | expected value.
-	when expected != Undefined
-		when value != expected
+	if expected != Undefined
+		if value != expected
 			return fail ("Expected value to be '" + expected + "', got '" + value + "'")
-		otherwise
+		else
 			return succeed()
 		end
-	otherwise
-		when value is Undefined
+	else
+		if value is Undefined
 			return fail "Value expected to be defined"
-		when not value
+		if not value
 			return fail "Value expected to be non-null"
-		otherwise
+		else
 			return succeed()
 		end
 	end
