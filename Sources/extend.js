@@ -56,6 +56,9 @@ Extend.Class=	function(declaration){
 		// - 'isClass()' returns *true*( (because this is an object, not a class)
 		// - 'getClass()' returns the class of this instance
 		// - 'getMethod(n)' returns the bound method which name is 'n'
+		// - 'getCallback(n)' the equivalent of 'getMethod', but will give the 'this' as
+		// additional last arguments (useful when you the invoker changes the 'this',
+		// which happens in event handlers)
 		// - 'isInstance(c)' tells if this object is an instance of the given class
 		// 
 		// Using the 'Class' function is very easy (in *Sugar*):
@@ -120,6 +123,41 @@ Extend.Class=	function(declaration){
 			return o.getClass().isSubclassOf(class_object)
 		};
 		class_object.bindMethod = function(object, methodName){
+			var this_method=object[methodName];
+			return function(){
+				var a=arguments;
+				if ( (a.length == 0) )
+				{
+					return this_method.call(object)
+				}
+				else if ( (a.length == 1) )
+				{
+					return this_method.call(object, a[0])
+				}
+				else if ( (a.length == 2) )
+				{
+					return this_method.call(object, a[0], a[1])
+				}
+				else if ( (a.length == 3) )
+				{
+					return this_method.call(object, a[0], a[1], a[2])
+				}
+				else if ( (a.length == 4) )
+				{
+					return this_method.call(object, a[0], a[1], a[2], a[3])
+				}
+				else if ( (a.length == 5) )
+				{
+					return this_method.call(object, a[0], a[1], a[2], a[3], a[4])
+				}
+				else if ( true )
+				{
+					var args=[];
+					return this_method.apply(object, args)
+				}
+			}
+		};
+		class_object.bindCallback = function(object, methodName){
 			var this_method=object[methodName];
 			return function(){
 				var a=arguments;
@@ -372,11 +410,21 @@ Extend.Class=	function(declaration){
 			var this_object=this;
 			return class_object.bindMethod(this_object, methodName)
 		};
+		instance_proto.getCallback = function(methodName){
+			var this_object=this;
+			return class_object.bindCallback(this_object, methodName)
+		};
 		instance_proto.isInstance = function(c){
 			return c.hasInstance(this)
 		};
 		if ( declaration.initialize )
-		{instance_proto.initialize = declaration.initialize;}
+		{
+			instance_proto.initialize = declaration.initialize;
+		}
+		else if ( true )
+		{
+			instance_proto.instance_proto = {};
+		}
 		instance_proto.getSuper = function(c){
 			return c.proxyWithState(this)
 		};

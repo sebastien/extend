@@ -1,11 +1,11 @@
 == Extend 2.0
 == Developer Manual
 -- Author: Sebastien Pierre <sebastien@ivy.fr>
--- Revision: 28-Jun-2007
+-- Revision: 25-Sep-2007
 
 
 Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/js/extend/1)
-which implemented a flexible class-based OOP layer on top of the JavaScript
+which implements a flexible class-based OOP layer on top of the JavaScript
 prototype object model.
 
 Extend 2.0 allows you to write nice and clean classes in JavaScript, features
@@ -74,7 +74,7 @@ Introducing Extend
 
   - 'parent': the parent class (if any) of this class.
 
-  - 'init': the constructor function for this class.
+  - 'initialize': the constructor function for this class.
 
   - 'properties': a dictionary mapping instance declaring attributes
     (properties) (and their optional default values).
@@ -128,6 +128,16 @@ Extend API
       'this' argument of the method. Using 'getMethod' will ensure that the this
       is preserved. It's actually the equivalent of doing
       'this.getClass().bindMethod(this, name)'.
+
+    'getCallback(name:String)'::
+      The 'getCallback' method is similar to 'getMethod', except that it will
+      add an extra argument which is the 'this' used when invoking the method.
+      Libraries such as [jQuery](<http://www.jquery.com>) change the 'this' of
+      callbacks given to events such as 'click' or 'focus' to the DOM node that
+      received the event rather than the instance to which  the method is bound.
+      Using 'getMethod' insulates you from this change, but you also lose the
+      reference to the DOM node that received the event (the event target). When
+      using 'getCallback', you'll have the target as an additional argument.
 
     'getSuper(c:Class)'::
       Returns a proxy that will use the current object as state, but where every
@@ -198,7 +208,7 @@ Examples
 
   >   var Shape = Extend.Class(
   >     name:"Shape",
-  >     init:function(){
+  >     initialize:function(){
   >       this.points = [];
   >     }
   >     methods:{
@@ -223,7 +233,7 @@ Examples
   >   var Rectangle = Extend.Class(
   >     name:"Rectangle",
   >     parent:"Shape",
-  >     init:function(){
+  >     initialize:function(){
   >       this.points = [];
   >     }
   >     methods:{
@@ -235,6 +245,19 @@ Examples
   >       }
   >     }
   >   });
+
+  Using callbacks with jQuery
+
+  >   var MyWidget = Extend.Class({
+  >     name:"MyWidget",
+  >     methods:{
+  >       onClick:function(target){
+  >         $(target).css({background:yello});
+  >       }
+  >   })
+  >   
+  >   var w = new MyWidget()
+  >   $("#my-widget").click( w.getCallback("onClick") )
 
 # --
  

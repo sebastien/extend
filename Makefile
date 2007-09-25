@@ -32,10 +32,10 @@ clean:
 # Specific rules _____________________________________________________________
 
 $(EXTEND_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -cljs $< > $@
+	$(SUGAR) -cljavascript $< > $@
 
 $(EXTEND_SUGAR_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -cljs -DSUGAR_RUNTIME $< > $@
+	$(SUGAR) -cljavascript -DSUGAR_RUNTIME $< > $@
 
 $(API_DOC): $(EXTEND_SOURCE)
 	$(SUGAR) -a $@ $< > /dev/null

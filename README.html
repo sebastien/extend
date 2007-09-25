@@ -11,12 +11,12 @@ body {
 	padding: 20pt;
 	padding-top: 10pt;
 	background: rgb(255,255,255);
-	font:  10.5pt/15pt sans-serif;
+	font:  10.5pt/15pt "Helvetica",Helvetica,sans-serif;
 	color: rgb(80,80,80);
 }
 
 h1, h2, h3, h4 {
-	font-family: "Trebuchet MS",sans-serif;
+	font-family: "Trebuchet MS",Helvetica,sans-serif;
 	color: rgb(22, 130, 178);
 	font-weight: normal;
 	padding-top: 0.5em;
@@ -78,7 +78,7 @@ aimg {
 }
 
 .kiwiMeta {
-	width: 100%;
+	max-width: 700px;
 	padding: 5pt;
 	margin-bottom:  2em;
 	border-top:  1px solid rgb(150, 220, 238);
@@ -93,24 +93,41 @@ aimg {
 	font-weight: bold;
 }
 
-.kiwiContent h1, .kiwiContent h2{
-	padding-bottom: 5pt;
-	border-bottom:  1px dotted rgb(150, 220, 238);
+.kiwiContent {
+	max-width: 700px;
+}
+
+.kiwiContent .heading .number {
+	padding-right: 8pt;
+}
+
+.kiwiContent .heading .number .lastDot {
+	display: none;
+}
+
+
+.kiwiContent .heading .number .level0 .lastDot {
+	display: inline;
 }
 
 .kiwiContent h1 {
-	font-size: 1.5em;
-	font-weight: normal;
-	padding-top: 1.5em;
+	font-size: 1.8em;
+	font-weight: bold;
+	margin-top: 1.5em;
 	padding-bottom: 0.5em;
+	border-bottom:  1px dotted rgb(150, 220, 238);
 }
 
 .kiwiContent h2 {
-	font-size: 1.3em;
+	font-size: 1.4em;
+	font-weight: bold;
+	padding-bottom: 0.5em;
+	border-bottom:  1px dotted rgb(150, 220, 238);
 }
 
 .kiwiContent h3 {
-	font-size: 1.1em;
+	font-size: 1.2em;
+	font-weight: normal;
 }
 
 .kiwiContent pre {
@@ -151,6 +168,14 @@ aimg {
 	padding-bottom: 0.2em;
 }
 
+.kiwiContent ul li.todo {
+	list-style-type: square;
+}
+
+.kiwiContent ul li.todo.done {
+	text-decoration: line-through;
+}
+
 .kiwiContent table {
 	border:  1px solid rgb(150, 220, 238);
 	padding: 0pt;
@@ -176,6 +201,7 @@ aimg {
 	margin: 0;
 	padding: 5pt;
 	font-size: 90%;
+	min-width: 125px;
 	background-color: rgb(250,250,250);
 	border-bottom: 1px solid rgb(150, 220, 238);
 }
@@ -272,8 +298,8 @@ aimg {
 </head>
 <body>
 <div
-	class="title"><h1>Extend 2.0</h1><h2>Developer Manual</h2></div><table class='kiwiMeta'><tr><td width='0px' class='name'>Author</td><td width='100%' class='value'>Sebastien Pierre &lt;sebastien@ivy.fr&gt;</td></tr><tr><td width='0px' class='name'>Revision</td><td width='100%' class='value'>28-Jun-2007</td></tr></table>
-<div class="kiwiContent"><div class='content'><p>Extend 2.0 is an evolution of the <a href="http://www.ivy.fr/js/extend/1">Extend 1.0</a> which implemented a flexible class-based OOP layer on top of the JavaScript prototype object model.</p><p>Extend 2.0 allows you to write nice and clean classes in JavaScript, features introspection and class meta-information, is mature and <a href="http://www.ivy.fr/js/extend/test.html">fully-tested</a>, and used as a base for our wonderful <a href="http://www.ivy.fr/sugar">Sugar language</a> runtime.</p><div class="section"><h1 class="heading">The problem</h1><div class="level1"><p>JavaScript being a prototype-based object language, it does not offer (in standard) a &ldquo;<span class='quote'>class-based</span>&rdquo; OOP layer. This can become a problem when you're writing medium to large system, where prototypes start to be cumbersome to manage.</p><p>The famous JavaScript <a href="http://www.prototypejs.com">Prototype library</a> provides a very basic way to create classes, but does not provide any inheritance between classes. Extensions such as <a href="#2">ExtendClass</a> and <a href="#3">ExtendClassFurther</a> tried to add sub-classing, but fail to have a flexible and reliable <code>super</code>-equivalent, which makes advanced JavaScript application development difficult.</p><p>Moreover, neither of these extensions allow meta-information specification to classes (such as class name, methods, parent class, etc), while this information is very useful for debugging and introspection.</p><p>Additionally, common cases such as handing an object method to a callback that may alter the <code>this</code> is not supported (<a href="http://www.jquery.com">jQuery</a> callback do that).</p></div></div><div class="section"><h1 class="heading">Introducing Extend</h1><div class="level1"><p>Extend 2.0 is a simplified, cleaner version of the Extend 1.X library, with the same design goals:</p><ul><li>Traditional class-based OOP layer for JavaScript </li><li>Notion of class attributes (shared), methods and class methods (operations) </li><li>Introspection API to list attributes, methods, operations </li><li>Makes the difference between what is inherited and what is not inherited </li><li>Easy wrapping of object methods to be safely given as callbacks</li></ul><p>To start using <code>Extend</code>, simply add the following line to your HTML head section:</p><pre>&lt;script type="text/javascript" src="http://www.ivy.fr/js/extend.js"&gt;&lt;/script&gt;</pre><p>Once you've included the script, you can create classed by using the 'Extend.Class' function:</p><pre>var A = Extend.Class({
+	class="title"><h1>Extend 2.0</h1><h2>Developer Manual</h2></div><table class='kiwiMeta'><tr><td width='0px' class='name'>Author</td><td width='100%' class='value'>Sebastien Pierre &lt;sebastien@ivy.fr&gt;</td></tr><tr><td width='0px' class='name'>Revision</td><td width='100%' class='value'>25-Sep-2007</td></tr></table>
+<div class="kiwiContent"><div class='content'><p>Extend 2.0 is an evolution of the <a href="http://www.ivy.fr/js/extend/1">Extend 1.0</a> which implements a flexible class-based OOP layer on top of the JavaScript prototype object model.</p><p>Extend 2.0 allows you to write nice and clean classes in JavaScript, features introspection and class meta-information, is mature and <a href="http://www.ivy.fr/js/extend/test.html">fully-tested</a>, and used as a base for our wonderful <a href="http://www.ivy.fr/sugar">Sugar language</a> runtime.</p><div class="section"><h1 class="heading"><span class="number"><span class="level0">1<span class="lastDot dot">.</span></span></span>The problem</h1><div class="level1"><p>JavaScript being a prototype-based object language, it does not offer (in standard) a &ldquo;<span class='quote'>class-based</span>&rdquo; OOP layer. This can become a problem when you're writing medium to large system, where prototypes start to be cumbersome to manage.</p><p>The famous JavaScript <a href="http://www.prototypejs.com">Prototype library</a> provides a very basic way to create classes, but does not provide any inheritance between classes. Extensions such as <a href="#2">ExtendClass</a> and <a href="#3">ExtendClassFurther</a> tried to add sub-classing, but fail to have a flexible and reliable <code>super</code>-equivalent, which makes advanced JavaScript application development difficult.</p><p>Moreover, neither of these extensions allow meta-information specification to classes (such as class name, methods, parent class, etc), while this information is very useful for debugging and introspection.</p><p>Additionally, common cases such as handing an object method to a callback that may alter the <code>this</code> is not supported (<a href="http://www.jquery.com">jQuery</a> callback do that).</p></div></div><div class="section"><h1 class="heading"><span class="number"><span class="level0">2<span class="lastDot dot">.</span></span></span>Introducing Extend</h1><div class="level1"><p>Extend 2.0 is a simplified, cleaner version of the Extend 1.X library, with the same design goals:</p><ul><li>Traditional class-based OOP layer for JavaScript </li><li>Notion of class attributes (shared), methods and class methods (operations) </li><li>Introspection API to list attributes, methods, operations </li><li>Makes the difference between what is inherited and what is not inherited </li><li>Easy wrapping of object methods to be safely given as callbacks</li></ul><p>To start using <code>Extend</code>, simply add the following line to your HTML head section:</p><pre>&lt;script type="text/javascript" src="http://www.ivy.fr/js/extend.js"&gt;&lt;/script&gt;</pre><p>Once you've included the script, you can create classed by using the 'Extend.Class' function:</p><pre>var A = Extend.Class({
   name:"A",
   methods:{
     helloWorld:function(){
@@ -281,10 +307,10 @@ aimg {
     }
   }
 });
-alert(new A().helloWorld());</pre><p>The <code>Extend.Class</code> takes the following parameters, given in a dictionary:</p><ul><li><code>name</code> (<em>required</em>): a string representing the class name. In case you want the class name to reflect a package hierarchy (like <code>ui.widget.InputField</code>), you can use dots to join module names and class name.</li></ul><ul><li><code>parent</code>: the parent class (if any) of this class.</li></ul><ul><li><code>init</code>: the constructor function for this class.</li></ul><ul><li><code>properties</code>: a dictionary mapping instance declaring attributes (properties) (and their optional default values).</li></ul><ul><li><code>methods</code>: a dictionary mapping method names to functions implementing the methods, where the <code>this</code> will refer to the current instance.</li></ul><ul><li><code>shared</code>: a dictionary mapping class attributes names to values. Class attributes default values are inherited by sub-classes, and can be accessed directly (like <code>A.foo</code> if <code>foo</code> is a class attribute of <code>A</code>)</li></ul><ul><li><code>operations</code>: a dictionary mapping class methods (operation) names to functions. The <code>this</code> in these functions will refer to the class object, as returned by <code>Extend.Class</code>.</li></ul><p>In methods, you <code>this</code> will (obviously) point to the current instance. If you want to access the method <code>foo</code> defined in class <code>A</code>, when you are in class <code>B</code> subclass of <code>A</code>, you can do:</p><pre>this.getSuper(A).foo()</pre><p>or use the faster option:</p><pre>this.A_foo()</pre><p>where <code>A</code> is the name you gave to the class <code>A</code>.</p></div></div><div class="section"><h1 class="heading">Extend API</h1><div class="level1"><p>Extend offers a set of methods that can are available to Extend classes and instances created from Extend classes. These methods range from simple introspection (what is the class of an object, what is this class name, is this an object an instance of this class, etc) to more complex things (safely wrapping a method for callback, listing inherited methods, etc).</p><div class="section"><h2 class="heading">Object API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>false</code></div></dd><dt> <code>getClass</code></dt><dd><div class='content'>Returns the class object associated with this instance. You can use the class object to access class operations, class attributes, etc.</div></dd><dt> <code>getMethod(name:String)</code></dt><dd><div class='content'>In JavaScript, if you give a method as a callback by simply doing <code>object.method</code>, then you may have problems when the caller changes the <code>this</code> argument of the method. Using <code>getMethod</code> will ensure that the this is preserved. It's actually the equivalent of doing 'this.getClass().bindMethod(this, name)'.</div></dd><dt> <code>getSuper(c:Class)</code></dt><dd><div class='content'>Returns a proxy that will use the current object as state, but where every operation defined in the proxy will use the implementation defined in the given class.</div></dd><dt> <code>isInstance(c:Class)</code></dt><dd><div class='content'>Returns <code>true</code> if this instance is an instance of the given class, which must be either the class of this instance, or an ancestor of this instance class.</div></dd></dl></div></div><div class="section"><h2 class="heading">Class API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>true</code></div></dd><dt> <code>getName</code></dt><dd><div class='content'>Returns the class name, as given when creating the class.</div></dd><dt> <code>getParent</code></dt><dd><div class='content'>Returns the parent class for this class, or <code>undefined</code>.</div></dd><dt> <code>hasInstance(o:Object)</code></dt><dd><div class='content'>Tells if the given object is an instance of this class. This also includes the parent classes.</div></dd><dt> <code>isSubclassOf(c:Class)</code></dt><dd><div class='content'>Tells if this class is a subclass of the given class.</div></dd><dt> <code>listMethods(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Returns a dictionary that maps methods names to unbound methods, including by default the <code>own</code> methods and the <code>inherited</code> methods. Settings these two parameters to either <code>true</code> or <code>false</code> will allow to return the desired subset.</div></dd><dt> <code>listOperations(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class operations.</div></dd><dt> <code>listShared(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class attributes (&ldquo;<span class='quote'>shared</span>&rdquo;).</div></dd><dt> <code>listProperties(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with instance attributes (&ldquo;<span class='quote'>properties</span>&rdquo;).</div></dd><dt> <code>getOperation(name:String)</code></dt><dd><div class='content'>Returns the class operation with the given name wrapped so that the <code>this</code> will be preserved even if you use <code>operation.apply(other_object,
-      arguments)</code> (pretty much like <code>bindMethod</code>).</div></dd><dt> <code>bindMethod(o:Object, name:String)</code></dt><dd><div class='content'>Returns the method named <code>name</code> when it is bound to the given object. This method can be safely given as a callback, and even if the <code>this</code> is changed in a <code>method.apply(other_object, arguments)</code>, it will be preserved.</div></dd><dt> <code>proxyWithState(o:Object)</code></dt><dd><div class='content'>Returns an object that will have the same operations and attributes defined in this class, but will use the given object as <span class='term'>state</span> (as <code>this</code> or <code>self</code>). Doing <code>o getClass() getParent() proxyWithState(o)</code> is the equivalent of creating a <code>super</code> keyword where you can invoke methods from the parent.</div></dd></dl></div></div></div></div><div class="section"><h1 class="heading">Examples</h1><div class="level1"><p>Step 1: Create a new class</p><pre>var Shape = Extend.Class(
+alert(new A().helloWorld());</pre><p>The <code>Extend.Class</code> takes the following parameters, given in a dictionary:</p><ul><li><code>name</code> (<em>required</em>): a string representing the class name. In case you want the class name to reflect a package hierarchy (like <code>ui.widget.InputField</code>), you can use dots to join module names and class name.</li></ul><ul><li><code>parent</code>: the parent class (if any) of this class.</li></ul><ul><li><code>initialize</code>: the constructor function for this class.</li></ul><ul><li><code>properties</code>: a dictionary mapping instance declaring attributes (properties) (and their optional default values).</li></ul><ul><li><code>methods</code>: a dictionary mapping method names to functions implementing the methods, where the <code>this</code> will refer to the current instance.</li></ul><ul><li><code>shared</code>: a dictionary mapping class attributes names to values. Class attributes default values are inherited by sub-classes, and can be accessed directly (like <code>A.foo</code> if <code>foo</code> is a class attribute of <code>A</code>)</li></ul><ul><li><code>operations</code>: a dictionary mapping class methods (operation) names to functions. The <code>this</code> in these functions will refer to the class object, as returned by <code>Extend.Class</code>.</li></ul><p>In methods, you <code>this</code> will (obviously) point to the current instance. If you want to access the method <code>foo</code> defined in class <code>A</code>, when you are in class <code>B</code> subclass of <code>A</code>, you can do:</p><pre>this.getSuper(A).foo()</pre><p>or use the faster option:</p><pre>this.A_foo()</pre><p>where <code>A</code> is the name you gave to the class <code>A</code>.</p></div></div><div class="section"><h1 class="heading"><span class="number"><span class="level0">3<span class="lastDot dot">.</span></span></span>Extend API</h1><div class="level1"><p>Extend offers a set of methods that can are available to Extend classes and instances created from Extend classes. These methods range from simple introspection (what is the class of an object, what is this class name, is this an object an instance of this class, etc) to more complex things (safely wrapping a method for callback, listing inherited methods, etc).</p><div class="section"><h2 class="heading"><span class="number"><span class="level0">3<span class="dot">.</span></span><span class="level1">1<span class="lastDot dot">.</span></span></span>Object API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>false</code></div></dd><dt> <code>getClass</code></dt><dd><div class='content'>Returns the class object associated with this instance. You can use the class object to access class operations, class attributes, etc.</div></dd><dt> <code>getMethod(name:String)</code></dt><dd><div class='content'>In JavaScript, if you give a method as a callback by simply doing <code>object.method</code>, then you may have problems when the caller changes the <code>this</code> argument of the method. Using <code>getMethod</code> will ensure that the this is preserved. It's actually the equivalent of doing 'this.getClass().bindMethod(this, name)'.</div></dd><dt> <code>getCallback(name:String)</code></dt><dd><div class='content'>The <code>getCallback</code> method is similar to <code>getMethod</code>, except that it will add an extra argument which is the <code>this</code> used when invoking the method. Libraries such as <a href="<http://www.jquery.com>">jQuery</a> change the <code>this</code> of callbacks given to events such as <code>click</code> or <code>focus</code> to the DOM node that received the event rather than the instance to which the method is bound. Using <code>getMethod</code> insulates you from this change, but you also lose the reference to the DOM node that received the event (the event target). When using <code>getCallback</code>, you'll have the target as an additional argument.</div></dd><dt> <code>getSuper(c:Class)</code></dt><dd><div class='content'>Returns a proxy that will use the current object as state, but where every operation defined in the proxy will use the implementation defined in the given class.</div></dd><dt> <code>isInstance(c:Class)</code></dt><dd><div class='content'>Returns <code>true</code> if this instance is an instance of the given class, which must be either the class of this instance, or an ancestor of this instance class.</div></dd></dl></div></div><div class="section"><h2 class="heading"><span class="number"><span class="level0">3<span class="dot">.</span></span><span class="level1">2<span class="lastDot dot">.</span></span></span>Class API</h2><div class="level2"><dl><dt> <code>isClass</code></dt><dd><div class='content'>Tells if the given object is class or not. This returns <code>true</code></div></dd><dt> <code>getName</code></dt><dd><div class='content'>Returns the class name, as given when creating the class.</div></dd><dt> <code>getParent</code></dt><dd><div class='content'>Returns the parent class for this class, or <code>undefined</code>.</div></dd><dt> <code>hasInstance(o:Object)</code></dt><dd><div class='content'>Tells if the given object is an instance of this class. This also includes the parent classes.</div></dd><dt> <code>isSubclassOf(c:Class)</code></dt><dd><div class='content'>Tells if this class is a subclass of the given class.</div></dd><dt> <code>listMethods(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Returns a dictionary that maps methods names to unbound methods, including by default the <code>own</code> methods and the <code>inherited</code> methods. Settings these two parameters to either <code>true</code> or <code>false</code> will allow to return the desired subset.</div></dd><dt> <code>listOperations(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class operations.</div></dd><dt> <code>listShared(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with class attributes (&ldquo;<span class='quote'>shared</span>&rdquo;).</div></dd><dt> <code>listProperties(own:Boolean=True, inherited:Boolean=True)</code></dt><dd><div class='content'>Same as <code>listMethods</code>, but with instance attributes (&ldquo;<span class='quote'>properties</span>&rdquo;).</div></dd><dt> <code>getOperation(name:String)</code></dt><dd><div class='content'>Returns the class operation with the given name wrapped so that the <code>this</code> will be preserved even if you use <code>operation.apply(other_object,
+      arguments)</code> (pretty much like <code>bindMethod</code>).</div></dd><dt> <code>bindMethod(o:Object, name:String)</code></dt><dd><div class='content'>Returns the method named <code>name</code> when it is bound to the given object. This method can be safely given as a callback, and even if the <code>this</code> is changed in a <code>method.apply(other_object, arguments)</code>, it will be preserved.</div></dd><dt> <code>proxyWithState(o:Object)</code></dt><dd><div class='content'>Returns an object that will have the same operations and attributes defined in this class, but will use the given object as <span class='term'>state</span> (as <code>this</code> or <code>self</code>). Doing <code>o getClass() getParent() proxyWithState(o)</code> is the equivalent of creating a <code>super</code> keyword where you can invoke methods from the parent.</div></dd></dl></div></div></div></div><div class="section"><h1 class="heading"><span class="number"><span class="level0">4<span class="lastDot dot">.</span></span></span>Examples</h1><div class="level1"><p>Step 1: Create a new class</p><pre>var Shape = Extend.Class(
   name:"Shape",
-  init:function(){
+  initialize:function(){
     this.points = [];
   }
   methods:{
@@ -301,7 +327,7 @@ my_shape.addPoint([1,0]);
 console.log(my_shape.getPoints().toSource());</pre><p>Step 3: Create a subclass</p><pre>var Rectangle = Extend.Class(
   name:"Rectangle",
   parent:"Shape",
-  init:function(){
+  initialize:function(){
     this.points = [];
   }
   methods:{
@@ -312,7 +338,16 @@ console.log(my_shape.getPoints().toSource());</pre><p>Step 3: Create a subclass<
       return this.points;
     }
   }
-});</pre></div></div></div></div>
+});</pre><p>Using callbacks with jQuery</p><pre>var MyWidget = Extend.Class({
+  name:"MyWidget",
+  methods:{
+    onClick:function(target){
+      $(target).css({background:yello});
+    }
+})
+
+var w = new MyWidget()
+$("#my-widget").click( w.getCallback("onClick") )</pre></div></div></div></div>
 <div class="kiwiReferences"><div class="entry"><div class="name"><a name="0">0</a></div><div class="content"> JavaScript Gotchas, Sébastien Pierre, June 2007
       <a href="http://www.ivy.fr/notes/javascript-gotchas.html">tech note</a></div></div><div class="entry"><div class="name"><a name="1">1</a></div><div class="content"> Object-Oriented Programmming in JavaScript, Mike Moss, January 2006
       <a href="http://mckoss.com/jscript/object.htm">article</a></div></div><div class="entry"><div class="name"><a name="2">2</a></div><div class="content"> Prototype-based Programming Wikipedia Article,

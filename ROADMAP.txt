@@ -1,5 +1,14 @@
 == Extend Roadmap
 
+Version 2.3::
+
+	[ ] Add multiple-dispatch to methods
+
+Version 2.2::
+
+	[ ] Add 'isA' and 'instanceOf' type predicates
+	[ ] Add a class registry
+
 Version 2.1::
 
 	[ ] Support for extending non Extend-produced classes

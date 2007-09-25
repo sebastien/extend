@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.16 (15-Aug-2007)
+@version 1.9.16 (25-Sep-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -68,6 +68,9 @@
 | - 'isClass()' returns *true*( (because this is an object, not a class)
 | - 'getClass()' returns the class of this instance
 | - 'getMethod(n)' returns the bound method which name is 'n'
+| - 'getCallback(n)' the equivalent of 'getMethod', but will give the 'this' as
+|    additional last arguments (useful when you the invoker changes the 'this',
+|    which happens in event handlers)
 | - 'isInstance(c)' tells if this object is an instance of the given class
 |
 | Using the 'Class' function is very easy (in *Sugar*):
@@ -119,6 +122,29 @@
 		return o getClass() isSubclassOf (class_object)
 	}
 	class_object bindMethod = {object, methodName|
+		var this_method = object [methodName]
+		# FIXME: Throw exception if this_method is not defined
+		return {
+			var a = arguments
+			if a length == 0
+				return this_method call (object)
+			if a length == 1
+				return this_method call (object, a[0])
+			if a length == 2
+				return this_method call (object, a[0], a[1])
+			if a length == 3
+				return this_method call (object, a[0], a[1], a[2])
+			if a length == 4
+				return this_method call (object, a[0], a[1], a[2], a[3])
+			if a length == 5
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4])
+			else
+				var args=[] ; args concat(arguments)
+				return this_method apply (object, args)
+			end
+		}
+	}
+	class_object bindCallback = {object, methodName|
 		var this_method = object [methodName]
 		# FIXME: Throw exception if this_method is not defined
 		return {
@@ -301,8 +327,16 @@
 		var this_object = target
 		return class_object bindMethod(this_object, methodName)
 	}
+	instance_proto getCallback       = {methodName|
+		var this_object = target
+		return class_object bindCallback(this_object, methodName)
+	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
-	if declaration initialize -> instance_proto initialize = declaration initialize 
+	if declaration initialize
+		instance_proto initialize = declaration initialize
+	else
+		instance_proto instance_proto = {}
+	end
 	instance_proto getSuper        = {c|return c proxyWithState(target)}
 
 	@embed JavaScript

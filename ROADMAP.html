@@ -11,12 +11,12 @@ body {
 	padding: 20pt;
 	padding-top: 10pt;
 	background: rgb(255,255,255);
-	font:  10.5pt/15pt sans-serif;
+	font:  10.5pt/15pt "Helvetica",Helvetica,sans-serif;
 	color: rgb(80,80,80);
 }
 
 h1, h2, h3, h4 {
-	font-family: "Trebuchet MS",sans-serif;
+	font-family: "Trebuchet MS",Helvetica,sans-serif;
 	color: rgb(22, 130, 178);
 	font-weight: normal;
 	padding-top: 0.5em;
@@ -78,7 +78,7 @@ aimg {
 }
 
 .kiwiMeta {
-	width: 100%;
+	max-width: 700px;
 	padding: 5pt;
 	margin-bottom:  2em;
 	border-top:  1px solid rgb(150, 220, 238);
@@ -93,24 +93,41 @@ aimg {
 	font-weight: bold;
 }
 
-.kiwiContent h1, .kiwiContent h2{
-	padding-bottom: 5pt;
-	border-bottom:  1px dotted rgb(150, 220, 238);
+.kiwiContent {
+	max-width: 700px;
+}
+
+.kiwiContent .heading .number {
+	padding-right: 8pt;
+}
+
+.kiwiContent .heading .number .lastDot {
+	display: none;
+}
+
+
+.kiwiContent .heading .number .level0 .lastDot {
+	display: inline;
 }
 
 .kiwiContent h1 {
-	font-size: 1.5em;
-	font-weight: normal;
-	padding-top: 1.5em;
+	font-size: 1.8em;
+	font-weight: bold;
+	margin-top: 1.5em;
 	padding-bottom: 0.5em;
+	border-bottom:  1px dotted rgb(150, 220, 238);
 }
 
 .kiwiContent h2 {
-	font-size: 1.3em;
+	font-size: 1.4em;
+	font-weight: bold;
+	padding-bottom: 0.5em;
+	border-bottom:  1px dotted rgb(150, 220, 238);
 }
 
 .kiwiContent h3 {
-	font-size: 1.1em;
+	font-size: 1.2em;
+	font-weight: normal;
 }
 
 .kiwiContent pre {
@@ -184,6 +201,7 @@ aimg {
 	margin: 0;
 	padding: 5pt;
 	font-size: 90%;
+	min-width: 125px;
 	background-color: rgb(250,250,250);
 	border-bottom: 1px solid rgb(150, 220, 238);
 }
@@ -281,7 +299,7 @@ aimg {
 <body>
 <div
 	class="title"><h1>Extend Roadmap</h1></div>
-<div class="kiwiContent"><div class='content'><dl><dt>Version 2.1</dt><dd><div class='content'><ul class="todo"><li class="todo">Support for extending non Extend-produced classes </li><li class="todo">Support for extending Java classes when using Rhino </li><li class="todo">Singleton construct support</li></ul></div></dd><dt>Version 2.0</dt><dd><div class='content'><ul class="todo"><li class="todo done">Complete rewrite (in Sugar) of Extend 1 </li><li class="todo done">Integration of LambdaFactory runtime support</li></ul></div></dd></dl></div></div>
+<div class="kiwiContent"><div class='content'><dl><dt>Version 2.3</dt><dd><div class='content'><ul class="todo"><li class="todo"><input type='checkbox' readonly>Add multiple-dispatch to methods</input></li></ul></div></dd><dt>Version 2.2</dt><dd><div class='content'><ul class="todo"><li class="todo"><input type='checkbox' readonly>Add <code>isA</code> and <code>instanceOf</code> type predicates </input></li><li class="todo"><input type='checkbox' readonly>Add a class registry</input></li></ul></div></dd><dt>Version 2.1</dt><dd><div class='content'><ul class="todo"><li class="todo"><input type='checkbox' readonly>Support for extending non Extend-produced classes </input></li><li class="todo"><input type='checkbox' readonly>Support for extending Java classes when using Rhino </input></li><li class="todo"><input type='checkbox' readonly>Singleton construct support</input></li></ul></div></dd><dt>Version 2.0</dt><dd><div class='content'><ul class="todo"><li class="todo done"><input type='checkbox' checked='true' readonly>Complete rewrite (in Sugar) of Extend 1 </input></li><li class="todo done"><input type='checkbox' checked='true' readonly>Integration of LambdaFactory runtime support</input></li></ul></div></dd></dl></div></div>
 
 </body>
 </html>
