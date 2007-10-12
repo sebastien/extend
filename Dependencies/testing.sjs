@@ -99,6 +99,22 @@
 	return value (val == Undefined, False)
 @end
 
+@function same value, other
+	if value == other
+		succeed()
+	else
+		fail ("Values are expected to be different '" + value + "' vs '" + other + "'")
+	end
+@end
+
+@function identical value, other
+	if value is other
+		succeed()
+	else
+		fail ("Values are expected to be different '" + value + "' vs '" + other + "'")
+	end
+@end
+
 @function unlike value, other
 | Unsures that the given 'value' is different from the 'other' value
 	if value == other

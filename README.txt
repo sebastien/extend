@@ -112,13 +112,36 @@ Extend API
   this an object an instance of this class, etc) to more complex things
   (safely wrapping a method for callback, listing inherited methods, etc).
 
+  Extend API
+  ----------
+
+    'Extend.Class({...})'::
+       Declares and returns a new class according to the class description
+       given as argument. This description was explained in the previous
+       section.
+
+    'Extend.getClass(name:String)'::
+       Returns the class with the given absolute name, if any.
+
+    'Extend.getClasses()'::
+       Returns a dictionary that maps _declared class names_ to actual class
+       instances. Extend acts like a global namespace where non-anonymous
+       declared classes are registered.
+
+    'Extend.getChildrenOf(aClass)'::
+       Returns a dictionary that maps _declared class names_ to actual class
+       instances of classes that inherit from the given class ('aClass')
+
   Object API
   ----------
 
-    'isClass'::
+  The _object API_ defines the methods which are available to instances
+  (objects) which were created (instantiated) from a class defined using Extend.
+
+    'isClass()'::
       Tells if the given object is class or not. This returns 'false'
 
-    'getClass'::
+    'getClass()'::
       Returns the class object associated with this instance. You can use the
       class object to access class operations, class attributes, etc.
 
@@ -152,6 +175,9 @@ Extend API
   Class API
   ---------
 
+  The _class API_ defines the methods which are available for class objects
+  resulting from the use of the Extend API.
+
     'isClass'::
       Tells if the given object is class or not. This returns 'true'
 
@@ -166,7 +192,8 @@ Extend API
       the parent classes.
 
     'isSubclassOf(c:Class)'::
-      Tells if this class is a subclass of the given class.
+      Tells if this class is a subclass of the given class. This also takes into
+      account the  parent classes.
 
     'listMethods(own:Boolean=True, inherited:Boolean=True)'::
       Returns a dictionary that maps methods names to unbound methods, including

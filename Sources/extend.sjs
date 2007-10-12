@@ -1,5 +1,5 @@
 @module Extend
-@version 1.9.16 (25-Sep-2007)
+@version 2.0.0 (12-Oct-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -32,6 +32,8 @@
 	@shared document = Undefined
 @end
 
+
+@shared Registry = {}
 
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
@@ -350,6 +352,15 @@
 	@end
 
 	class_object prototype = instance_proto
+
+	# We register the class in the registry
+	if (declaration name)
+		if (Registry [declaration name])
+			throw ("Class with same name already registered: " + (declaration name))
+		end
+		Registry [declaration name] = class_object
+	end
+
 	return class_object
 
 @end
@@ -358,6 +369,25 @@
 @end
 
 @function Singleton sdata
+@end
+
+@function getClass name
+	return Registry [name]
+@end
+
+@function getClasses
+	return Registry
+@end
+
+
+@function getChildrenOf aClass:Class
+	var res = {}
+	getClasses() :: {v,k|
+		if ( v isSubclassOf (aClass) ) 
+			res[k] = v
+		end
+	}
+	return res
 @end
 
 @specific SUGAR_RUNTIME

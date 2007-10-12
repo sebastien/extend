@@ -315,11 +315,9 @@ Testing.end()
 // TEST 25
 Testing.test("S: Super constructor: this.SuperClass_initialize()")
 	var ClassSA = Extend.Class({
-		name:"ClassSA",
 		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
-		name:"ClassSB",
 		parent:ClassSA,
 		initialize:function(){
 			this.ClassSA_initialize();
@@ -327,7 +325,6 @@ Testing.test("S: Super constructor: this.SuperClass_initialize()")
 		}
 	})
 	var ClassSC = Extend.Class({
-		name:"ClassSC",
 		parent:ClassSB,
 		initialize:function(){
 			this.ClassSB_initialize()
@@ -356,11 +353,9 @@ Testing.end()
 // TEST 26
 Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var ClassSA = Extend.Class({
-		name:"ClassSA",
 		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
-		name:"ClassSB",
 		parent:ClassSA,
 		initialize:function(){
 			this.getSuper(ClassSA)()
@@ -368,7 +363,6 @@ Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 		}
 	})
 	var ClassSC = Extend.Class({
-		name:"ClassSC",
 		parent:ClassSB,
 		initialize:function(){
 			this.getSuper(ClassSB)()
@@ -392,16 +386,13 @@ Testing.end()
 // TEST 27
 Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var ClassSA = Extend.Class({
-		name:"A",
 		methods:{doThis:function(){return this.getClass().getName() + ":" + "A"}}
 	})
 	var ClassSB = Extend.Class({
-		name:"B",
 		parent:ClassSA,
 		methods:{doThis:function(){return this.getSuper(ClassSA).doThis() + "B"}}
 	})
 	var ClassSC = Extend.Class({
-		name:"C",
 		parent:ClassSB,
 		shared:{V:"C"},
 		methods:{
@@ -766,6 +757,23 @@ Testing.test("I: a.listMethods(A)")
 	Testing.value(new_a.doA.apply({a:"not a"}, []), "not a")
 	Testing.value(new_a_doA.apply({a:"not a"}, []), "a")
 
+Testing.end()
+
+// TEST 37
+Testing.test("I: a.getClass(A)")
+	var A     = Extend.Class({name:"A" })
+	Testing.identical(A, Extend.getClass("A"))
+	var a_A   = Extend.Class({name:"a.A" })
+	Testing.identical(a_A, Extend.getClass("a.A"))
+	var a_b_A = Extend.Class({name:"a.b.A" })
+	Testing.identical(a_b_A, Extend.getClass("a.b.A"))
+	//try {
+	//	Extend.Class({name:"a.b.A" })
+	//	Testing.fail("Exception should be raised when redefining class")
+	//} catch (e) {
+	//	Testing.succeed()
+	//}
+	Testing.identical(a_b_A, Extend.getClass("a.b.A"))
 Testing.end()
 
 // EOF

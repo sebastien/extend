@@ -20,7 +20,8 @@
 // You can get more information at the Extend [project
 // page](http://www.ivy.fr/js/extend).
 var Extend={}
-Extend._VERSION_='1.9.16';
+Extend._VERSION_='2.0.0';
+Extend.Registry={}
 Extend.Class=	function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
 		// following keys:
@@ -437,6 +438,14 @@ Extend.Class=	function(declaration){
 		}
 		
 		class_object.prototype = instance_proto;
+		if ( declaration.name )
+		{
+			if ( Extend.Registry[declaration.name] )
+			{
+				throw(new Exception(("Class with same name already registered: " + declaration.name)))
+			}
+			Extend.Registry[declaration.name] = class_object;
+		}
 		return class_object
 	}
 Extend.Protocol=	function(pdata){
@@ -444,6 +453,25 @@ Extend.Protocol=	function(pdata){
 	}
 Extend.Singleton=	function(sdata){
 		var __this__=Extend;
+	}
+Extend.getClass=	function(name){
+		var __this__=Extend;
+		return Extend.Registry[name]
+	}
+Extend.getClasses=	function(){
+		var __this__=Extend;
+		return Extend.Registry
+	}
+Extend.getChildrenOf=	function(aClass){
+		var __this__=Extend;
+		var res={};
+		Extend.iterate(Extend.getClasses(), function(v, k){
+			if ( v.isSubclassOf(aClass) )
+			{
+				res[k] = v;
+			}
+		}, __this__)
+		return res
 	}
 Extend.init=	function(){
 		var __this__=Extend;
