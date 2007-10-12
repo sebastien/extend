@@ -7,7 +7,7 @@ Version 2.3::
 Version 2.2::
 
 	[ ] Add 'isA' and 'instanceOf' type predicates
-	[ ] Add a class registry
+	[X] Add a class registry and query operations (implemented in 2.0)
 
 Version 2.1::
 

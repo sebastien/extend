@@ -1,10 +1,10 @@
 == Extend 2.0
 == Developer Manual
 -- Author: Sebastien Pierre <sebastien@ivy.fr>
--- Revision: 25-Sep-2007
+-- Revision: 12-Oct-2007
 
 
-Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/js/extend/1)
+Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/extend/extend-1.0.0.js)
 which implements a flexible class-based OOP layer on top of the JavaScript
 prototype object model.
 
@@ -51,7 +51,7 @@ Introducing Extend
   To start using 'Extend', simply add the following line to your HTML head
   section:
 
-  >   <script type="text/javascript" src="http://www.ivy.fr/js/extend.js"></script>
+  >   <script type="text/javascript" src="http://www.ivy.fr/extend/extend.js"></script>
 
   Once you've included the script, you can create classed by using the
   'Extend.Class' function:
