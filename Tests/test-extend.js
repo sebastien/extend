@@ -1,4 +1,4 @@
-// Extend 2.0 test suite (18-Jun-2007)
+// Extend 2.0 test suite (12-Oct-2007)
 // -----------------------------------
 
 /*
@@ -315,9 +315,11 @@ Testing.end()
 // TEST 25
 Testing.test("S: Super constructor: this.SuperClass_initialize()")
 	var ClassSA = Extend.Class({
+		name:"ClassSA",
 		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
+		name:"ClassSB",
 		parent:ClassSA,
 		initialize:function(){
 			this.ClassSA_initialize();
@@ -325,6 +327,7 @@ Testing.test("S: Super constructor: this.SuperClass_initialize()")
 		}
 	})
 	var ClassSC = Extend.Class({
+		name:"ClassSC",
 		parent:ClassSB,
 		initialize:function(){
 			this.ClassSB_initialize()
@@ -353,9 +356,11 @@ Testing.end()
 // TEST 26
 Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var ClassSA = Extend.Class({
+		name:"ClassSA",
 		initialize:function(){this.a="a"}
 	})
 	var ClassSB = Extend.Class({
+		name:"ClassSB",
 		parent:ClassSA,
 		initialize:function(){
 			this.getSuper(ClassSA)()
@@ -363,6 +368,7 @@ Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 		}
 	})
 	var ClassSC = Extend.Class({
+		name:"ClassSC",
 		parent:ClassSB,
 		initialize:function(){
 			this.getSuper(ClassSB)()
@@ -386,13 +392,16 @@ Testing.end()
 // TEST 27
 Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var ClassSA = Extend.Class({
+		name:"A",
 		methods:{doThis:function(){return this.getClass().getName() + ":" + "A"}}
 	})
 	var ClassSB = Extend.Class({
+		name:"B",
 		parent:ClassSA,
 		methods:{doThis:function(){return this.getSuper(ClassSA).doThis() + "B"}}
 	})
 	var ClassSC = Extend.Class({
+		name:"C",
 		parent:ClassSB,
 		shared:{V:"C"},
 		methods:{
@@ -774,6 +783,45 @@ Testing.test("I: a.getClass(A)")
 	//	Testing.succeed()
 	//}
 	Testing.identical(a_b_A, Extend.getClass("a.b.A"))
+Testing.end()
+
+// TEST 38
+Testing.test("I: a.getChildrenOf(A)")
+	var A = Extend.Class({name:"A" })
+	var B = Extend.Class({name:"B", parent:A })
+	var C = Extend.Class({name:"C", parent:B })
+	var D = Extend.Class({name:"D", parent:C })
+	var E = Extend.Class({name:"E", parent:D })
+	Testing.asUndefined(Extend.getChildrenOf(A).A)
+	Testing.identical(Extend.getChildrenOf(A).B, B)
+	Testing.identical(Extend.getChildrenOf(A).C, C)
+	Testing.identical(Extend.getChildrenOf(A).D, D)
+	Testing.identical(Extend.getChildrenOf(A).E, E)
+
+	Testing.asUndefined(Extend.getChildrenOf(B).A)
+	Testing.asUndefined(Extend.getChildrenOf(B).B)
+	Testing.identical(  Extend.getChildrenOf(B).C, C)
+	Testing.identical(  Extend.getChildrenOf(B).D, D)
+	Testing.identical(  Extend.getChildrenOf(B).E, E)
+
+	Testing.asUndefined(Extend.getChildrenOf(C).A)
+	Testing.asUndefined(Extend.getChildrenOf(C).B)
+	Testing.asUndefined(Extend.getChildrenOf(C).C)
+	Testing.identical(  Extend.getChildrenOf(C).D, D)
+	Testing.identical(  Extend.getChildrenOf(C).E, E)
+
+	Testing.asUndefined(Extend.getChildrenOf(D).A)
+	Testing.asUndefined(Extend.getChildrenOf(D).B)
+	Testing.asUndefined(Extend.getChildrenOf(D).C)
+	Testing.asUndefined(Extend.getChildrenOf(D).D)
+	Testing.identical(  Extend.getChildrenOf(D).E, E)
+
+	Testing.asUndefined(Extend.getChildrenOf(E).A)
+	Testing.asUndefined(Extend.getChildrenOf(E).B)
+	Testing.asUndefined(Extend.getChildrenOf(E).C)
+	Testing.asUndefined(Extend.getChildrenOf(E).D)
+	Testing.asUndefined(Extend.getChildrenOf(E).E)
+
 Testing.end()
 
 // EOF

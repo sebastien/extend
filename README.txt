@@ -130,7 +130,8 @@ Extend API
 
     'Extend.getChildrenOf(aClass)'::
        Returns a dictionary that maps _declared class names_ to actual class
-       instances of classes that inherit from the given class ('aClass')
+       instances of classes that inherit from the given class ('aClass'). This
+       excludes the given class from the result.
 
   Object API
   ----------

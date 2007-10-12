@@ -1,5 +1,5 @@
 @module Testing
-@version 0.0.0 (19-Jun-2007)
+@version 0.0.0 (12-Oct-2007)
 @target JavaScript
 | The testing module implements a simple stateful test engine.
 |
@@ -103,7 +103,7 @@
 	if value == other
 		succeed()
 	else
-		fail ("Values are expected to be different '" + value + "' vs '" + other + "'")
+		fail ("Values are expected to be the same '" + value + "' vs '" + other + "'")
 	end
 @end
 
@@ -111,7 +111,7 @@
 	if value is other
 		succeed()
 	else
-		fail ("Values are expected to be different '" + value + "' vs '" + other + "'")
+		fail ("Values are expected to be identical '" + value + "' vs '" + other + "'")
 	end
 @end
 

@@ -355,9 +355,10 @@
 
 	# We register the class in the registry
 	if (declaration name)
-		if (Registry [declaration name])
-			throw ("Class with same name already registered: " + (declaration name))
-		end
+		#if (Registry [declaration name])
+		#	
+		#	throw ("Class with same name already registered: " + (declaration name))
+		#end
 		Registry [declaration name] = class_object
 	end
 
@@ -382,11 +383,13 @@
 
 @function getChildrenOf aClass:Class
 	var res = {}
-	getClasses() :: {v,k|
-		if ( v isSubclassOf (aClass) ) 
-			res[k] = v
-		end
-	}
+	@embed JavaScript
+	|var values = Extend.getClasses()
+	|for ( key in values ) {
+	|	if ( values[key] != aClass && values[key].isSubclassOf(aClass) )
+	|	{ res[key] = values[key] }
+	|}
+	@end
 	return res
 @end
 

@@ -440,10 +440,6 @@ Extend.Class=	function(declaration){
 		class_object.prototype = instance_proto;
 		if ( declaration.name )
 		{
-			if ( Extend.Registry[declaration.name] )
-			{
-				throw(new Exception(("Class with same name already registered: " + declaration.name)))
-			}
 			Extend.Registry[declaration.name] = class_object;
 		}
 		return class_object
@@ -465,12 +461,12 @@ Extend.getClasses=	function(){
 Extend.getChildrenOf=	function(aClass){
 		var __this__=Extend;
 		var res={};
-		Extend.iterate(Extend.getClasses(), function(v, k){
-			if ( v.isSubclassOf(aClass) )
-			{
-				res[k] = v;
-			}
-		}, __this__)
+		var values = Extend.getClasses()
+		for ( key in values ) {
+			if ( values[key] != aClass && values[key].isSubclassOf(aClass) )
+			{ res[key] = values[key] }
+		}
+		
 		return res
 	}
 Extend.range=	function(start, end, step){
