@@ -4,7 +4,7 @@
 -- Revision: 12-Oct-2007
 
 
-Extend 2.0 is an evolution of the [Extend 1.0](http://www.ivy.fr/extend/extend-1.0.0.js)
+Extend 2.0 is an evolution of [Extend 1.0](http://www.ivy.fr/extend/extend-1.0.0.js)
 which implements a flexible class-based OOP layer on top of the JavaScript
 prototype object model.
 
@@ -179,13 +179,13 @@ Extend API
   The _class API_ defines the methods which are available for class objects
   resulting from the use of the Extend API.
 
-    'isClass'::
+    'isClass()'::
       Tells if the given object is class or not. This returns 'true'
 
-    'getName'::
+    'getName()'::
       Returns the class name, as given when creating the class.
 
-    'getParent'::
+    'getParent()'::
       Returns the parent class for this class, or 'undefined'.
 
     'hasInstance(o:Object)'::

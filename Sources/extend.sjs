@@ -1,5 +1,5 @@
 @module Extend
-@version 2.0.0 (12-Oct-2007)
+@version 2.1.0b (28-Jan-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -380,6 +380,38 @@
 	return Registry
 @end
 
+@function invoke t, f, args, extra
+| The 'invoke' method allows advanced invocation (supporting by name, as list
+| and as map invocation schemes) provided the given function 'f' has proper
+| '__meta__' annotation.
+|
+| These annotations are expected to be like:
+|
+| >    f __meta__ = {
+| >        arity:2
+| >        arguments:{
+| >           b:2,
+| >           "*":[1]
+| >           "**":{c:3,d:4}
+| >        }
+| >    }
+|
+	# TODO: Add consistency checks for invocation
+	var meta = f ['__meta__']
+	var actual_args = [] 
+	extra ["*"]  :: {v   | args push(v) }
+	extra ["**"] :: {v,k | extra[k] = v }
+	args :: {v|actual_args push(args)}
+	var start = args length
+	while start < meta arity
+		var arg = meta arguments [start]
+		actual_args push (extra[arg name])
+		start += 1
+	end
+	print ("CALLING ", f toSource())
+	print (" with", actual_args toSource())
+	return f apply (t, actual_args)
+@end
 
 @function getChildrenOf aClass:Class
 	var res = {}
@@ -395,6 +427,10 @@
 
 @specific SUGAR_RUNTIME
 | This contains specific code that is useful to [Sugar](http://www.ivy.fr/sugar)
+
+	# =========================================================================
+	# ARRAY OPERATIONS
+	# =========================================================================
 
 	@function range:List start:Number, end:Number, step:Number?
 	| Creates a new list composed of elements in the given range, determined by
@@ -463,6 +499,47 @@
 		@end
 		return res
 	@end
+
+	@function slice list, start=0, end=Undefined
+		return list slice (start, end)
+	@end
+
+	# =========================================================================
+	# TYPE INTROSPECTION FUNCTIONS
+	# =========================================================================
+
+	@function isDefined value
+		return not (value is Undefined)
+	@end
+
+	@function isList value
+		# We took our inspiration from here
+		# <http://base2.googlecode.com/svn/version/1.0(beta2)/src/base2.js>
+		# but this is not such a great solution...
+		@embed JavaScript
+		| return !!(typeof object == "object" && object.join && object.splice);
+		@end
+	@end
+
+	@function isMap value
+		@embed JavaScript
+		| return !!(!typeof object == "object")
+		@end
+	@end
+
+	@function isFunction value
+		@embed JavaScript
+		| return !!(typeof object == "function")
+		@end
+	@end
+
+	@function isInstance value
+		return isDefined (value getClass)
+	@end
+
+	# =========================================================================
+	# STDIO
+	# =========================================================================
 
 	@function print args...
 	| Prints the given arguments to the JavaScript console (available in Safari

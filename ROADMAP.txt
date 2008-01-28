@@ -1,19 +1,37 @@
 == Extend Roadmap
 
+Version 3.0::
+
+	[ ] Platform-neutral standard library for String, List, Dict, Map and Closures
+	[ ] Functional programming primitives (map, filter, reduce, ...)
+	[ ] Design by contract functions (pre, post, assert)
+	[ ] Support for Python as a back-end
+
+Version 2.4::
+
+	[ ] Support for extending Java classes when using Rhino
+	[ ] Support for extending non Extend-produced classes (in JavaScript)
+	[ ] Add 'assert' function
+
 Version 2.3::
 
 	[ ] Add multiple-dispatch to methods
+	[ ] Make iteration support breaking through exceptions
+	[ ] Document how to do 'super' accesses
 
 Version 2.2::
 
 	[ ] Add 'isA' and 'instanceOf' type predicates
 	[X] Add a class registry and query operations (implemented in 2.0)
+	[X] Add meta-information for function arguments
+	[ ] Document the internal data structures
+	[ ] Rename 'Extend' to 'extend' (follow Sugar conventions)
 
 Version 2.1::
 
-	[ ] Support for extending non Extend-produced classes
-	[ ] Support for extending Java classes when using Rhino
 	[ ] Singleton construct support
+	[ ] Support for importing modules / modules registry
+	[ ] Support for appending code to modules
 
 Version 2.0::
 
