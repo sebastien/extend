@@ -7,6 +7,12 @@ Version 3.0::
 	[ ] Design by contract functions (pre, post, assert)
 	[ ] Support for Python as a back-end
 
+Version 2.5::
+
+	[ ] Add per-application log/warning/error
+	[ ] Extend logging system so that modules can have their own logging
+	    callbacks
+
 Version 2.4::
 
 	[ ] Support for extending Java classes when using Rhino

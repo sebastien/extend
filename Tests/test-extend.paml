@@ -6,6 +6,7 @@
 		<script(src=../Dependencies/html.js)
 		<script(src=../Dependencies/testing.sjs)
 		<script(src=../Sources/extend.sjs)
+		<script(src=setup.js)
 	<body
 		<h1:Extend 2.0 Test Suite
 		<p

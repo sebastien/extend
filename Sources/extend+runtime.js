@@ -715,7 +715,7 @@ Extend.isDefined=	_meta_(function(value){
 		})
 Extend.isList=	_meta_(function(value){
 		var __this__=Extend;
-		 return !!(typeof object == "object" && object.join && object.splice);
+		 return !!( !(value===null) && typeof value == "object" && value.join && value.splice);
 		
 	},	{
 			arity:1,

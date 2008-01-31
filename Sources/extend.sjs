@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.0b (28-Jan-2007)
+@version 2.1.0c (31-Jan-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -513,11 +513,10 @@
 	@end
 
 	@function isList value
-		# We took our inspiration from here
+		# We took our inspiration from here, and added support for null
 		# <http://base2.googlecode.com/svn/version/1.0(beta2)/src/base2.js>
-		# but this is not such a great solution...
 		@embed JavaScript
-		| return !!(typeof object == "object" && object.join && object.splice);
+		| return !!( !(value===null) && typeof value == "object" && value.join && value.splice);
 		@end
 	@end
 

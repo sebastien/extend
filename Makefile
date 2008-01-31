@@ -6,9 +6,9 @@ PAMELA=pamela
 PAMELAWEB=pamela-web
 EXTEND_SOURCE=Sources/extend.sjs
 EXTEND_DIST=Sources/extend.js
-EXTEND_SUGAR_DIST=Sources/extend+sugar.js
+EXTEND_SUGAR_DIST=Sources/extend+runtime.js
 API_DOC=Documentation/extend.html
-API_DOC_SUGAR=Documentation/extend+sugar.html
+API_DOC_SUGAR=Documentation/extend+runtime.html
 DOC_TEXT=$(shell echo *.txt)
 DOC_HTML=$(DOC_TEXT:.txt=.html)
 TEST_EXTEND=Tests/test-extend.html
