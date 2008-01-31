@@ -22,7 +22,7 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.0b';
+Extend._VERSION_='2.1.0c';
 Extend.Registry={}
 Extend.Class=	_meta_(function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
@@ -697,14 +697,59 @@ Extend.sliceArguments=	_meta_(function(args, index){
 			arity:2,
 			arguments:[{'name': 'args'}, {'name': 'index'}]
 		})
-Extend.slice=	_meta_(function(list, start, end){
+Extend.slice=	_meta_(function(value, start, end){
 		var __this__=Extend;
-		start = start === undefined ? 0 : start
+		start = start === undefined ? undefined : start
 		end = end === undefined ? undefined : end
-		return list.slice(start, end)
+		if ( (start === undefined) )
+		{
+			return value
+		}
+		else if ( Extend.isString(value) )
+		{
+			if ( (end === true) )
+			{
+				end = value.length;
+			}
+			if ( (start < 0) )
+			{start = (value.length + start);}
+			if ( (end < 0) )
+			{end = (value.length + end);}
+			if ( (end === undefined) )
+			{
+				return value[start]
+			}
+			else if ( true )
+			{
+				return value.substring(start, end)
+			}
+		}
+		else if ( Extend.isList(value) )
+		{
+			if ( (end === true) )
+			{
+				end = value.length;
+			}
+			if ( (start < 0) )
+			{start = (value.length + start);}
+			if ( (end < 0) )
+			{end = (value.length + end);}
+			if ( (end === undefined) )
+			{
+				return value[start]
+			}
+			else if ( true )
+			{
+				return value.slice(start, end)
+			}
+		}
+		else if ( true )
+		{
+			throw ("Unsupported type for slice:" + value)
+		}
 	},	{
 			arity:3,
-			arguments:[{'name': 'list'}, {'flags': '=', 'name': 'start'}, {'flags': '=', 'name': 'end'}]
+			arguments:[{'name': 'value'}, {'flags': '=', 'name': 'start'}, {'flags': '=', 'name': 'end'}]
 		})
 Extend.isDefined=	_meta_(function(value){
 		var __this__=Extend;
@@ -717,6 +762,13 @@ Extend.isList=	_meta_(function(value){
 		var __this__=Extend;
 		 return !!( !(value===null) && typeof value == "object" && value.join && value.splice);
 		
+	},	{
+			arity:1,
+			arguments:[{'name': 'value'}]
+		})
+Extend.isString=	_meta_(function(value){
+		var __this__=Extend;
+		return (typeof(value) == "string")
 	},	{
 			arity:1,
 			arguments:[{'name': 'value'}]

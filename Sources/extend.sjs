@@ -32,7 +32,6 @@
 	@shared document = Undefined
 @end
 
-
 @shared Registry = {}
 
 @function Class declaration
@@ -500,8 +499,30 @@
 		return res
 	@end
 
-	@function slice list, start=0, end=Undefined
-		return list slice (start, end)
+	@function slice value, start=Undefined, end=Undefined
+		if start is Undefined 
+			return value
+		if isString(value)
+			if end is True -> end = value length
+			if start < 0 -> start = value length + start
+			if end   < 0 -> end = value length + end
+			if end is Undefined 
+				return value [start]
+			else
+				return value substring (start, end)
+			end
+		if isList(value)
+			if end is True -> end = value length
+			if start < 0 -> start = value length + start
+			if end   < 0 -> end = value length + end
+			if end is Undefined 
+				return value [start]
+			else
+				return value slice (start, end)
+			end
+		else
+			raise ("Unsupported type for slice:" + value)
+		end
 	@end
 
 	# =========================================================================
@@ -518,6 +539,10 @@
 		@embed JavaScript
 		| return !!( !(value===null) && typeof value == "object" && value.join && value.splice);
 		@end
+	@end
+
+	@function isString value
+		return typeof (value) == "string"
 	@end
 
 	@function isMap value
