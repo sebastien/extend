@@ -1,0 +1,15 @@
+<html
+	<head
+		<title:Extend 2.0 Test Suite
+		<link(rel=Stylesheet,type=text/css,href=../Dependencies/testing.css)
+		<script(src=../Dependencies/jquery-1.1.2.js)
+		<script(src=../Dependencies/html.js)
+		<script(src=../Dependencies/testing.sjs)
+		<script(src=setup.js)
+		<script(src=../Sources/extend+runtime.js)
+	<body
+		<h1:Extend 2.0 Test Suite
+		<p
+			This tests the <b:Extend 2.0> library
+		<table#result.testResults(width=100%,cellspacing=0,cellpadding=10)
+		<script(src=test-runtime.js)
