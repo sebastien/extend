@@ -699,15 +699,11 @@ Extend.sliceArguments=	_meta_(function(args, index){
 		})
 Extend.slice=	_meta_(function(value, start, end){
 		var __this__=Extend;
-		start = start === undefined ? undefined : start
+		start = start === undefined ? 0 : start
 		end = end === undefined ? undefined : end
-		if ( (start === undefined) )
+		if ( Extend.isString(value) )
 		{
-			return value
-		}
-		else if ( Extend.isString(value) )
-		{
-			if ( (end === true) )
+			if ( (end === undefined) )
 			{
 				end = value.length;
 			}
@@ -715,18 +711,11 @@ Extend.slice=	_meta_(function(value, start, end){
 			{start = (value.length + start);}
 			if ( (end < 0) )
 			{end = (value.length + end);}
-			if ( (end === undefined) )
-			{
-				return value[start]
-			}
-			else if ( true )
-			{
-				return value.substring(start, end)
-			}
+			return value.substring(start, end)
 		}
 		else if ( Extend.isList(value) )
 		{
-			if ( (end === true) )
+			if ( (end === undefined) )
 			{
 				end = value.length;
 			}
@@ -734,14 +723,7 @@ Extend.slice=	_meta_(function(value, start, end){
 			{start = (value.length + start);}
 			if ( (end < 0) )
 			{end = (value.length + end);}
-			if ( (end === undefined) )
-			{
-				return value[start]
-			}
-			else if ( true )
-			{
-				return value.slice(start, end)
-			}
+			return value.slice(start, end)
 		}
 		else if ( true )
 		{

@@ -499,27 +499,17 @@
 		return res
 	@end
 
-	@function slice value, start=Undefined, end=Undefined
-		if start is Undefined 
-			return value
+	@function slice value, start=0, end=Undefined
 		if isString(value)
-			if end is True -> end = value length
+			if end is Undefined -> end = value length
 			if start < 0 -> start = value length + start
 			if end   < 0 -> end = value length + end
-			if end is Undefined 
-				return value [start]
-			else
-				return value substring (start, end)
-			end
+			return value substring (start, end)
 		if isList(value)
-			if end is True -> end = value length
+			if end is Undefined -> end = value length
 			if start < 0 -> start = value length + start
 			if end   < 0 -> end = value length + end
-			if end is Undefined 
-				return value [start]
-			else
-				return value slice (start, end)
-			end
+			return value slice (start, end)
 		else
 			raise ("Unsupported type for slice:" + value)
 		end
