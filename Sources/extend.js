@@ -22,7 +22,7 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.0c';
+Extend._VERSION_='2.1.0d';
 Extend.Registry={}
 Extend.Class=	_meta_(function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the

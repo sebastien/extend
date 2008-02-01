@@ -22,7 +22,7 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.0c';
+Extend._VERSION_='2.1.0d';
 Extend.Registry={}
 Extend.Class=	_meta_(function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
@@ -732,6 +732,19 @@ Extend.slice=	_meta_(function(value, start, end){
 	},	{
 			arity:3,
 			arguments:[{'name': 'value'}, {'flags': '=', 'name': 'start'}, {'flags': '=', 'name': 'end'}]
+		})
+Extend.createMapFromItems=	_meta_(function(items){
+		var __this__=Extend;
+		items = Extend.sliceArguments(arguments,0)
+		 var result = {}
+		 for ( var i=0 ; i<items.length ; i++ ) {
+		   result[items[i][0]] = items[i][1]
+		 }
+		 return result
+		
+	},	{
+			arity:1,
+			arguments:[{'flags': '*', 'name': 'items'}]
 		})
 Extend.isDefined=	_meta_(function(value){
 		var __this__=Extend;

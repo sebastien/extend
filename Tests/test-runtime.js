@@ -46,4 +46,11 @@ Testing.test("R: Extend.slice for strings")
 	Testing.same(Extend.slice("hello", -2, 5),"lo")
 Testing.end()
 
+Testing.test("R: Extend.createMapFromItems")
+	Testing.same(Extend.createMapFromItems(), {})
+	Testing.same(Extend.createMapFromItems(["a",1])["a"], 1)
+	Testing.same(Extend.createMapFromItems(["a",1],["b",2])["a"], 1)
+	Testing.same(Extend.createMapFromItems(["a",1],["b",2])["b"], 2)
+Testing.end()
+
 // END
