@@ -770,7 +770,7 @@ Extend.isString=	_meta_(function(value){
 		})
 Extend.isMap=	_meta_(function(value){
 		var __this__=Extend;
-		 return !!(!typeof object == "object")
+		 return !!(!(value===null) && typeof value == "object" && !Extend.isList(value))
 		
 	},	{
 			arity:1,
@@ -778,18 +778,29 @@ Extend.isMap=	_meta_(function(value){
 		})
 Extend.isFunction=	_meta_(function(value){
 		var __this__=Extend;
-		 return !!(typeof object == "function")
+		 return !!(typeof value == "function")
 		
 	},	{
 			arity:1,
 			arguments:[{'name': 'value'}]
 		})
-Extend.isInstance=	_meta_(function(value){
+Extend.isInstance=	_meta_(function(value, ofClass){
+		// Tells if the given value is an instance (in the sense of Extend) of the
+		// given 'ofClass'. If there is no given class, then it will just return
+		// true if the value is an instance of any class.
 		var __this__=Extend;
-		return Extend.isDefined(value.getClass)
+		ofClass = ofClass === undefined ? undefined : ofClass
+		if ( ofClass )
+		{
+			return (Extend.isDefined(value.getClass) && value.isInstance(ofClass))
+		}
+		else if ( true )
+		{
+			return Extend.isDefined(value.getClass)
+		}
 	},	{
-			arity:1,
-			arguments:[{'name': 'value'}]
+			arity:2,
+			arguments:[{'name': 'value'}, {'flags': '=', 'name': 'ofClass'}]
 		})
 Extend.print=	_meta_(function(args){
 		// Prints the given arguments to the JavaScript console (available in Safari

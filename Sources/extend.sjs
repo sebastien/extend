@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.0d (01-Feb-2007)
+@version 2.1.0d (04-Feb-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -551,18 +551,25 @@
 
 	@function isMap value
 		@embed JavaScript
-		| return !!(!typeof object == "object")
+		| return !!(!(value===null) && typeof value == "object" && !Extend.isList(value))
 		@end
 	@end
 
 	@function isFunction value
 		@embed JavaScript
-		| return !!(typeof object == "function")
+		| return !!(typeof value == "function")
 		@end
 	@end
 
-	@function isInstance value
-		return isDefined (value getClass)
+	@function isInstance value, ofClass=Undefined
+	| Tells if the given value is an instance (in the sense of Extend) of the
+	| given 'ofClass'. If there is no given class, then it will just return
+	| true if the value is an instance of any class.
+		if ofClass
+			return isDefined (value getClass) and value isInstance (ofClass)
+		else
+			return isDefined (value getClass)
+		end
 	@end
 
 	# =========================================================================
