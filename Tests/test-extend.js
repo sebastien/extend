@@ -73,15 +73,23 @@ Testing.end()
 // TEST 6
 Testing.test("C: Class attribute from instance: a.getClass().V")
 	Testing.value(ClassA.Count,1) 
-	Testing.value(new_a.getClass().Count,1) 
+	Testing.value(new_a.getClass().Count,1)
 Testing.end()
 
 // TEST 7
 Testing.test("C: Instance method: a.method()")
 	Testing.value(new_a._id,0) 
-	Testing.value(new_a.hello(),"Hello:0") 
-	Testing.value(new_a.basehello(),"Hello:0") 
-	Testing.value(new_a.thishello(),"Hello:0") 
+	Testing.value(new_a.hello(),"Hello:0")
+	Testing.value(new_a.basehello(),"Hello:0")
+	Testing.value(new_a.thishello(),"Hello:0")
+Testing.end()
+
+// TEST 7a
+Testing.test("C: Operation access from instance: a.Operation()")
+	Testing.asDefined(new_a.otherHello)
+	Testing.asDefined(new_a.getCount)
+	Testing.value(new_a.otherHello(), "OtherHello")
+	Testing.value(new_a.getCount(),   1)
 Testing.end()
 
 // ===========================================================================

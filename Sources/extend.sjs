@@ -340,7 +340,13 @@
 	end
 	instance_proto getSuper        = {c|return c proxyWithState(target)}
 
+	# FIXME: This sounds a bit overkill to copy EVERY method defined here into
+	# the instance proto... as it seems redundant with the class object.
 	@embed JavaScript
+	|if ( declaration.operations != undefined ) {
+	|	for ( var name in declaration.operations ) {
+	|		instance_proto[name] = instance_proto[full_name + "_" + name] = class_object.getOperation(name)
+	|}}
 	|if ( declaration.methods != undefined ) {
 	|	for ( var name in declaration.methods ) {
 	|		instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
@@ -354,8 +360,8 @@
 
 	# We register the class in the registry
 	if (declaration name)
+		# FIXME: We have to deal with multiple declarations
 		#if (Registry [declaration name])
-		#	
 		#	throw ("Class with same name already registered: " + (declaration name))
 		#end
 		Registry [declaration name] = class_object

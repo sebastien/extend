@@ -515,6 +515,10 @@ Extend.Class=	_meta_(function(declaration){
 				arity:1,
 				arguments:[{'name': 'c'}]
 			});
+		if ( declaration.operations != undefined ) {
+			for ( var name in declaration.operations ) {
+				instance_proto[name] = instance_proto[full_name + "_" + name] = class_object.getOperation(name)
+		}}
 		if ( declaration.methods != undefined ) {
 			for ( var name in declaration.methods ) {
 				instance_proto[name] = instance_proto[full_name + "_" + name] = declaration.methods[name]
