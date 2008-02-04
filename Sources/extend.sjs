@@ -521,6 +521,20 @@
 		end
 	@end
 
+	@function isIn value, list
+	| Returns true if the given value is in the given list
+		if isList (list)
+			@embed JavaScript
+			| for ( var i=0 ; i<list.length ; i++) {
+			|   if (list[i]==value) { return true }
+			| }
+			| return false
+			@end
+		else
+			return False
+		end
+	@end
+
 	# =========================================================================
 	# PRIMITIVE FACTORY METHODS
 	# =========================================================================

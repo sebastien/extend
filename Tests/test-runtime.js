@@ -63,9 +63,15 @@ Testing.end()
 
 Testing.test("R: Extend.createMapFromItems")
 	Testing.same(Extend.createMapFromItems(), {})
-	Testing.same(Extend.createMapFromItems(["a",1])["a"], 1)
-	Testing.same(Extend.createMapFromItems(["a",1],["b",2])["a"], 1)
-	Testing.same(Extend.createMapFromItems(["a",1],["b",2])["b"], 2)
+	Testing.same(Extend.createMapFromItems(["a",1]), {a:1})
+	Testing.same(Extend.createMapFromItems(["a",1],["b",2]),{a:1,b:2})
+Testing.end()
+
+Testing.test("R: Extend.isIn")
+	Testing.asTrue(Extend.isIn(0,[0]))
+	Testing.asTrue(Extend.isIn(0,[1,0]))
+	Testing.asTrue(Extend.isIn(0,[1,0,0]))
+	Testing.asFalse(Extend.isIn(9,[1,0,0]))
 Testing.end()
 
 // END

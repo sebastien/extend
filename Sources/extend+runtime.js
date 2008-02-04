@@ -737,6 +737,25 @@ Extend.slice=	_meta_(function(value, start, end){
 			arity:3,
 			arguments:[{'name': 'value'}, {'flags': '=', 'name': 'start'}, {'flags': '=', 'name': 'end'}]
 		})
+Extend.isIn=	_meta_(function(value, list){
+		// Returns true if the given value is in the given list
+		var __this__=Extend;
+		if ( Extend.isList(list) )
+		{
+			 for ( var i=0 ; i<list.length ; i++) {
+			   if (list[i]==value) { return true }
+			 }
+			 return false
+			
+		}
+		else if ( true )
+		{
+			return false
+		}
+	},	{
+			arity:2,
+			arguments:[{'name': 'value'}, {'name': 'list'}]
+		})
 Extend.createMapFromItems=	_meta_(function(items){
 		var __this__=Extend;
 		items = Extend.sliceArguments(arguments,0)
