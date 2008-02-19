@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.0d (04-Feb-2007)
+@version 2.1.0f (19-Feb-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -33,6 +33,9 @@
 @end
 
 @shared Registry = {}
+@shared Counters = {
+	Instances:0
+}
 
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
@@ -526,6 +529,13 @@
 		if isList (list)
 			@embed JavaScript
 			| for ( var i=0 ; i<list.length ; i++) {
+			|   if (list[i]==value) { return true }
+			| }
+			| return false
+			@end
+		if isMap (list)
+			@embed JavaScript
+			| for ( var i in list )
 			|   if (list[i]==value) { return true }
 			| }
 			| return false
