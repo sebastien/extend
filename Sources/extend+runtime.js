@@ -22,8 +22,9 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.0d';
+Extend._VERSION_='2.1.0f';
 Extend.Registry={}
+Extend.Counters={"Instances":0}
 Extend.Class=	_meta_(function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
 		// following keys:
@@ -743,6 +744,14 @@ Extend.isIn=	_meta_(function(value, list){
 		if ( Extend.isList(list) )
 		{
 			 for ( var i=0 ; i<list.length ; i++) {
+			   if (list[i]==value) { return true }
+			 }
+			 return false
+			
+		}
+		else if ( Extend.isMap(list) )
+		{
+			 for ( var i in list )
 			   if (list[i]==value) { return true }
 			 }
 			 return false
