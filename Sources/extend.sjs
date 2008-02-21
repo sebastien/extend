@@ -535,7 +535,7 @@
 			@end
 		if isMap (list)
 			@embed JavaScript
-			| for ( var i in list )
+			| for ( var i in list ) {
 			|   if (list[i]==value) { return true }
 			| }
 			| return false
