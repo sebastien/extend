@@ -150,8 +150,11 @@ Extend API
       In JavaScript, if you give a method as a callback by simply doing
       'object.method', then you may have problems when the caller changes the
       'this' argument of the method. Using 'getMethod' will ensure that the this
-      is preserved. It's actually the equivalent of doing
-      'this.getClass().bindMethod(this, name)'.
+      is preserved. It's actually an equivalent of doing
+      'this.getClass().bindMethod(this, name)', except that successive calls to
+      'getMethod(...)' will always return the same function object, while
+      'bindMethod' will create a new function each time (useful to know when
+      you're using jQuery 'bind'/'unbind' functions).
 
     'getCallback(name:String)'::
       The 'getCallback' method is similar to 'getMethod', except that it will
@@ -221,6 +224,11 @@ Extend API
       method can be safely given as a callback, and even if the 'this' is
       changed in a 'method.apply(other_object, arguments)', it will be
       preserved.
+      |
+      However, it is good to note that 'bindMethod' creates a new function
+      object each time you invoke it. So when you're using it with function such
+      as jQuery 'bind'/'unbind' you'll have to make sure to keep a reference to
+      your function.
 
     'proxyWithState(o:Object)'::
       Returns an object that will have the same operations and attributes
@@ -260,7 +268,7 @@ Examples
 
   >   var Rectangle = Extend.Class(
   >     name:"Rectangle",
-  >     parent:"Shape",
+  >     parent:Shape,
   >     initialize:function(){
   >       this.points = [];
   >     }

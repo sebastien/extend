@@ -22,7 +22,7 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.0f';
+Extend._VERSION_='2.1.1';
 Extend.Registry={}
 Extend.Counters={"Instances":0}
 Extend.Class=	_meta_(function(declaration){
@@ -89,6 +89,7 @@ Extend.Class=	_meta_(function(declaration){
 				 for ( var prop in properties ) {
 				   this[prop] = properties[prop];
 				 }
+				 this._callbacks  = {}
 				
 				if ( this.initialize )
 				{
@@ -415,11 +416,23 @@ Extend.Class=	_meta_(function(declaration){
 		},{arguments:[]});
 		instance_proto.getMethod = _meta_(function(methodName){
 			var this_object=this;
-			return class_object.bindMethod(this_object, methodName)
+			var callback=this._callbacks[("M:" + methodName)];
+			if ( (callback === undefined) )
+			{
+				callback = class_object.bindCallback(this_object, methodName);
+				this._callbacks[("M:" + methodName)] = callback;
+			}
+			return callback
 		},{arguments:[{'name': 'methodName'}]});
 		instance_proto.getCallback = _meta_(function(methodName){
 			var this_object=this;
-			return class_object.bindCallback(this_object, methodName)
+			var callback=this._callbacks[("C:" + methodName)];
+			if ( (callback === undefined) )
+			{
+				callback = class_object.bindCallback(this_object, methodName);
+				this._callbacks[("C:" + methodName)] = callback;
+			}
+			return callback
 		},{arguments:[{'name': 'methodName'}]});
 		instance_proto.isInstance = _meta_(function(c){
 			return c.hasInstance(this)

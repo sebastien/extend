@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.0f (19-Feb-2007)
+@version 2.1.1 (04-Jun-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -94,6 +94,7 @@
 | >   var my_instance = new MyClass()
 
 	var full_name    = declaration name
+	# This is the function that initializes new instances
 	var class_object = {
 		if not (arguments length == 1 and arguments[0] == "__Extend_SubClass__")
 			@embed JavaScript
@@ -101,6 +102,7 @@
 			| for ( var prop in properties ) {
 			|   this[prop] = properties[prop];
 			| }
+			| this._callbacks  = {}
 			@end
 			if target initialize -> return target initialize apply (target, arguments)
 		end
@@ -329,11 +331,23 @@
 	instance_proto isClass         = {return False}
 	instance_proto getMethod       = {methodName|
 		var this_object = target
-		return class_object bindMethod(this_object, methodName)
+		# We use prefixes to avoid creating another hash in the object
+		var callback    = target _callbacks ["M:" + methodName]
+		if callback is Undefined
+			callback = class_object bindCallback(this_object, methodName)
+			target _callbacks ["M:" + methodName] = callback
+		end
+		return callback
 	}
 	instance_proto getCallback       = {methodName|
 		var this_object = target
-		return class_object bindCallback(this_object, methodName)
+		# We use prefixes to avoid creating another hash in the object
+		var callback    = target _callbacks ["C:" + methodName]
+		if callback is Undefined
+			callback = class_object bindCallback(this_object, methodName)
+			target _callbacks ["C:" + methodName] = callback
+		end
+		return callback
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
 	if declaration initialize
