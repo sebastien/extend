@@ -12,6 +12,8 @@ Version 2.5::
 	[ ] Add per-application log/warning/error
 	[ ] Extend logging system so that modules can have their own logging
 	    callbacks
+	[ ] ActionScript-compatible Class abstraction object (provides same
+	    interface between JavaScript and ActionScript)
 
 Version 2.4::
 
@@ -24,6 +26,7 @@ Version 2.3::
 	[ ] Add multiple-dispatch to methods
 	[ ] Make iteration support breaking through exceptions
 	[ ] Document how to do 'super' accesses
+	[ ] ActionScript support for the runtime functions
 
 Version 2.2::
 
