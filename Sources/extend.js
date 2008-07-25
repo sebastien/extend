@@ -22,9 +22,10 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.1';
+Extend._VERSION_='2.1.2';
 Extend.Registry={}
-Extend.Counters={"Instances":0}
+Extend.Counters={'Instances':0}
+Extend.PrintCallback=undefined
 Extend.Class=	_meta_(function(declaration){
 		// Classes are created using extend by giving a dictionary that contains the
 		// following keys:
@@ -83,7 +84,7 @@ Extend.Class=	_meta_(function(declaration){
 		var __this__=Extend;
 		var full_name=declaration.name;
 		var class_object=_meta_(function(){
-			if ( (! ((arguments.length == 1) && (arguments[0] == "__Extend_SubClass__"))) )
+			if ( (! ((arguments.length == 1) && (arguments[0] == '__Extend_SubClass__'))) )
 			{
 				 var properties = class_object.listProperties()
 				 for ( var prop in properties ) {
@@ -102,10 +103,10 @@ Extend.Class=	_meta_(function(declaration){
 		},{arguments:[]});
 		class_object._parent = declaration.parent;
 		class_object._name = declaration.name;
-		class_object._properties = {"all":{}, "inherited":{}, "own":{}};
-		class_object._shared = {"all":{}, "inherited":{}, "own":{}};
-		class_object._operations = {"all":{}, "inherited":{}, "own":{}, "fullname":{}};
-		class_object._methods = {"all":{}, "inherited":{}, "own":{}, "fullname":{}};
+		class_object._properties = {'all':{}, 'inherited':{}, 'own':{}};
+		class_object._shared = {'all':{}, 'inherited':{}, 'own':{}};
+		class_object._operations = {'all':{}, 'inherited':{}, 'own':{}, 'fullname':{}};
+		class_object._methods = {'all':{}, 'inherited':{}, 'own':{}, 'fullname':{}};
 		class_object.getName = _meta_(function(){
 			return class_object._name
 		},{arguments:[]});
@@ -404,7 +405,7 @@ Extend.Class=	_meta_(function(declaration){
 		var instance_proto={};
 		if ( declaration.parent )
 		{
-			instance_proto = new declaration.parent("__Extend_SubClass__");
+			instance_proto = new declaration.parent('__Extend_SubClass__');
 			instance_proto.constructor = class_object;
 		}
 		instance_proto.isInstance = undefined;
@@ -416,21 +417,21 @@ Extend.Class=	_meta_(function(declaration){
 		},{arguments:[]});
 		instance_proto.getMethod = _meta_(function(methodName){
 			var this_object=this;
-			var callback=this._callbacks[("M:" + methodName)];
+			var callback=this._callbacks[('M:' + methodName)];
 			if ( (callback === undefined) )
 			{
 				callback = class_object.bindCallback(this_object, methodName);
-				this._callbacks[("M:" + methodName)] = callback;
+				this._callbacks[('M:' + methodName)] = callback;
 			}
 			return callback
 		},{arguments:[{'name': 'methodName'}]});
 		instance_proto.getCallback = _meta_(function(methodName){
 			var this_object=this;
-			var callback=this._callbacks[("C:" + methodName)];
+			var callback=this._callbacks[('C:' + methodName)];
 			if ( (callback === undefined) )
 			{
 				callback = class_object.bindCallback(this_object, methodName);
-				this._callbacks[("C:" + methodName)] = callback;
+				this._callbacks[('C:' + methodName)] = callback;
 			}
 			return callback
 		},{arguments:[{'name': 'methodName'}]});
@@ -498,12 +499,12 @@ Extend.invoke=	_meta_(function(t, f, args, extra){
 		// >    }
 		// 
 		var __this__=Extend;
-		var meta=f["__meta__"];
+		var meta=f['__meta__'];
 		var actual_args=[];
-		Extend.iterate(extra["*"], _meta_(function(v){
+		Extend.iterate(extra['*'], _meta_(function(v){
 			args.push(v)
 		},{arguments:[{'name': 'v'}]}), __this__)
-		Extend.iterate(extra["**"], _meta_(function(v, k){
+		Extend.iterate(extra['**'], _meta_(function(v, k){
 			extra[k] = v;
 		},{arguments:[{'name': 'v'}, {'name': 'k'}]}), __this__)
 		Extend.iterate(args, _meta_(function(v){
@@ -516,8 +517,6 @@ Extend.invoke=	_meta_(function(t, f, args, extra){
 			actual_args.push(extra[arg.name])
 			start = (start + 1);
 		}
-		Extend.print("CALLING ", f.toSource())
-		Extend.print(" with", actual_args.toSource())
 		return f.apply(t, actual_args)
 	},{arguments:[{'name': 't'}, {'name': 'f'}, {'name': 'args'}, {'name': 'extra'}]})
 Extend.getChildrenOf=	_meta_(function(aClass){

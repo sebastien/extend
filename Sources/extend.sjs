@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.1 (04-Jun-2007)
+@version 2.1.2 (25-Jul-2007)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -26,6 +26,7 @@
 # TODO: Add a class registry (needs @shared on Modules)
 # TODO: Add a class prototype
 # TODO: Add isA, instanceOf
+# TODO: Properties should be cloned
 
 @specific ActionScript
 	@shared console  = Undefined
@@ -36,6 +37,7 @@
 @shared Counters = {
 	Instances:0
 }
+@shared PrintCallback = Undefined
 
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
@@ -430,8 +432,8 @@
 		actual_args push (extra[arg name])
 		start += 1
 	end
-	print ("CALLING ", f toSource())
-	print (" with", actual_args toSource())
+	# print ("CALLING ", f toSource())
+	# print (" with", actual_args toSource())
 	return f apply (t, actual_args)
 @end
 
@@ -636,18 +638,27 @@
 	| will output
 	|
 	| >    "Here is a dict: {a:1,b:2,c:3}"
+		if typeof(console) == "undefined" and typeof(print) is "undefined" and PrintCallback is Undefined
+			return None
+		end
+		var res = ""
 		@embed JavaScript
-		| if (typeof(console)=="undefined"&&typeof(print)=="undefined"){return;}
-		| var res = ""
 		| for ( var i=0 ; i<args.length ; i++ ) {
 		|   var val = args[i]
 		|   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
 		|   if ( i<args.length-1 ) { res += val + " " }
 		|   else { res += val }
 		| }
-		| if(typeof(console)!="undefined"){console.log(res);}
-		| else if(typeof(document)=="undefined"&&typeof(print)!="undefined"){print(res);}
 		@end
+		if PrintCallback is Undefined
+			if typeof(console) != "undefined"
+				console log (res)
+			if typeof(document) == "undefined" and typeof(print) != "undefined"
+				print (res)
+			end
+		else
+			PrintCallback (res)
+		end
 	@end
 
 @end
