@@ -24,6 +24,9 @@ Version 2.3::
 	[ ] Add multiple-dispatch to methods
 	[ ] Make iteration support breaking through exceptions
 	[ ] Document how to do 'super' accesses
+	[ ] Extract JavaScript-specific code
+	[ ] Extract ActionScript-specific code
+	[ ] Build separate ActionScript and JavaScript versions
 
 Version 2.2::
 
