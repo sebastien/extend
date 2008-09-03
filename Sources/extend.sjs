@@ -1,5 +1,5 @@
 @module Extend
-@version 2.1.2 (25-Jul-2007)
+@version 2.1.3 (03-Sep-2008)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -616,6 +616,19 @@
 		else
 			return isDefined (value getClass)
 		end
+	@end
+
+	@function getMethodOf instance, name
+		return instance[name]
+	@end
+
+	@function getClassOf instance
+		@embed ActionScript
+		|return getDefinitionByName(getQualifiedSuperClassName(instance));
+		@end
+		@embed JavaScript
+		|return instance.getClass()
+		@end
 	@end
 
 	# =========================================================================

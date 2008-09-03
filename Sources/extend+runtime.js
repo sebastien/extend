@@ -22,7 +22,7 @@
 function _meta_(v,m){var ms=v['__meta__']||{};for(var k in m){ms[k]=m[k]};v['__meta__']=ms;return v}
 var Extend={}
 var __this__=Extend
-Extend._VERSION_='2.1.2';
+Extend._VERSION_='2.1.3';
 Extend.Registry={}
 Extend.Counters={'Instances':0}
 Extend.PrintCallback=undefined
@@ -699,6 +699,18 @@ Extend.isInstance=	_meta_(function(value, ofClass){
 			return Extend.isDefined(value.getClass)
 		}
 	},{arguments:[{'name': 'value'}, {'flags': '=', 'name': 'ofClass'}]})
+Extend.getMethodOf=	_meta_(function(instance, name){
+		var __this__=Extend;
+		return instance[name]
+	},{arguments:[{'name': 'instance'}, {'name': 'name'}]})
+Extend.getClassOf=	_meta_(function(instance){
+		var __this__=Extend;
+		// Unable to embed the following code
+		// return getDefinitionByName(getQualifiedSuperClassName(instance));
+		// 
+		return instance.getClass()
+		
+	},{arguments:[{'name': 'instance'}]})
 Extend.print=	_meta_(function(args){
 		// Prints the given arguments to the JavaScript console (available in Safari
 		// and in Mozilla if you've installed FireBug), or using the 'print' command
