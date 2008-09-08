@@ -27,6 +27,9 @@ Version 2.3::
 	[ ] Make iteration support breaking through exceptions
 	[ ] Document how to do 'super' accesses
 	[ ] ActionScript support for the runtime functions
+	[ ] Extract JavaScript-specific code
+	[ ] Extract ActionScript-specific code
+	[ ] Build separate ActionScript and JavaScript versions
 
 Version 2.2::
 
