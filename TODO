@@ -1,0 +1,4 @@
+- Add prototype support
+- Add singleton support
+- Find a way so that meta-information can be more lightweight (and automatically
+  updated)
