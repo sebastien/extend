@@ -1,5 +1,5 @@
-@module Extend
-@version 2.1.3 (03-Sep-2008)
+@module extend
+@version 2.1.4 (08-Sep-2008)
 
 @target JavaScript
 | This module implements a complete OOP layer for JavaScript that makes it
@@ -129,49 +129,49 @@
 	class_object hasInstance   = {o|
 		return o getClass() isSubclassOf (class_object)
 	}
-	class_object bindMethod = {object, methodName|
-		var this_method = object [methodName]
+	class_object bindMethod = {obj, methodName|
+		var this_method = obj [methodName]
 		# FIXME: Throw exception if this_method is not defined
 		return {
 			var a = arguments
 			if a length == 0
-				return this_method call (object)
+				return this_method call (obj)
 			if a length == 1
-				return this_method call (object, a[0])
+				return this_method call (obj, a[0])
 			if a length == 2
-				return this_method call (object, a[0], a[1])
+				return this_method call (obj, a[0], a[1])
 			if a length == 3
-				return this_method call (object, a[0], a[1], a[2])
+				return this_method call (obj, a[0], a[1], a[2])
 			if a length == 4
-				return this_method call (object, a[0], a[1], a[2], a[3])
+				return this_method call (obj, a[0], a[1], a[2], a[3])
 			if a length == 5
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4])
+				return this_method call (obj, a[0], a[1], a[2], a[3], a[4])
 			else
 				var args=[] ; args concat(arguments)
-				return this_method apply (object, args)
+				return this_method apply (obj, args)
 			end
 		}
 	}
-	class_object bindCallback = {object, methodName|
-		var this_method = object [methodName]
+	class_object bindCallback = {obj, methodName|
+		var this_method = obj [methodName]
 		# FIXME: Throw exception if this_method is not defined
 		return {
 			var a = arguments
 			if a length == 0
-				return this_method call (object, target)
+				return this_method call (obj, target)
 			if a length == 1
-				return this_method call (object, a[0], target)
+				return this_method call (obj, a[0], target)
 			if a length == 2
-				return this_method call (object, a[0], a[1], target)
+				return this_method call (obj, a[0], a[1], target)
 			if a length == 3
-				return this_method call (object, a[0], a[1], a[2], target)
+				return this_method call (obj, a[0], a[1], a[2], target)
 			if a length == 4
-				return this_method call (object, a[0], a[1], a[2], a[3], target)
+				return this_method call (obj, a[0], a[1], a[2], a[3], target)
 			if a length == 5
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
+				return this_method call (obj, a[0], a[1], a[2], a[3], a[4], target)
 			else
 				var args=[] ; args concat(arguments) ; args push(target)
-				return this_method apply (object, args)
+				return this_method apply (obj, args)
 			end
 		}
 	}
