@@ -1,3 +1,9 @@
+@module extend
+
+@shared Counters = {
+	Instances:0
+}
+
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the
 | following keys:

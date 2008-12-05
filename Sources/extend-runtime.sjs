@@ -1,11 +1,4 @@
-
-@function getClass name
-	return Registry [name]
-@end
-
-@function getClasses
-	return Registry
-@end
+@module extend
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -39,19 +32,6 @@
 	print (" with", actual_args toSource())
 	return f apply (t, actual_args)
 @end
-
-@function getChildrenOf aClass:Class
-	var res = {}
-	@embed JavaScript
-	|var values = Extend.getClasses()
-	|for ( key in values ) {
-	|	if ( values[key] != aClass && values[key].isSubclassOf(aClass) )
-	|	{ res[key] = values[key] }
-	|}
-	@end
-	return res
-@end
-
 
 # =========================================================================
 # ARRAY OPERATIONS
@@ -219,6 +199,19 @@
 	end
 @end
 
+@function getMethodOf instance, name
+	return instance[name]
+@end
+
+@function getClassOf instance
+	@embed ActionScript
+	|return getDefinitionByName(getQualifiedSuperClassName(instance));
+	@end
+	@embed JavaScript
+	|return instance.getClass()
+	@end
+@end
+
 # =========================================================================
 # STDIO
 # =========================================================================
@@ -239,18 +232,27 @@
 | will output
 |
 | >    "Here is a dict: {a:1,b:2,c:3}"
+	if typeof(console) == "undefined" and typeof(print) is "undefined" and PrintCallback is Undefined
+		return None
+	end
+	var res = ""
 	@embed JavaScript
-	| if (typeof(console)=="undefined"&&typeof(print)=="undefined"){return;}
-	| var res = ""
 	| for ( var i=0 ; i<args.length ; i++ ) {
 	|   var val = args[i]
 	|   if ( val!=undefined && typeof(val) == "object" && val.toSource != undefined) { val = val.toSource() }
 	|   if ( i<args.length-1 ) { res += val + " " }
 	|   else { res += val }
 	| }
-	| if(typeof(console)!="undefined"){console.log(res);}
-	| else if(typeof(document)=="undefined"&&typeof(print)!="undefined"){print(res);}
 	@end
+	if PrintCallback is Undefined
+		if typeof(console) != "undefined"
+			console log (res)
+		if typeof(document) == "undefined" and typeof(print) != "undefined"
+			print (res)
+		end
+	else
+		PrintCallback (res)
+	end
 @end
 
 #EOF
