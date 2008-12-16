@@ -2,6 +2,7 @@
 @version 2.2.0
 
 @shared ErrorCallback
+@shared PrintCallback
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -233,7 +234,8 @@
 | will output
 |
 | >    "Here is a dict: {a:1,b:2,c:3}"
-	if typeof(console) == "undefined" and typeof(print) is "undefined" and PrintCallback is Undefined
+	var pr_func = eval("print")
+	if typeof(console) == "undefined" and typeof(pr_func) is "undefined" and PrintCallback is Undefined
 		return None
 	end
 	var res = ""
@@ -248,8 +250,8 @@
 	if PrintCallback is Undefined
 		if typeof(console) != "undefined"
 			console log (res)
-		if typeof(document) == "undefined" and typeof(print) != "undefined"
-			print (res)
+		if typeof(document) == "undefined" and typeof(pr_func) != "undefined"
+			pr_func (res)
 		end
 	else
 		PrintCallback (res)

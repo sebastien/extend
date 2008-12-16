@@ -12,7 +12,7 @@ EXTEND_AS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_AS_SOURCE:=$(EXTEND_AS_SOURCE:%=Sources/extend-%.sjs)
 PRODUCTS=$(EXTEND_JS) $(EXTEND_JS_MIN) $(API_DOC)
 API_DOC=Distribution/extend-api-$(VERSION).html
-SUGAR=sugar
+SUGAR=sugar -ONORUNTIME
 PAMELA=pamela
 PAMELAWEB=pamela-web
 
@@ -23,6 +23,9 @@ PAMELAWEB=pamela-web
 all: doc dist
 	echo $(PRODUCTS)
 
+functions:
+	@grep @function Sources/*.sjs | cut -d' ' -f2 | sort | uniq | cut -d':' -f1 
+	
 doc: $(API_DOC) $(DOC_HTML)
 	@echo "Documentation ready."
 
