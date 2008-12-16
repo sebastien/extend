@@ -4,11 +4,11 @@ DOC_TEXT=$(shell echo *.txt)
 DOC_HTML=$(DOC_TEXT:.txt=.html)
 TEST_EXTEND=Tests/test-extend.html
 VERSION=$(shell grep @version Sources/*.sjs | cut -d' ' -f2)
-EXTEND_JS=extend-$(VERSION).js
-EXTEND_JS_MIN=extend-$(VERSION).min.js
+EXTEND_JS=Distribution/extend-$(VERSION).js
+EXTEND_JS_MIN=Distribution/extend-$(VERSION).min.js
 EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_JS_SOURCE:=$(EXTEND_JS_SOURCE:%=Sources/extend-%.sjs)
-API_DOC=extend-api.html
+API_DOC=Distribution/extend-api-$(VERSION).html
 SUGAR=sugar
 PAMELA=pamela
 PAMELAWEB=pamela-web
@@ -24,6 +24,7 @@ doc: $(API_DOC) $(DOC_HTML)
 
 dist: $(EXTEND_JS) $(EXTEND_JS_MIN)
 	@echo "Distribution ready."
+	@cd Tests && ln -s ../$(EXTEND_JS) lib/extend.js
 
 clean:
 	rm $(EXTEND_JS) $(EXTEND_JS_MIN) $(API_DOC)
@@ -31,9 +32,11 @@ clean:
 # Specific rules _____________________________________________________________
 
 $(EXTEND_JS): $(EXTEND_JS_SOURCE)
+	@mkdir -p `basename $@`
 	$(SUGAR) -cljavascript $^ > $@
 
 $(API_DOC): $(EXTEND_JS_SOURCE)
+	@mkdir -p `basename $@`
 	$(SUGAR) -a $@ $^ > /dev/null
 
 %.min.js: %.js
