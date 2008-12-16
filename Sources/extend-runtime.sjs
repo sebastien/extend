@@ -1,4 +1,5 @@
 @module extend
+@version 2.1.5
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -178,7 +179,7 @@
 
 @function isMap value
 	@embed JavaScript
-	| return !!(!(value===null) && typeof value == "object" && !Extend.isList(value))
+	| return !!(!(value===null) && typeof value == "object" && !extend.isList(value))
 	@end
 @end
 
@@ -189,7 +190,7 @@
 @end
 
 @function isInstance value, ofClass=Undefined
-| Tells if the given value is an instance (in the sense of Extend) of the
+| Tells if the given value is an instance (in the sense of extend) of the
 | given 'ofClass'. If there is no given class, then it will just return
 | true if the value is an instance of any class.
 	if ofClass
@@ -227,7 +228,7 @@
 |
 | Example:
 |
-| >    Extend print ("Here is a dict:", {a:1,b:2,c:3})
+| >    extend print ("Here is a dict:", {a:1,b:2,c:3})
 |
 | will output
 |

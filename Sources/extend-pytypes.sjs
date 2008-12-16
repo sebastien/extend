@@ -1,4 +1,4 @@
-@module extend.python
+@module extend
 
 @function len:Integer value
 	if isList(value)

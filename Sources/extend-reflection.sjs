@@ -28,7 +28,7 @@
 @function getChildrenOf aClass:Class
 	var res = {}
 	@embed JavaScript
-	|var values = Extend.getClasses()
+	|var values = extend.getClasses()
 	|for ( key in values ) {
 	|	if ( values[key] != aClass && values[key].isSubclassOf(aClass) )
 	|	{ res[key] = values[key] }

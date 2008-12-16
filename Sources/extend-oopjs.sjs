@@ -9,7 +9,7 @@
 | following keys:
 |
 | - 'name', an optional name for this class
-| - 'parent', with a reference to a parent class (created with Extend)
+| - 'parent', with a reference to a parent class (created with extend)
 | - 'initialize', with a function to be used as a constructor
 | - 'properties', with a dictionary of instance attributes
 | - 'methods', with a dictionary of instance methods
@@ -46,7 +46,7 @@
 |
 | Using the 'Class' function is very easy (in *Sugar*):
 |
-| >   var MyClass = Extend Class {
+| >   var MyClass = extend Class {
 | >      name:"MyClass"
 | >      initialize:{
 | >         self message = "Hello, world !"
