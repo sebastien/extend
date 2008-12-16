@@ -4,7 +4,6 @@
 DOC_TEXT=$(shell echo *.txt)
 DOC_HTML=$(DOC_TEXT:.txt=.html)
 TEST_EXTEND=Tests/test-extend.html
-VERSION=$(shell grep @version Sources/*.sjs | cut -d' ' -f2)
 EXTEND_JS=Distribution/extend.js
 EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_JS_SOURCE:=$(EXTEND_JS_SOURCE:%=Sources/extend-%.sjs)

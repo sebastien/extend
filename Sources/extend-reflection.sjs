@@ -1,100 +1,71 @@
-// 8< ---[extend.js]---
+@module extend
 
-var extend=extend||{}
-var __this__=extend
-extend.car=	function(list){
-		var __this__=extend;
-	}
-extend.cdr=	function(list){
-		var __this__=extend;
-	}
-extend.cons=	function(list){
-		var __this__=extend;
-	}
-extend.map=	function(callback, iterable){
-		var __this__=extend;
-	}
-extend.filter=	function(callback, iterable){
-		var __this__=extend;
-	}
-extend.reduce=	function(callback, iterable){
-		var __this__=extend;
-	}
-extend.init=	function(){
-		var __this__=extend;
-	}
-extend.init()
-// 8< ---[_RW_extend46python.js]---
+@shared Registry = {}
 
-var _RW_extend46python=_RW_extend46python||{}
-var __this__=_RW_extend46python
-_RW_extend46python.len=	function(value){
-		var __this__=_RW_extend46python;
-		if ( isList(value) )
-		{
-			return value.length
-		}
-		else if ( isObject(value) )
-		{
-			if ( value.length )
-			{
-				return value.length
-			}
-			else if ( value.__len__ )
-			{
-				return value.__len__()
-			}
-		}
-		else if ( true )
-		{
-			return null
-		}
-	}
-_RW_extend46python.map=	function(callback, iterable){
-		var __this__=_RW_extend46python;
-	}
-_RW_extend46python.filter=	function(callback, iterable){
-		var __this__=_RW_extend46python;
-	}
-_RW_extend46python.reduce=	function(callback, iterable){
-		var __this__=_RW_extend46python;
-	}
-_RW_extend46python.init=	function(){
-		var __this__=_RW_extend46python;
-		String.prototype.__len__ = function(){
-			return this.length
-		};
-		Array.prototype.extend = function(){
-		};
-		Array.prototype.append = function(){
-		};
-		Array.prototype.insert = function(){
-		};
-		Array.prototype.slice = function(){
-		};
-		Array.prototype.__iter__ = function(){
-			return this.length
-		};
-		Array.prototype.__len__ = function(){
-			return this.length
-		};
-		Object.prototype.keys = function(){
-		};
-		Object.prototype.items = function(){
-		};
-		Object.prototype.values = function(){
-		};
-		Object.prototype.hasKey = function(key){
-		};
-		Object.prototype.get = function(key){
-		};
-		Object.prototype.set = function(key, value){
-		};
-		Object.prototype.setDefault = function(key, value){
-		};
-		Object.prototype.__iter__ = function(){
-		};
-		Object.prototype.__len__ = function(){
-		};
-	}
-_RW_extend46python.init()
+@function getClass name
+	return Registry [name]
+@end
+
+@function getParentClass object
+	return Registry [name]
+@end
+
+@function getClasses
+	return Registry
+@end
+
+@function getMethod name, object
+@end
+
+
+@function getSuperMethod name, object
+@end
+
+@function getSuperMethod name, object
+@end
+
+
+@function getChildrenOf aClass:Class
+	var res = {}
+	@embed JavaScript
+	|var values = Extend.getClasses()
+	|for ( key in values ) {
+	|	if ( values[key] != aClass && values[key].isSubclassOf(aClass) )
+	|	{ res[key] = values[key] }
+	|}
+	@end
+	return res
+@end
+
+@function invoke t, f, args, extra
+| The 'invoke' method allows advanced invocation (supporting by name, as list
+| and as map invocation schemes) provided the given function 'f' has proper
+| '__meta__' annotation.
+|
+| These annotations are expected to be like:
+|
+| >    f __meta__ = {
+| >        arity:2
+| >        arguments:{
+| >           b:2,
+| >           "*":[1]
+| >           "**":{c:3,d:4}
+| >        }
+| >    }
+|
+	# TODO: Add consistency checks for invocation
+	var meta = f ['__meta__']
+	var actual_args = [] 
+	extra ["*"]  :: {v   | args push(v) }
+	extra ["**"] :: {v,k | extra[k] = v }
+	args :: {v|actual_args push(args)}
+	var start = args length
+	while start < meta arity
+		var arg = meta arguments [start]
+		actual_args push (extra[arg name])
+		start += 1
+	end
+	# print ("CALLING ", f toSource())
+	# print (" with", actual_args toSource())
+	return f apply (t, actual_args)
+@end
