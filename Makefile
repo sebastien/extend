@@ -1,47 +1,42 @@
 # Extend Makefile (19-Jun-2007)
 # TODO: Replace all this with source/target shortcuts
 #
-SUGAR=sugar
-PAMELA=pamela
-PAMELAWEB=pamela-web
-EXTEND_SOURCE=Sources/extend.sjs
-EXTEND_DIST=Sources/extend.js
-EXTEND_SUGAR_DIST=Sources/extend+runtime.js
-API_DOC=Documentation/extend.html
-API_DOC_SUGAR=Documentation/extend+runtime.html
 DOC_TEXT=$(shell echo *.txt)
 DOC_HTML=$(DOC_TEXT:.txt=.html)
 TEST_EXTEND=Tests/test-extend.html
+VERSION=$(shell grep @version Sources/*.sjs | cut -d' ' -f2)
+EXTEND_JS=Distribution/extend.js
+EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
+EXTEND_JS_SOURCE:=$(EXTEND_JS_SOURCE:%=Sources/extend-%.sjs)
+API_DOC=extend-api.html
+SUGAR=sugar
+PAMELA=pamela
+PAMELAWEB=pamela-web
 
 .PHONY: doc
 
 # Generic rules ______________________________________________________________
 
 all: doc dist
-	@echo
+	echo $(EXTEND_JS)
 
-doc: $(API_DOC) $(API_DOC_SUGAR) $(DOC_HTML)
+doc: $(API_DOC) $(DOC_HTML)
 	@echo "Documentation ready."
 
-dist: $(EXTEND_DIST) $(EXTEND_SUGAR_DIST)
+dist: $(EXTEND_JS)
 	@echo "Distribution ready."
 
 clean:
-	rm $(EXTEND_DIST) $(EXTEND_SUGAR_DIST) $(API_DOC) $(API_DOC_SUGAR)
+	rm $(EXTEND_JS) $(API_DOC)
 
 # Specific rules _____________________________________________________________
 
-$(EXTEND_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -cljavascript $< > $@
+$(EXTEND_JS): $(EXTEND_JS_SOURCE)
+	@mkdir -p `dirname $@`
+	$(SUGAR) -cljavascript $^ > $@
 
-$(EXTEND_SUGAR_DIST): $(EXTEND_SOURCE)
-	$(SUGAR) -cljavascript -DSUGAR_RUNTIME $< > $@
-
-$(API_DOC): $(EXTEND_SOURCE)
+$(API_DOC): $(EXTEND_JS_SOURCE)
 	$(SUGAR) -a $@ $< > /dev/null
-
-$(API_DOC_SUGAR): $(EXTEND_SOURCE)
-	$(SUGAR) -DSUGAR_RUNTIME -a $@ $< > /dev/null
 
 %.html: %.txt
 	kiwi $< $@

@@ -1,4 +1,4 @@
-@module extend.functional
+@module extend
 
 @function car list
 @end
