@@ -1,6 +1,8 @@
 @module extend
 @version 2.1.5
 
+@shared ErrorCallback
+
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
 | and as map invocation schemes) provided the given function 'f' has proper
@@ -29,8 +31,6 @@
 		actual_args push (extra[arg name])
 		start += 1
 	end
-	print ("CALLING ", f toSource())
-	print (" with", actual_args toSource())
 	return f apply (t, actual_args)
 @end
 
@@ -253,6 +253,20 @@
 		end
 	else
 		PrintCallback (res)
+	end
+@end
+
+@function error message
+	if ErrorCallback
+		ErrorCallback (message)
+	else
+		print ("[!] " + message)
+	end
+@end
+
+@function assert predicate, message
+	if not predicate
+		error (message)
 	end
 @end
 

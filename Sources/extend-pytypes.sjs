@@ -24,55 +24,55 @@
 @end
 
 
-String prototype __len__ = {
+String __len__ = {
 	return target length
 }
 
-Array prototype extend = {
+Array extend = {array|
 }
 
-Array prototype append = {
+Array append = {
 }
 
-Array prototype insert = {
+Array insert = {
 }
 
-Array prototype slice = {
+Array slice = {
 }
 
-Array prototype __iter__ = {
+Array __iter__ = {
 	return target length
 }
 
-Array prototype __len__ = {
+Array __len__ = {
 	return target length
 }
 
-Object prototype keys = {
+Object keys = {
 }
 
-Object prototype items = {
+Object items = {
 }
 
-Object prototype values = {
+Object values = {
 }
 
-Object prototype hasKey = {key|
+Object hasKey = {key|
 }
 
-Object prototype get = {key|
+Object get = {key|
 }
 
-Object prototype set = {key,value|
+Object set = {key,value|
 }
 
-Object prototype setDefault = {key,value|
+Object setDefault = {key,value|
 }
 
-Object prototype __iter__ = {
+Object __iter__ = {
 }
 
-Object prototype __len__ = {
+Object __len__ = {
 }
 
 # EOF

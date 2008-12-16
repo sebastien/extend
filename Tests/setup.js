@@ -1,5 +1,7 @@
 // TEST SETUP ________________________________________________________________
 // TODO: Convert to Sugar
+$(document).ready(function(){$(".VERSION").html("" + extend.__VERSION__)})
+
 Testing.OnTestStart = function(testId, testName) {
 	var test_row = html.tr(
 		{"id":"test_" + testId, "class":"test testRunning"},
