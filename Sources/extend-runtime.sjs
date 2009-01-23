@@ -140,13 +140,19 @@
 @function access value, index
 	if isList(value)
 		if index >= 0
-			return value[index]
+			@embed JavaScript
+			|return value[index]
+			@end
 		else
-			return value[value length + index]
+			@embed JavaScript
+			|return value[value.length + index]
+			@end
 		end
 	else
 		# FIXME: Support access protocol for objects
-		return value[index]
+		@embed JavaScript
+		|return value[index]
+		@end
 	end
 @end
 
