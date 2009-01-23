@@ -1,19 +1,5 @@
 @module extend
 
-@function len:Integer value
-	if isList(value)
-		return value length
-	if isObject(value)
-		if value length
-			return value length
-		if value __len__
-			return value __len__ ()
-		end
-	else
-		return None
-	end
-@end
-
 @function map callback, iterable
 @end
 

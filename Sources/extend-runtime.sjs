@@ -1,5 +1,5 @@
 @module extend
-@version 2.2.0
+@version 2.2.1
 
 @shared ErrorCallback
 @shared PrintCallback
@@ -120,6 +120,33 @@
 		return value slice (start, end)
 	else
 		raise ("Unsupported type for slice:" + value)
+	end
+@end
+
+@function len:Integer value
+	if isList(value)
+		return value length
+	if isObject(value)
+		if value length
+			return value length
+		if value __len__
+			return value __len__ ()
+		end
+	else
+		return None
+	end
+@end
+
+@function access value, index
+	if isList(value)
+		if index >= 0
+			return value[index]
+		else
+			return value[value length + index]
+		end
+	else
+		# FIXME: Support access protocol for objects
+		return value[index]
 	end
 @end
 
