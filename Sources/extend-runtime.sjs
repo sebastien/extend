@@ -206,8 +206,10 @@
 @function isList value
 	# We took our inspiration from here, and added support for null
 	# <http://base2.googlecode.com/svn/version/1.0(beta2)/src/base2.js>
+	# and then from 
+	# <http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/>
 	@embed JavaScript
-	| return !!( !(value===null) && typeof value == "object" && value.join && value.splice);
+	| return Object.prototype.toString.call(value) === '[object Array]';
 	@end
 @end
 
