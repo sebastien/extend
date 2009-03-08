@@ -1,5 +1,5 @@
 @module extend
-@version 2.2.1
+@version 2.2.3
 
 @shared ErrorCallback
 @shared PrintCallback
@@ -137,6 +137,10 @@
 	end
 @end
 
+@function type value
+	return typeof(value)
+@end
+
 @function access value, index
 	if isList(value)
 		if index >= 0
@@ -207,6 +211,10 @@
 	@end
 @end
 
+@function isNumber value
+	return typeof (value) == "number"
+@end
+
 @function isString value
 	return typeof (value) == "string"
 @end
@@ -220,6 +228,12 @@
 @function isFunction value
 	@embed JavaScript
 	| return !!(typeof value == "function")
+	@end
+@end
+
+@function isObject value
+	@embed JavaScript
+	| return !!(typeof value == "object")
 	@end
 @end
 
