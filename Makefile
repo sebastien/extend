@@ -5,6 +5,7 @@ TEST_EXTEND=Tests/test-extend.html
 VERSION=$(shell grep @version Sources/*.sjs | cut -d' ' -f2)
 EXTEND_JS=Distribution/extend-$(VERSION).js
 EXTEND_AS=Distribution/extend-$(VERSION).as
+EXTEND_SWC=Distribution/extend-$(VERSION).swc
 EXTEND_JS_MIN=Distribution/extend-$(VERSION).min.js
 EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_JS_SOURCE:=$(EXTEND_JS_SOURCE:%=Sources/extend-%.sjs)
@@ -45,6 +46,9 @@ $(EXTEND_JS): $(EXTEND_JS_SOURCE)
 $(EXTEND_AS): $(EXTEND_AS_SOURCE)
 	@mkdir -p `dirname $@`
 	$(SUGAR) -clactionscript $^ > $@
+
+$(EXTEND_SWC): $(EXTEND_AS)
+	 compc -compiler.strict=false -source-path Distribution -include-sources $< -o extend.swc
 
 $(API_DOC): $(EXTEND_JS_SOURCE)
 	@mkdir -p `dirname $@`
