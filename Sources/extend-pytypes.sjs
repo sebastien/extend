@@ -33,84 +33,86 @@
 @end
 
 
-String __len__ = {
-	return target length
-}
+@function extendPrimitiveTypes
+	String prototype __len__ = {
+		return target length
+	}
 
-Array extend = {array|
-	array :: {e|target append (e)}
-}
+	Array prototype extend = {array|
+		array :: {e|target append (e)}
+	}
 
-Array append = {e|
-	target push (e)
-}
+	Array prototype append = {e|
+		target push (e)
+	}
 
-Array insert = {e,i|
-	target splice (i,e)
-}
+	Array prototype insert = {e,i|
+		target splice (i,e)
+	}
 
-Array slice = {
-}
+	Array prototype slice = {
+	}
 
-Array __iter__ = {
-	return target length
-}
+	Array prototype __iter__ = {
+		return target length
+	}
 
-Array __len__ = {
-	return target length
-}
+	Array prototype __len__ = {
+		return target length
+	}
 
-Object keys = {
-	var result = []
-	@embed JavaScript
-	|for (var k in this) { var key=k ; result.push(key) }
-	@end
-	return result
-}
+	Object prototype keys = {
+		var result = []
+		@embed JavaScript
+		|for (var k in this) { var key=k ; result.push(key) }
+		@end
+		return result
+	}
 
-Object items = {
-	var result = []
-	@embed JavaScript
-	|for (var k in this) { var key=k ; result.push([key,this[key]]) }
-	@end
-	return result
-}
+	Object prototype items = {
+		var result = []
+		@embed JavaScript
+		|for (var k in this) { var key=k ; result.push([key,this[key]]) }
+		@end
+		return result
+	}
 
-Object values = {
-	var result = []
-	@embed JavaScript
-	|for (var k in this) { var key=k ; result.push([key,this[key]]) }
-	@end
-	return result
-}
+	Object prototype values = {
+		var result = []
+		@embed JavaScript
+		|for (var k in this) { var key=k ; result.push([key,this[key]]) }
+		@end
+		return result
+	}
 
-Object hasKey = {key|
-	return typeof(this[key]) != "undefined"
-}
+	Object prototype hasKey = {key|
+		return typeof(this[key]) != "undefined"
+	}
 
-Object get = {key|
-	return target[key]
-}
+	Object prototype get = {key|
+		return target[key]
+	}
 
-Object set = {key,value|
-	target[key] = value
-	return this
-}
-
-Object setDefault = {key,value|
-	if typeof(target[key]) != "undefined"
-		return  target[key]
-	else
+	Object prototype set = {key,value|
 		target[key] = value
-		return value
-	end
-}
+		return this
+	}
 
-Object __iter__ = {
-}
+	Object prototype setDefault = {key,value|
+		if typeof(target[key]) != "undefined"
+			return  target[key]
+		else
+			target[key] = value
+			return value
+		end
+	}
 
-Object __len__ = {
-	return target keys () length
-}
+	Object prototype __iter__ = {
+	}
+
+	Object prototype __len__ = {
+		return target keys () length
+	}
+@end
 
 # EOF

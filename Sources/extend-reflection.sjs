@@ -25,7 +25,7 @@
 @end
 
 
-@function getChildrenOf aClass:Class
+@function getChildrenOf aClass
 	var res = {}
 	@embed JavaScript
 	|var values = extend.getClasses()

@@ -1,5 +1,5 @@
 @module extend
-@version 2.2.3
+@version 2.2.4
 
 @shared ErrorCallback
 @shared PrintCallback
@@ -61,7 +61,7 @@
 	return result
 @end
 
-@function iterate value:any, callback:Function, context:Object
+@function iterate value, callback:Function, context:Object
 | Iterates on the given values. If 'value' is an array, the _callback_ will be
 | invoked on each item (giving the 'value[i], i' as argument) until the callback
 | returns 'false'. If 'value' is a dictionary, the callback will be applied
