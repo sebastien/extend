@@ -1,5 +1,7 @@
 @module extend
 @version 2.2.4
+@import flash.utils.getDefinitionByName
+@import flash.utils.getQualifiedSuperclassName
 
 @shared ErrorCallback
 @shared PrintCallback
@@ -256,7 +258,7 @@
 
 @function getClassOf instance
 	@embed ActionScript
-	|return getDefinitionByName(getQualifiedSuperClassName(instance));
+	|return getDefinitionByName(getQualifiedSuperclassName(instance));
 	@end
 	@embed JavaScript
 	|return instance.getClass()
