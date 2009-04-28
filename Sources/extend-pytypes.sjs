@@ -1,39 +1,7 @@
 @module extend
 
-@function map callback, iterable
-	var result = []
-	for e in iterable
-		result append (callback (e))
-	end
-	return result
-@end
-
-@function filter callback, iterable
-	var result = []
-	for e in iterable
-		if callback 'e
-			result append 'e
-		end
-	end
-	return result
-@end
-
-@function reduce callback, iterable
-	var first  = True
-	var result = Undefined
-	for e in iterable
-		if first
-			result = callback(e)
-			first  = False
-		else
-			result = callback(e, result)
-		end
-	end
-	return result
-@end
-
-
 @function extendPrimitiveTypes
+	# FIXME: This is incompatible with jQuery and all... shoule define specific types instead
 	String prototype __len__ = {
 		return target length
 	}

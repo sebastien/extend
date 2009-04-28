@@ -1,7 +1,8 @@
 @module extend
-@version 2.2.4
+@version 2.2.5
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
+@import flash.external.ExternalInterface
 
 @shared ErrorCallback
 @shared PrintCallback

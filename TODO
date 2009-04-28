@@ -1,3 +1,8 @@
+- Add error/warn/info
+- Add isActionScript isJavaScript
+- Add sprintf
+
+
 - Add prototype support
 - Add singleton support
 - Find a way so that meta-information can be more lightweight (and automatically
