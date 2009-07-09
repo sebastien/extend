@@ -1,3 +1,5 @@
+- Reference to 'this' in classes, when 'this' can be altered (by jQuery for instance)
+
 - Add error/warn/info
 - Add isActionScript isJavaScript
 - Add sprintf

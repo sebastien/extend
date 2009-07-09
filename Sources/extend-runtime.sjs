@@ -1,10 +1,11 @@
 @module extend
-@version 2.2.5
+@version 2.2.6
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
 
 @shared ErrorCallback
+@shared DebugCallback
 @shared PrintCallback
 
 @function invoke t, f, args, extra
@@ -315,6 +316,14 @@
 		ErrorCallback (message)
 	else
 		print ("[!] " + message)
+	end
+@end
+
+@function debug message
+	if DebugCallback
+		DebugCallback (message)
+	else
+		print ("[ ] " + message)
 	end
 @end
 
