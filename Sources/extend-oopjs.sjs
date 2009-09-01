@@ -294,13 +294,34 @@
 	instance_proto isInstance      = Undefined
 	instance_proto getClass        = {return class_object}
 	instance_proto isClass         = {return False}
+	instance_proto _methodCache    = Undefined
 	instance_proto getMethod       = {methodName|
 		var this_object = target
-		return class_object bindMethod(this_object, methodName)
+		if not (this_object __methodCache) -> this_object __methodCache = {}
+		# We use a cache so that multiple calls to getMethod will actually
+		# return the same object
+		if this_object __methodCache [methodName]
+			return this_object __methodCache [methodName]
+		else
+			var m = class_object bindMethod(this_object, methodName)
+			this_object __methodCache [methodName] = m
+			return m
+		end
 	}
 	instance_proto getCallback       = {methodName|
 		var this_object = target
-		return class_object bindCallback(this_object, methodName)
+		var this_object = target
+		if not (this_object __methodCache) -> this_object __methodCache = {}
+		var callback_name = methodName + "_k"
+		# We use a cache so that multiple calls to getMethod will actually
+		# return the same object
+		if this_object __methodCache [callback_name]
+			return this_object __methodCache [callback_name]
+		else
+			var m = class_object bindCallback(this_object, methodName)
+			this_object __methodCache [callback_name] = m
+			return m
+		end
 	}
 	instance_proto isInstance      = {c|return c hasInstance(target)}
 	if declaration initialize
