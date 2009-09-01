@@ -335,6 +335,7 @@
 
 @function fail message
 	error (message)
+	return False
 @end
 
 #EOF
