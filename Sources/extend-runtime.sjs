@@ -1,5 +1,5 @@
 @module extend
-@version 2.2.6
+@version 2.2.7
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -331,6 +331,10 @@
 	if not predicate
 		error (message)
 	end
+@end
+
+@function fail message
+	error (message)
 @end
 
 #EOF
