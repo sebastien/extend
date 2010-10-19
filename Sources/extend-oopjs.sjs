@@ -90,7 +90,7 @@
 		return False
 	}
 	class_object hasInstance   = {o|
-		return o getClass() isSubclassOf (class_object)
+		return (extend isDefined (o getClass)) and (o getClass () isSubclassOf (class_object))
 	}
 	class_object bindMethod = {object, methodName|
 		var this_method = object [methodName]

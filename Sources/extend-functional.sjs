@@ -27,17 +27,10 @@
 	return result
 @end
 
-@function reduce callback, iterable
+@function foldl seed, iterable, callback
 	var first  = True
-	var result = Undefined
-	for e in iterable
-		if first
-			result = callback(e)
-			first  = False
-		else
-			result = callback(e, result)
-		end
-	end
+	var result = seed
+	iterable :: {e| result = callback (result, e) }
 	return result
 @end
 
