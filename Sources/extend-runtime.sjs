@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.0
+@version 2.3.2
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -122,6 +122,16 @@
 		if start < 0 -> start = value length + start
 		if end   < 0 -> end = value length + end
 		return value slice (start, end)
+	if isObject(value) and isDefined(value length)
+		var res = []
+		if end is Undefined -> end = value length
+		if start < 0 -> start = value length + start
+		if end   < 0 -> end = value length + end
+		var i = start
+		while i < end
+			res push (value [i])
+		end
+		return res
 	else
 		raise ("Unsupported type for slice:" + value)
 	end
@@ -136,6 +146,20 @@
 		if value __len__
 			return value __len__ ()
 		end
+	else
+		return None
+	end
+@end
+
+@function keys value
+	if isList
+		return range(0, len(value))
+	if isList
+		var res = []
+		@embed JavaScript
+		|for(var k in value) { res.push(k); }
+		@end
+		return res
 	else
 		return None
 	end

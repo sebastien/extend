@@ -2,6 +2,7 @@
 
 @shared Counters = {
 	Instances:0
+	Classes:0
 }
 
 @function Class declaration
@@ -81,6 +82,8 @@
 	class_object _methods     = {all:{},inherited:{},own:{},fullname:{}}
 	class_object getName      = {return class_object _name}
 	class_object getParent    = {return class_object _parent}
+	class_object id           = Counters Classes
+	Counters Classes         += 1
 	class_object isSubclassOf = {c|
 		var parent = this
 		while parent
@@ -218,7 +221,7 @@
 		|  var w = wrapper(class_object.prototype[key])
 		|  if (key == "initialize") { constr=w }
 		|  proxy[key] = w
-		|  // This should not be necessary
+		|  // This should not be necessary, but it actually is! -- should investigae at some point
 		|  proxy_object[key] = w
 		| }
 		@end
@@ -335,16 +338,28 @@
 			return m
 		end
 	}
+	# FIXME: Closure could be shared
 	instance_proto isInstance      = {c|return c hasInstance(target)}
 	if declaration initialize
 		instance_proto initialize = declaration initialize
 	else
 		instance_proto instance_proto = {}
 	end
-	instance_proto getSuper        = {c|return c proxyWithState(target)}
+	# FIXME: Closure could be shared
+	instance_proto getSuper        = {c|
+		# NOTE: Here we cache the proxies to parent classes, as they are very
+		# costly to create
+		if typeof(target _extendProxyWithState) == "undefined"
+			target _extendProxyWithState = {(c id):c proxyWithState(target)}
+		if typeof(target _extendProxyWithState [c id]) == "undefined"
+			target _extendProxyWithState [c id] = c proxyWithState(target)
+		end
+		return target _extendProxyWithState[c id]
+	}
 
 	# FIXME: This sounds a bit overkill to copy EVERY method defined here into
-	# the instance proto... as it seems redundant with the class object.
+	# the instance proto... as it seems redundant with the class object. However, this has to be
+	# done only ONCE per class, so it's OK!
 	@embed JavaScript
 	|if ( declaration.operations != undefined ) {
 	|	for ( var name in declaration.operations ) {
