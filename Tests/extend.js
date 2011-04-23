@@ -1,1 +1,1 @@
-../Distribution/extend-2.3.2.js
+../Distribution/extend-2.3.6.js

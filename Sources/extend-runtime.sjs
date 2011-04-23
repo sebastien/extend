@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.2
+@version 2.3.6
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -43,7 +43,7 @@
 # ARRAY OPERATIONS
 # =========================================================================
 
-@function range:List start:Number, end:Number, step:Number?
+@function range:List start:Number, end:Number, step:Number=1
 | Creates a new list composed of elements in the given range, determined by
 | the 'start' index and the 'end' index. This function will automatically
 | find the proper step (wether '+1' or '-1') depending on the bounds you
@@ -52,12 +52,12 @@
 	var result = []
 	@embed JavaScript
 	| if (start < end ) {
-	|   for ( var i=start ; i<end ; i++ ) {
+	|   for ( var i=start ; i<end ; i+=step ) {
 	|     result.push(i);
 	|   }
 	| }
 	| else if (start > end ) {
-	|   for ( var i=start ; i>end ; i-- ) {
+	|   for ( var i=start ; i>end ; i-=step ) {
 	|     result.push(i);
 	|   }
 	| }
@@ -152,9 +152,9 @@
 @end
 
 @function keys value
-	if isList
+	if extend isList(value)
 		return range(0, len(value))
-	if isList
+	if extend isMap(value)
 		var res = []
 		@embed JavaScript
 		|for(var k in value) { res.push(k); }

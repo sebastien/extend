@@ -1,3 +1,7 @@
+- Implement @singleton
+- Implement @trait     so that we can mixin things in existing classes
+- Implement @prototype (maybe it's too redundant with singleton)
+
 - Reference to 'this' in classes, when 'this' can be altered (by jQuery for instance)
 
 - Add error/warn/info
@@ -5,7 +9,5 @@
 - Add sprintf
 
 
-- Add prototype support
-- Add singleton support
 - Find a way so that meta-information can be more lightweight (and automatically
   updated)

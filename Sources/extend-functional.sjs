@@ -1,5 +1,49 @@
 @module extend
 
+@function str v
+	return "" + v
+@end
+
+@function len v
+    if isList(v)
+        return v length
+    if isMap(v)
+        var c = 0
+        v :: {c += 1}
+        return c
+    else
+        return Undefined
+    end
+@end
+
+@function find enumerable, value
+	var res   = []
+	var found = Undefined
+	for v,k in enumerable
+		if (v == value) and (found == Undefined)
+			# FIXME: Should break the iteration
+			found = k
+		end
+	end
+	return found
+@end
+
+@function keys enumerable
+	var res = []
+	for v,k in enumerable
+		res push [k]
+	end
+	return res
+@end
+
+@function values enumerable
+	var res = []
+	for v,k in enumerable
+		res push [v]
+	end
+	return res
+@end
+
 @function car list
 	if list length > 0
 		return list[0]
@@ -18,10 +62,7 @@
 	end
 @end
 
-@function cons list
-@end
-
-@function map callback, iterable
+@function map iterable, callback
 	var result = []
 	for e in iterable
 		result push (callback (e))
@@ -29,7 +70,7 @@
 	return result
 @end
 
-@function filter callback, iterable
+@function filter iterable, callback
 	var result = []
 	for e in iterable
 		if callback (e)
@@ -53,7 +94,7 @@
 	return res
 @end
 
-@function foldl seed, iterable, callback
+@function foldl iterable, seed, callback
 	var first  = True
 	var result = seed
 	iterable :: {e| result = callback (result, e) }
