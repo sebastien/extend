@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.6
+@version 2.3.9
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -39,9 +39,65 @@
 	return f apply (t, actual_args)
 @end
 
+@function str v
+	return "" + v
+@end
+
 # =========================================================================
 # ARRAY OPERATIONS
 # =========================================================================
+
+@function len v
+    if isList(v)
+        return v length
+    if isMap(v)
+        var c = 0
+        v :: {c += 1}
+        return c
+    else
+        return Undefined
+    end
+@end
+
+@function find enumerable, value
+	var res   = []
+	var found = -1
+	for v,k in enumerable
+		if (v == value) and (found == -1)
+			# FIXME: Should break the iteration
+			found = k
+		end
+	end
+	return found
+@end
+
+@function keys value
+	if extend isList(value)
+		return range(0, len(value))
+	if extend isMap(value)
+		var res = []
+		@embed JavaScript
+		|for(var k in value) { res.push(k); }
+		@end
+		return res
+	else
+		return None
+	end
+@end
+
+@function values enumerable
+	if extend isList(value)
+		return range(0, len(value))
+	if extend isMap(value)
+		var res = []
+		@embed JavaScript
+		|for(var k in value) { res.push(enumerable[k]); }
+		@end
+		return res
+	else
+		return None
+	end
+@end
 
 @function range:List start:Number, end:Number, step:Number=1
 | Creates a new list composed of elements in the given range, determined by
@@ -151,19 +207,6 @@
 	end
 @end
 
-@function keys value
-	if extend isList(value)
-		return range(0, len(value))
-	if extend isMap(value)
-		var res = []
-		@embed JavaScript
-		|for(var k in value) { res.push(k); }
-		@end
-		return res
-	else
-		return None
-	end
-@end
 
 @function type value
 	return typeof(value)
@@ -272,7 +315,11 @@
 | given 'ofClass'. If there is no given class, then it will just return
 | true if the value is an instance of any class.
 	if ofClass
-		return isDefined (value getClass) and value isInstance (ofClass)
+		var is_instance = False
+		@embed JavaScript
+		|is_instance = value instanceof ofClass;
+		@end
+		return isDefined (value getClass) and value isInstance (ofClass) or is_instance
 	else
 		return isDefined (value getClass)
 	end

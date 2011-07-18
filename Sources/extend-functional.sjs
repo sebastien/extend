@@ -1,47 +1,24 @@
 @module extend
 
-@function str v
-	return "" + v
-@end
-
-@function len v
-    if isList(v)
-        return v length
-    if isMap(v)
-        var c = 0
-        v :: {c += 1}
-        return c
-    else
-        return Undefined
-    end
-@end
-
-@function find enumerable, value
-	var res   = []
-	var found = Undefined
-	for v,k in enumerable
-		if (v == value) and (found == Undefined)
-			# FIXME: Should break the iteration
-			found = k
+@function merge value, otherValue
+	if isList(value)
+		assert (isList(otherValue), "extend.merge(a,b) b expected to be a list")
+		for v in otherValue
+			if find (value, v) == -1
+				value push (v)
+			end
 		end
+	if isMap(value)
+		assert (isMap(otherValue),   "extend.merge(a,b) b expected to be a map")
+		for v,k in otherValue
+			if value[k] == Undefined
+				value[k] = v
+			end
+		end
+	else
+		error ("extend.merge(a,_) expects a to be a list or a map")
 	end
-	return found
-@end
-
-@function keys enumerable
-	var res = []
-	for v,k in enumerable
-		res push [k]
-	end
-	return res
-@end
-
-@function values enumerable
-	var res = []
-	for v,k in enumerable
-		res push [v]
-	end
-	return res
+	return value
 @end
 
 @function car list

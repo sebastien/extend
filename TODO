@@ -11,3 +11,4 @@
 
 - Find a way so that meta-information can be more lightweight (and automatically
   updated)
+- Add a way to export declared classes, so that it can be used in a "require"
