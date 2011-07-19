@@ -72,30 +72,26 @@
 @end
 
 @function keys value
-	if extend isList(value)
-		return range(0, len(value))
-	if extend isMap(value)
+	if extend isString(value) or extend isNumber(value)
+		return None
+	else
 		var res = []
 		@embed JavaScript
 		|for(var k in value) { res.push(k); }
 		@end
 		return res
-	else
-		return None
 	end
 @end
 
-@function values enumerable
-	if extend isList(value)
-		return range(0, len(value))
-	if extend isMap(value)
+@function values value
+	if extend isString(value) or extend isNumber(value)
+		return None
+	else
 		var res = []
 		@embed JavaScript
-		|for(var k in value) { res.push(enumerable[k]); }
+		|for(var k in value) { res.push(value[k]); }
 		@end
 		return res
-	else
-		return None
 	end
 @end
 
