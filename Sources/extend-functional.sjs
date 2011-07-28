@@ -41,16 +41,16 @@
 
 @function map iterable, callback
 	var result = []
-	for e in iterable
-		result push (callback (e))
+	for e,k in iterable
+		result push (callback (e,k))
 	end
 	return result
 @end
 
 @function filter iterable, callback
 	var result = []
-	for e in iterable
-		if callback (e)
+	for e,k in iterable
+		if callback (e,k)
 			result push (e)
 		end
 	end
@@ -60,11 +60,11 @@
 @function reduce iterable, callback
 	var res = Undefined
 	var i   = 0
-	iterable :: {e|
+	iterable :: {e,k|
 		if i == 0
 			res = e
 		else
-			res = callback(res, e)
+			res = callback(res, e, k)
 		end
 		i += 1
 	}
@@ -74,7 +74,7 @@
 @function foldl iterable, seed, callback
 	var first  = True
 	var result = seed
-	iterable :: {e| result = callback (result, e) }
+	iterable :: {e,k| result = callback (result, e,k) }
 	return result
 @end
 

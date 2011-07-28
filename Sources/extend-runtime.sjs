@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.9
+@version 2.3.10
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -127,26 +127,26 @@
 	@embed JavaScript
 	|  if ( !value ) { return }
 	|  if ( value.length != undefined ) {
-	|    var length = undefined
+	|    var length = undefined;
 	|    // Is it an object with the length() and get() protocol ?
 	|    if ( typeof(value.length) == "function" ) {
 	|      length = value.length()
 	|      for ( var i=0 ; i<length ; i++ ) {
-	|        var cont = callback.call(context, value.get(i), i)
-	|        if ( cont == false ) { i = length + 1 };
+	|        var cont = callback.call(context, value.get(i), i);
+	|        if ( cont == false ) { i = length + 1; }
 	|      }
 	|    // Or a plain array ?
 	|    } else {
-	|      length = value.length
+	|      length = value.length;
 	|      for ( var i=0 ; i<length ; i++ ) {
 	|       var cont = callback.call(context, value[i], i);
-	|       if ( cont == false ) { i = length + 1 };
+	|       if ( cont == false ) { i = length + 1; };
 	|      }
 	|    }
 	|  } else {
 	|    for ( var k in value ) {
 	|      var cont = callback.call(context, value[k], k);
-	|      if ( cont == false ) { i = length + 1 };
+	|      if ( cont == false ) { i = length + 1; };
 	|    }
 	|  }
 	@end
