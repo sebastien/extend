@@ -1,3 +1,6 @@
+- Refactor the map/reduce/fold as they are not consistent
+- isIn and find are redundant...
+
 - Implement @singleton
 - Implement @trait     so that we can mixin things in existing classes
 - Implement @prototype (maybe it's too redundant with singleton)

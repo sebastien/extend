@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.10
+@version 2.3.15
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -7,6 +7,9 @@
 @shared ErrorCallback
 @shared DebugCallback
 @shared PrintCallback
+@shared FLOW_CONTINUE = new Object()
+@shared FLOW_BREAK    = new Object()
+@shared FLOW_RETURN   = new Object()
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -43,33 +46,133 @@
 	return "" + v
 @end
 
-# =========================================================================
-# ARRAY OPERATIONS
-# =========================================================================
 
-@function len v
-    if isList(v)
-        return v length
-    if isMap(v)
-        var c = 0
-        v :: {c += 1}
-        return c
-    else
-        return Undefined
-    end
+@function range:List start:Number, end:Number, step:Number=1
+| Creates a new list composed of elements in the given range, determined by
+| the 'start' index and the 'end' index. This function will automatically
+| find the proper step (wether '+1' or '-1') depending on the bounds you
+| specify.
+	# TODO: Create a big array (1...100) and use subsets instead
+	var result = []
+	@embed JavaScript
+	| if (start < end ) {
+	|   for ( var i=start ; i<end ; i+=step ) {
+	|     result.push(i);
+	|   }
+	| }
+	| else if (start > end ) {
+	|   for ( var i=start ; i>end ; i-=step ) {
+	|     result.push(i);
+	|   }
+	| }
+	@end
+	return result
 @end
 
-@function find enumerable, value
-	var res   = []
-	var found = -1
-	for v,k in enumerable
-		if (v == value) and (found == -1)
-			# FIXME: Should break the iteration
-			found = k
+@function sliceArguments args, index
+| This is a utility function that will return the rest of the given
+| arguments list, without using the 'slice' operation which is only
+| available to arrays.
+	var res = []
+	@embed JavaScript
+	| while (index<args.length) { res.push(args[index++]) }
+	@end
+	return res
+@end
+
+# =========================================================================
+# ALL TYPES OPERATIONS
+# =========================================================================
+
+@function len:Integer value
+	if isList(value)
+		return value length
+	if isObject(value)
+		if value length
+			return value length
+		if value __len__
+			return value __len__ ()
+		else
+			var c = 0
+			@embed JavaScript
+			|for (var _ in value) {c += 1};
+			@end
+			return c
 		end
+	else
+		return None
 	end
-	return found
 @end
+
+@function iterate value, callback:Function, context:Object
+| Iterates on the given values. If 'value' is an array, the _callback_ will be
+| invoked on each item (giving the 'value[i], i' as argument) until the callback
+| returns 'false'. If 'value' is a dictionary, the callback will be applied
+| on the values (giving 'value[k], k' as argument). Otherwise the object is
+| expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
+| enable the iteration.
+	@embed JavaScript
+	|  if ( !value ) { return }
+	|  if ( value.length != undefined ) {
+	|    var length = undefined;
+	|    // Is it an object with the length() and get() protocol ?
+	|    if ( typeof(value.length) == "function" ) {
+	|      length = value.length()
+	|      for ( var i=0 ; i<length ; i++ ) {
+	|          try {callback.call(context, value.get(i), i);} catch (e) {
+	|              if      ( e === FLOW_CONTINUE ) {}
+	|              else if ( e === FLOW_BREAK    ) {return}
+	|              else if ( e === FLOW_RETURN   ) {return}
+	|              else    {throw e}
+	|          }
+	|      }
+	|    // Or a plain array ?
+	|    } else {
+	|      length = value.length;
+	|      for ( var i=0 ; i<length ; i++ ) {
+	|          try {callback.call(context, value[i], i);} catch (e) {
+	|              if      ( e === FLOW_CONTINUE ) {}
+	|              else if ( e === FLOW_BREAK    ) {return}
+	|              else if ( e === FLOW_RETURN   ) {return}
+	|              else    {throw e}
+	|          }
+	|      }
+	|    }
+	|  } else {
+	|    for ( var k in value ) {
+	|       try {callback.call(context, value[i], i);} catch (e) {
+	|          if      ( e === FLOW_CONTINUE ) {}
+	|          else if ( e === FLOW_BREAK    ) {return}
+	|          else if ( e === FLOW_RETURN   ) {return}
+	|          else    {throw e}
+	|       }
+	|    }
+	|  }
+	@end
+@end
+
+@function access value, index
+	if (typeof(value) == "string") or isList(value)
+		if index >= 0
+			@embed JavaScript
+			|return value[index]
+			@end
+		else
+			@embed JavaScript
+			|return value[value.length + index]
+			@end
+		end
+	else
+		# TODO: Support access protocol for objects
+		@embed JavaScript
+		|return value[index]
+		@end
+	end
+@end
+
+# =========================================================================
+# MAP AND ARRAY OPERATIONS
+# =========================================================================
 
 @function keys value
 	if extend isString(value) or extend isNumber(value)
@@ -95,72 +198,31 @@
 	end
 @end
 
-@function range:List start:Number, end:Number, step:Number=1
-| Creates a new list composed of elements in the given range, determined by
-| the 'start' index and the 'end' index. This function will automatically
-| find the proper step (wether '+1' or '-1') depending on the bounds you
-| specify.
-	# TODO: Create a big array (1...100) and use subsets instead
-	var result = []
-	@embed JavaScript
-	| if (start < end ) {
-	|   for ( var i=start ; i<end ; i+=step ) {
-	|     result.push(i);
-	|   }
-	| }
-	| else if (start > end ) {
-	|   for ( var i=start ; i>end ; i-=step ) {
-	|     result.push(i);
-	|   }
-	| }
-	@end
-	return result
+# =========================================================================
+# ARRAY OPERATIONS
+# =========================================================================
+
+@function find enumerable, value
+	var res   = []
+	var found = -1
+	for v,k in enumerable
+		if (v == value) and (found == -1)
+			# FIXME: Should break the iteration
+			found = k
+		end
+	end
+	return found
 @end
 
-@function iterate value, callback:Function, context:Object
-| Iterates on the given values. If 'value' is an array, the _callback_ will be
-| invoked on each item (giving the 'value[i], i' as argument) until the callback
-| returns 'false'. If 'value' is a dictionary, the callback will be applied
-| on the values (giving 'value[k], k' as argument). Otherwise the object is
-| expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
-| enable the iteration.
-	@embed JavaScript
-	|  if ( !value ) { return }
-	|  if ( value.length != undefined ) {
-	|    var length = undefined;
-	|    // Is it an object with the length() and get() protocol ?
-	|    if ( typeof(value.length) == "function" ) {
-	|      length = value.length()
-	|      for ( var i=0 ; i<length ; i++ ) {
-	|        var cont = callback.call(context, value.get(i), i);
-	|        if ( cont == false ) { i = length + 1; }
-	|      }
-	|    // Or a plain array ?
-	|    } else {
-	|      length = value.length;
-	|      for ( var i=0 ; i<length ; i++ ) {
-	|       var cont = callback.call(context, value[i], i);
-	|       if ( cont == false ) { i = length + 1; };
-	|      }
-	|    }
-	|  } else {
-	|    for ( var k in value ) {
-	|      var cont = callback.call(context, value[k], k);
-	|      if ( cont == false ) { i = length + 1; };
-	|    }
-	|  }
-	@end
-@end
-
-@function sliceArguments args, index
-| This is a utility function that will return the rest of the given
-| arguments list, without using the 'slice' operation which is only
-| available to arrays.
-	var res = []
-	@embed JavaScript
-	| while (index<args.length) { res.push(args[index++]) }
-	@end
-	return res
+@function replace container, original, replacement
+	if isString(container)
+		while container indexOf (original) != -1
+			container = container replace (original, replacement)
+		end
+	else
+		error("extend.replace only supports string for now")
+	end
+	return container
 @end
 
 @function slice value, start=0, end=Undefined
@@ -186,44 +248,6 @@
 		return res
 	else
 		raise ("Unsupported type for slice:" + value)
-	end
-@end
-
-@function len:Integer value
-	if isList(value)
-		return value length
-	if isObject(value)
-		if value length
-			return value length
-		if value __len__
-			return value __len__ ()
-		end
-	else
-		return None
-	end
-@end
-
-
-@function type value
-	return typeof(value)
-@end
-
-@function access value, index
-	if isList(value)
-		if index >= 0
-			@embed JavaScript
-			|return value[index]
-			@end
-		else
-			@embed JavaScript
-			|return value[value.length + index]
-			@end
-		end
-	else
-		# FIXME: Support access protocol for objects
-		@embed JavaScript
-		|return value[index]
-		@end
 	end
 @end
 
@@ -265,6 +289,10 @@
 # =========================================================================
 # TYPE INTROSPECTION FUNCTIONS
 # =========================================================================
+
+@function type value
+	return typeof(value)
+@end
 
 @function isDefined value
 	return not (value is Undefined)

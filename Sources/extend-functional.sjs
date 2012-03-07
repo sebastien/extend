@@ -1,10 +1,17 @@
 @module extend
 
+@function strip value
+	# TODO: Implement strip for arrays and objects
+	@embed JavaScript
+	|return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+	@end
+@end
+
 @function merge value, otherValue
 	if isList(value)
 		assert (isList(otherValue), "extend.merge(a,b) b expected to be a list")
 		for v in otherValue
-			if find (value, v) == -1
+			if extend find (value, v) == -1
 				value push (v)
 			end
 		end
@@ -40,18 +47,34 @@
 @end
 
 @function map iterable, callback
-	var result = []
-	for e,k in iterable
-		result push (callback (e,k))
+	if extend isList(iterable)
+		var result = []
+		for e,k in iterable
+			result push (callback (e,k))
+		end
+	else
+		var result = {}
+		for e,k in iterable
+			result[k] = (callback (e,k))
+		end
 	end
 	return result
 @end
 
 @function filter iterable, callback
-	var result = []
-	for e,k in iterable
-		if callback (e,k)
-			result push (e)
+	if extend isList(iterable)
+		var result = []
+		for e,k in iterable
+			if callback (e,k)
+				result push (e)
+			end
+		end
+	else
+		var result = {}
+		for e,k in iterable
+			if callback (e,k)
+				result[k] = e
+			end
 		end
 	end
 	return result

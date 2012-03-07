@@ -113,13 +113,7 @@
 			if a length == 5
 				return this_method call (object, a[0], a[1], a[2], a[3], a[4])
 			else
-				var args = []
-				var i = 0
-				while args length < arguments length
-					args push (arguments[i])
-					i += 1
-				end
-				args push(target)
+				var args = [object] concat (arguments)
 				return this_method apply (object, args)
 			end
 		}
@@ -142,13 +136,7 @@
 			if a length == 5
 				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
 			else
-				var args = []
-				var i = 0
-				while args length < arguments length
-					args push (arguments[i])
-					i += 1
-				end
-				args push(target)
+				var args = [object] concat (arguments)
 				return this_method apply (object, args)
 			end
 		}
