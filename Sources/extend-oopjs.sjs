@@ -37,7 +37,7 @@
 | When you instanciate your class, objects will have the following methods
 | available:
 |
-| - 'isClass()' returns *true*( (because this is an object, not a class)
+| - 'isClass()' returns *false*( (because this is an object, not a class)
 | - 'getClass()' returns the class of this instance
 | - 'getMethod(n)' returns the bound method which name is 'n'
 | - 'getCallback(n)' the equivalent of 'getMethod', but will give the 'this' as

@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.15
+@version 2.3.16
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -116,36 +116,42 @@
 	|  if ( value.length != undefined ) {
 	|    var length = undefined;
 	|    // Is it an object with the length() and get() protocol ?
-	|    if ( typeof(value.length) == "function" ) {
+	|    if ( typeof(value.length) == "function" && typeof(value.get) == "function" ) {
 	|      length = value.length()
 	|      for ( var i=0 ; i<length ; i++ ) {
-	|          try {callback.call(context, value.get(i), i);} catch (e) {
-	|              if      ( e === FLOW_CONTINUE ) {}
-	|              else if ( e === FLOW_BREAK    ) {return}
-	|              else if ( e === FLOW_RETURN   ) {return}
+	|          var result = undefined;
+	|          try {result=callback.call(context, value.get(i), i);} catch (e) {
+	|              if      ( e === extend.FLOW_CONTINUE ) {}
+	|              else if ( e === extend.FLOW_BREAK    ) {return}
+	|              else if ( e === extend.FLOW_RETURN   ) {return}
 	|              else    {throw e}
 	|          }
+	|          if (!(result===undefined)) {return result}
 	|      }
 	|    // Or a plain array ?
 	|    } else {
 	|      length = value.length;
 	|      for ( var i=0 ; i<length ; i++ ) {
-	|          try {callback.call(context, value[i], i);} catch (e) {
-	|              if      ( e === FLOW_CONTINUE ) {}
-	|              else if ( e === FLOW_BREAK    ) {return}
-	|              else if ( e === FLOW_RETURN   ) {return}
+	|          var result = undefined;
+	|          try {result=callback.call(context, value[i], i);} catch (e) {
+	|              if      ( e === extend.FLOW_CONTINUE ) {}
+	|              else if ( e === extend.FLOW_BREAK    ) {return}
+	|              else if ( e === extend.FLOW_RETURN   ) {return}
 	|              else    {throw e}
 	|          }
+	|          if (!(result===undefined)) {return result}
 	|      }
 	|    }
 	|  } else {
 	|    for ( var k in value ) {
-	|       try {callback.call(context, value[i], i);} catch (e) {
-	|          if      ( e === FLOW_CONTINUE ) {}
-	|          else if ( e === FLOW_BREAK    ) {return}
-	|          else if ( e === FLOW_RETURN   ) {return}
+	|       var result = undefined;
+	|       try {result=callback.call(context, value[k], k);} catch (e) {
+	|          if      ( e === extend.FLOW_CONTINUE ) {}
+	|          else if ( e === extend.FLOW_BREAK    ) {return}
+	|          else if ( e === extend.FLOW_RETURN   ) {return}
 	|          else    {throw e}
 	|       }
+	|       if (!(result===undefined)) {return result}
 	|    }
 	|  }
 	@end
@@ -298,13 +304,14 @@
 	return not (value is Undefined)
 @end
 
+# FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
 	# We took our inspiration from here, and added support for null
 	# <http://base2.googlecode.com/svn/version/1.0(beta2)/src/base2.js>
 	# and then from 
 	# <http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/>
 	@embed JavaScript
-	| return Object.prototype.toString.call(value) === '[object Array]';
+	| return Object.prototype.toString.call(value) === '[object Array]' || (value && typeof(value.length) == "number" && typeof(value)=="object");
 	@end
 @end
 
