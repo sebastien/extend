@@ -227,6 +227,20 @@
 		if (v == value) and (found == -1)
 			# FIXME: Should break the iteration
 			found = k
+			break
+		end
+	end
+	return found
+@end
+
+@function findLike enumerable, predicate
+	var res   = []
+	var found = -1
+	for v,k in enumerable
+		if predicate(v) and (found == -1)
+			# FIXME: Should break the iteration
+			found = k
+			break
 		end
 	end
 	return found
