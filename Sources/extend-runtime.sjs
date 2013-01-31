@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.16
+@version 2.3.18
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -7,6 +7,10 @@
 @shared ErrorCallback
 @shared DebugCallback
 @shared PrintCallback
+
+@shared Nothing       = new Object()
+@shared Timeout       = new Object()
+@shared Error         = new Object()
 @shared FLOW_CONTINUE = new Object()
 @shared FLOW_BREAK    = new Object()
 @shared FLOW_RETURN   = new Object()
@@ -113,7 +117,15 @@
 | enable the iteration.
 	@embed JavaScript
 	|  if ( !value ) { return }
-	|  if ( value.length != undefined ) {
+	|  // We use foreach if it's available
+	|  if ( value.forEach ) { 
+	|       try {result=value.forEach(callback)} catch (e) {
+	|           if      ( e === extend.FLOW_CONTINUE ) {}
+	|           else if ( e === extend.FLOW_BREAK    ) {return}
+	|           else if ( e === extend.FLOW_RETURN   ) {return}
+	|           else    {throw e}
+	|       }
+	|  } else if ( value.length != undefined ) {
 	|    var length = undefined;
 	|    // Is it an object with the length() and get() protocol ?
 	|    if ( typeof(value.length) == "function" && typeof(value.get) == "function" ) {
@@ -261,10 +273,14 @@
 | Returns true if the given value is in the given list
 	if isList (list)
 		@embed JavaScript
-		| for ( var i=0 ; i<list.length ; i++) {
-		|   if (list[i]==value) { return true }
-		| }
-		| return false
+		| if (list.some) {
+		|   return list.some(function(v){return v==value});
+		| } else {
+		|   for ( var i=0 ; i<list.length ; i++) {
+		|     if (list[i]==value) { return true }
+		|   }
+		|   return false
+		|}
 		@end
 	if isMap (list)
 		@embed JavaScript
@@ -306,12 +322,8 @@
 
 # FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
-	# We took our inspiration from here, and added support for null
-	# <http://base2.googlecode.com/svn/version/1.0(beta2)/src/base2.js>
-	# and then from 
-	# <http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/>
 	@embed JavaScript
-	| return Object.prototype.toString.call(value) === '[object Array]' || (value && typeof(value.length) == "number" && typeof(value)=="object");
+	|return value instanceof Array
 	@end
 @end
 
@@ -326,6 +338,13 @@
 @function isMap value
 	@embed JavaScript
 	| return !!(!(value===null) && typeof value == "object" && !extend.isList(value))
+	@end
+@end
+
+@function isIterable value
+| The value needs to be an array or an object with
+	@embed JavaScript
+	| return extend.isList(value) || value && typeof (value.length) == "number";
 	@end
 @end
 
@@ -438,6 +457,42 @@
 @function fail message
 	error (message)
 	return False
+@end
+
+@function sprintf
+	@embed JavaScript
+	|var str_repeat  = function(i, m){ for (var o = []; m > 0; o[--m] = i); return(o.join(''));};
+	|var i = 0, a, f = arguments[i++], o = [], m, p, c, x;
+	|while (f) {
+	|  if (m = /^[^\x25]+/.exec(f)) o.push(m[0]);
+	|  else if (m = /^\x25{2}/.exec(f)) o.push('%');
+	|  else if (m = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(f)) {
+	|    if (((a = arguments[m[1] || i++]) == null) || (a == undefined)) throw("Too few arguments.");
+	|    if (/[^s]/.test(m[7]) && (typeof(a) != 'number'))
+	|      throw("Expecting number but found " + typeof(a));
+	|    switch (m[7]) {
+	|      case 'b': a = a.toString(2); break;
+	|      case 'c': a = String.fromCharCode(a); break;
+	|      case 'd': a = parseInt(a); break;
+	|      case 'e': a = m[6] ? a.toExponential(m[6]) : a.toExponential(); break;
+	|      case 'f': a = m[6] ? parseFloat(a).toFixed(m[6]) : parseFloat(a); break;
+	|      case 'o': a = a.toString(8); break;
+	|      case 's': a = ((a = String(a)) && m[6] ? a.substring(0, m[6]) : a); break;
+	|      case 'u': a = Math.abs(a); break;
+	|      case 'x': a = a.toString(16); break;
+	|      case 'X': a = a.toString(16).toUpperCase(); break;
+	|    }
+	|    a = (/[def]/.test(m[7]) && m[2] && a > 0 ? '+' + a : a);
+	|    c = m[3] ? m[3] == '0' ? '0' : m[3].charAt(1) : ' ';
+	|    x = m[5] - String(a).length;
+	|    p = m[5] ? str_repeat(c, x) : '';
+	|    o.push(m[4] ? a + p : p + a);
+	|  }
+	|  else {throw ("Huh ?!");}
+	|  f = f.substring(m[0].length);
+	|}
+	|return o.join('');
+	@end
 @end
 
 #EOF

@@ -4,7 +4,8 @@ DOC_TEXT=$(shell echo *.txt)
 TEST_EXTEND=Tests/test-extend.html
 VERSION=$(shell grep @version Sources/*.sjs | cut -d' ' -f2)
 EXTEND_JS=Distribution/extend-$(VERSION).js
-EXTEND_AS=Distribution/extend-$(VERSION).as
+# NOTE: Disabled temporarily
+#EXTEND_AS=Distribution/extend-$(VERSION).as
 EXTEND_SWC=Distribution/extend-$(VERSION).swc
 EXTEND_JS_MIN=Distribution/extend-$(VERSION).min.js
 EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
@@ -16,6 +17,7 @@ API_DOC=Distribution/extend-api-$(VERSION).html
 SUGAR=sugar -ONORUNTIME
 PAMELA=pamela
 PAMELAWEB=pamela-web
+JSMIN=jsmin
 
 .PHONY: doc
 
@@ -55,6 +57,6 @@ $(API_DOC): $(EXTEND_JS_SOURCE)
 	$(SUGAR) -a $@ $^ > /dev/null
 
 %.min.js: %.js
-	cat $< | jsmin.py > $@
+	cat $< | $(JSMIN) > $@
 
 # EOF

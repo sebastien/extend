@@ -47,13 +47,23 @@
 @end
 
 @function map iterable, callback
+	var result = None
 	if extend isList(iterable)
-		var result = []
+		if iterable map
+			result = iterable map (callback)
+		else
+			result = []
+			for e,k in iterable
+				result push (callback (e,k))
+			end
+		end
+	if extend isIterable (iterable)
+		result = []
 		for e,k in iterable
 			result push (callback (e,k))
 		end
 	else
-		var result = {}
+		result = {}
 		for e,k in iterable
 			result[k] = (callback (e,k))
 		end
@@ -62,15 +72,27 @@
 @end
 
 @function filter iterable, callback
-	if extend isList(iterable)
-		var result = []
+	var result = None
+	if extend isList (iterable)
+		if iterable filter
+			result = iterable filter (callback)
+		else
+			result = []
+			for e,k in iterable
+				if callback (e,k)
+					result push (e)
+				end
+			end
+		end
+	if extend isIterable (iterable)
+		result = []
 		for e,k in iterable
 			if callback (e,k)
 				result push (e)
 			end
 		end
 	else
-		var result = {}
+		result = {}
 		for e,k in iterable
 			if callback (e,k)
 				result[k] = e
@@ -81,6 +103,7 @@
 @end
 
 @function reduce iterable, callback
+	# FIXME: Use reduce function if available
 	var res = Undefined
 	var i   = 0
 	iterable :: {e,k|
