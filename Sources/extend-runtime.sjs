@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.18
+@version 2.3.19
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -33,7 +33,7 @@
 |
 	# TODO: Add consistency checks for invocation
 	var meta = f ['__meta__']
-	var actual_args = [] 
+	var actual_args = []
 	extra ["*"]  :: {v   | args push(v) }
 	extra ["**"] :: {v,k | extra[k] = v }
 	args :: {v|actual_args push(args)}
@@ -118,7 +118,7 @@
 	@embed JavaScript
 	|  if ( !value ) { return }
 	|  // We use foreach if it's available
-	|  if ( value.forEach ) { 
+	|  if ( value.forEach ) {
 	|       try {result=value.forEach(callback)} catch (e) {
 	|           if      ( e === extend.FLOW_CONTINUE ) {}
 	|           else if ( e === extend.FLOW_BREAK    ) {return}
@@ -170,21 +170,18 @@
 @end
 
 @function access value, index
-	if (typeof(value) == "string") or isList(value)
-		if index >= 0
-			@embed JavaScript
-			|return value[index]
-			@end
-		else
-			@embed JavaScript
-			|return value[value.length + index]
-			@end
-		end
-	else
-		# TODO: Support access protocol for objects
+	if index >= 0
 		@embed JavaScript
 		|return value[index]
 		@end
+	else
+		if (typeof(value) == "string") or isList(value) or (value and isNumber(value length))
+			@embed JavaScript
+			|return value[value.length + index]
+			@end
+		else
+			raise new Exception("extend.access:Type not supported:" + value)
+		end
 	end
 @end
 
