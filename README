@@ -245,13 +245,19 @@ Extend API
   --------------
 
     'extend.car(list:Iterable)'::
+
     'extend.cdr(list:Iterable)'::
+
     'extend.cons(list:Iterable)'::
 
     'extend.map(list:Iterable)'::
+
     'extend.filter(list:Iterable)'::
+
     'extend.foldl(list:Iterable)'::
+
     'extend.reduce(list:Iterable)'::
+
     'extend.merge(a:Iterable, b:Iterable):Iterable'::
 
 
@@ -271,6 +277,14 @@ Extend API
     'extend.slice(collection:(List|Object|Any), start:Number, end:Number?):Array<Any>'::
 
     'extend.access(collection:(List|Object|Any), index:Number):Any'::
+
+    'extend.copy(list:Iterable)'::
+
+    'extend.find(list:Iterable, value:Any)'::
+
+    'extend.findLike(list:Iterable, predicate:Function)'::
+
+    'extend.first(list:Iterable, predicate:Function)'::
 
     'extend.isIn(value:Any, collection:(List|Object|Any)):Boolean'::
 

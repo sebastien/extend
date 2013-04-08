@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.19
+@version 2.3.21
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -119,7 +119,7 @@
 	|  if ( !value ) { return }
 	|  // We use foreach if it's available
 	|  if ( value.forEach ) {
-	|       try {result=value.forEach(callback)} catch (e) {
+	|       try {result=value.forEach(callback)} catch (e) {
 	|           if      ( e === extend.FLOW_CONTINUE ) {}
 	|           else if ( e === extend.FLOW_BREAK    ) {return}
 	|           else if ( e === extend.FLOW_RETURN   ) {return}
@@ -132,7 +132,7 @@
 	|      length = value.length()
 	|      for ( var i=0 ; i<length ; i++ ) {
 	|          var result = undefined;
-	|          try {result=callback.call(context, value.get(i), i);} catch (e) {
+	|          try {result=callback.call(context, value.get(i), i);} catch (e) {
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
 	|              else if ( e === extend.FLOW_BREAK    ) {return}
 	|              else if ( e === extend.FLOW_RETURN   ) {return}
@@ -145,7 +145,7 @@
 	|      length = value.length;
 	|      for ( var i=0 ; i<length ; i++ ) {
 	|          var result = undefined;
-	|          try {result=callback.call(context, value[i], i);} catch (e) {
+	|          try {result=callback.call(context, value[i], i);} catch (e) {
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
 	|              else if ( e === extend.FLOW_BREAK    ) {return}
 	|              else if ( e === extend.FLOW_RETURN   ) {return}
@@ -157,7 +157,7 @@
 	|  } else {
 	|    for ( var k in value ) {
 	|       var result = undefined;
-	|       try {result=callback.call(context, value[k], k);} catch (e) {
+	|       try {result=callback.call(context, value[k], k);} catch (e) {
 	|          if      ( e === extend.FLOW_CONTINUE ) {}
 	|          else if ( e === extend.FLOW_BREAK    ) {return}
 	|          else if ( e === extend.FLOW_RETURN   ) {return}
@@ -213,6 +213,18 @@
 	end
 @end
 
+@function copy value
+	if extend isList   (value)
+		return [] concat (value)
+	if extend isObject (value)
+		var r = {}
+		value :: {v,k|r[k]=v}
+		return r
+	else
+		return value
+	end
+@end
+
 # =========================================================================
 # ARRAY OPERATIONS
 # =========================================================================
@@ -222,7 +234,6 @@
 	var found = -1
 	for v,k in enumerable
 		if (v == value) and (found == -1)
-			# FIXME: Should break the iteration
 			found = k
 			break
 		end
@@ -242,6 +253,17 @@
 	end
 	return found
 @end
+
+@function first enumerable, predicate
+| Returns the first value that matches the given predicate
+	var i = findLike(enumerable, predicate)
+	if i >=0 
+		return enumerable[i]
+	else
+		return None
+	end 
+@end
+
 
 @function replace container, original, replacement
 	if isString(container)
