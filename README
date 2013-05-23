@@ -1,7 +1,7 @@
 == Extend
 == Thin OO and functional extensions to JavaScript
 -- Author: Sebastien Pierre <sebastien@ffctn.com>
--- Revision: 2011-07-18
+-- Revision: 2013-05-23
 -- Creation: 2007-11-12
 
 
@@ -310,6 +310,9 @@ Extend API
     'extend.isObject(value:Any):Boolean'::
 
     'extend.isInstance(value:Any):Boolean'::
+
+    'extend.getType(value:Any):String'::
+         returns the type of the given value, as a String.
 
   Assestions and logging
   ----------------------

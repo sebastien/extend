@@ -7,26 +7,6 @@
 	@end
 @end
 
-@function merge value, otherValue
-	if isList(value)
-		assert (isList(otherValue), "extend.merge(a,b) b expected to be a list")
-		for v in otherValue
-			if extend find (value, v) == -1
-				value push (v)
-			end
-		end
-	if isMap(value)
-		assert (isMap(otherValue),   "extend.merge(a,b) b expected to be a map")
-		for v,k in otherValue
-			if value[k] == Undefined
-				value[k] = v
-			end
-		end
-	else
-		error ("extend.merge(a,_) expects a to be a list or a map")
-	end
-	return value
-@end
 
 @function car list
 	if list length > 0

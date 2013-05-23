@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.21
+@version 2.3.24
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -213,6 +213,16 @@
 	end
 @end
 
+@function sorted value, reverse=False
+	if extend isList   (value)
+		value = copy (value)
+		value sort ()
+		return value
+	else
+		raise new Exception("Not implemented")
+	end
+@end
+
 @function copy value
 	if extend isList   (value)
 		return [] concat (value)
@@ -223,6 +233,27 @@
 	else
 		return value
 	end
+@end
+
+@function merge value, otherValue, replace=False
+	if isList(value)
+		assert (isList(otherValue), "extend.merge(a,b) b expected to be a list")
+		for v in otherValue
+			if extend find (value, v) == -1
+				value push (v)
+			end
+		end
+	if isMap(value)
+		assert (isMap(otherValue),   "extend.merge(a,b) b expected to be a map")
+		for v,k in otherValue
+			if (not isDefined (value[k])) or replace
+				value[k] = v
+			end
+		end
+	else
+		error ("extend.merge(a,_) expects a to be a list or a map")
+	end
+	return value
 @end
 
 # =========================================================================
@@ -405,6 +436,33 @@
 		return isDefined (value getClass) and value isInstance (ofClass) or is_instance
 	else
 		return isDefined (value getClass)
+	end
+@end
+
+@function getType value
+| Returns the type of the given value
+	if not isDefined(value)
+		return "undefined"
+	if value is None
+		return "none"
+	if isNumber(value)
+		return "number"
+	if isString(value)
+		return "string"
+	if isList(value)
+		return "list"
+	if isMap(value)
+		return "map"
+	if isFunction(value)
+		return "function"
+	if isObject(value)
+		if isFunction(value getClass)
+			return "instance"
+		else
+			return "object"
+		end
+	else
+		return "unknown"
 	end
 @end
 
