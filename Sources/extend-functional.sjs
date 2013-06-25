@@ -82,12 +82,12 @@
 	return result
 @end
 
-@function reduce iterable, callback
+@function reduce iterable, callback, initial=Undefined
 	# FIXME: Use reduce function if available
-	var res = Undefined
+	var res = initial
 	var i   = 0
 	iterable :: {e,k|
-		if i == 0
+		if i == 0 and (not isDefined (res))
 			res = e
 		else
 			res = callback(res, e, k)

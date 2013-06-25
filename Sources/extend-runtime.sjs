@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.24
+@version 2.3.28
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -194,6 +194,7 @@
 		return None
 	else
 		var res = []
+		# FIXME: Use map?
 		@embed JavaScript
 		|for(var k in value) { res.push(k); }
 		@end
@@ -206,8 +207,22 @@
 		return None
 	else
 		var res = []
+		# FIXME: Use map?
 		@embed JavaScript
 		|for(var k in value) { res.push(value[k]); }
+		@end
+		return res
+	end
+@end
+
+@function items value
+	if extend isString(value) or extend isNumber(value)
+		return None
+	else
+		var res = []
+		# FIXME: Use map?
+		@embed JavaScript
+		|for (var k in value) { res.push({key:k,value:value[k]}); }
 		@end
 		return res
 	end
@@ -228,7 +243,9 @@
 		return [] concat (value)
 	if extend isObject (value)
 		var r = {}
-		value :: {v,k|r[k]=v}
+		@embed JavaScript
+		|for (var k in value) {r[k]=value[k]}
+		@end
 		return r
 	else
 		return value
@@ -333,15 +350,19 @@
 	end
 @end
 
-@function isIn value, list
+@function equals a,b
+	return a == b
+@end
+
+@function isIn value, list, predicate=equals
 | Returns true if the given value is in the given list
 	if isList (list)
 		@embed JavaScript
 		| if (list.some) {
-		|   return list.some(function(v){return v==value});
+		|   return list.some(function(v){return predicate(v,value)});
 		| } else {
 		|   for ( var i=0 ; i<list.length ; i++) {
-		|     if (list[i]==value) { return true }
+		|     if (predicate(list[i],value)) { return true }
 		|   }
 		|   return false
 		|}
@@ -349,7 +370,7 @@
 	if isMap (list)
 		@embed JavaScript
 		| for ( var i in list ) {
-		|   if (list[i]==value) { return true }
+		|   if (predicate(list[i],value)) { return true }
 		| }
 		| return false
 		@end
