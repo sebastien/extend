@@ -1,5 +1,5 @@
 @module extend
-@version 2.3.28
+@version 2.4.2
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -180,7 +180,7 @@
 			|return value[value.length + index]
 			@end
 		else
-			raise new Exception("extend.access:Type not supported:" + value)
+			raise ("extend.access:Type not supported:" + value)
 		end
 	end
 @end
@@ -228,13 +228,16 @@
 	end
 @end
 
-@function sorted value, reverse=False
+@function sorted value, comparison=Undefined, reverse=False
 	if extend isList   (value)
 		value = copy (value)
-		value sort ()
+		value sort (comparison)
+		if reverse
+			value reverse ()
+		end
 		return value
 	else
-		raise new Exception("Not implemented")
+		raise ("Not implemented")
 	end
 @end
 
@@ -291,9 +294,10 @@
 
 @function findLike enumerable, predicate
 	var res   = []
-	var found = -1
+	# FIXME: This is not consistent
+	var found = None
 	for v,k in enumerable
-		if predicate(v) and (found == -1)
+		if predicate(v) and (found is None)
 			# FIXME: Should break the iteration
 			found = k
 			break
@@ -305,11 +309,11 @@
 @function first enumerable, predicate
 | Returns the first value that matches the given predicate
 	var i = findLike(enumerable, predicate)
-	if i >=0 
-		return enumerable[i]
-	else
+	if i is None
 		return None
-	end 
+	else
+		return enumerable[i]
+	end
 @end
 
 
