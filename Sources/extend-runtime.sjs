@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.2
+@version 2.4.3
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -228,7 +228,11 @@
 	end
 @end
 
-@function sorted value, comparison=Undefined, reverse=False
+@function cmp a, b
+	return a > b
+@end
+
+@function sorted value, comparison=cmp, reverse=False
 	if extend isList   (value)
 		value = copy (value)
 		value sort (comparison)
