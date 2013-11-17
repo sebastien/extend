@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.3
+@version 2.4.4
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -113,7 +113,7 @@
 | invoked on each item (giving the 'value[i], i' as argument) until the callback
 | returns 'false'. If 'value' is a dictionary, the callback will be applied
 | on the values (giving 'value[k], k' as argument). Otherwise the object is
-| expected to define both 'length' or 'getLength' and 'get' or 'getItem' to
+| expected to define both '__len__' and '__item__' to
 | enable the iteration.
 	@embed JavaScript
 	|  if ( !value ) { return }
@@ -128,11 +128,11 @@
 	|  } else if ( value.length != undefined ) {
 	|    var length = undefined;
 	|    // Is it an object with the length() and get() protocol ?
-	|    if ( typeof(value.length) == "function" && typeof(value.get) == "function" ) {
-	|      length = value.length()
+	|    if ( typeof(value.__len__) == "function" && typeof(value.__getitem__) == "function" ) {
+	|      length = value.__len__()
 	|      for ( var i=0 ; i<length ; i++ ) {
 	|          var result = undefined;
-	|          try {result=callback.call(context, value.get(i), i);} catch (e) {
+	|          try {result=callback.call(context, value.__getitem__(i), i);} catch (e) {
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
 	|              else if ( e === extend.FLOW_BREAK    ) {return}
 	|              else if ( e === extend.FLOW_RETURN   ) {return}
@@ -229,7 +229,13 @@
 @end
 
 @function cmp a, b
-	return a > b
+	if a is Nothing
+		return True
+	if b is Nothing
+		return False
+	else
+		return a > b
+	end
 @end
 
 @function sorted value, comparison=cmp, reverse=False
@@ -239,6 +245,12 @@
 		if reverse
 			value reverse ()
 		end
+		return value
+	if isMap (value)
+		return sorted (values (value), cmp, reverse)
+	if isNumber (value) or isString (value)
+		return value
+	if not value
 		return value
 	else
 		raise ("Not implemented")
