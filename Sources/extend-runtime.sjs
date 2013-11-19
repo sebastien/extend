@@ -297,7 +297,8 @@
 # =========================================================================
 
 @function find enumerable, value
-	var res   = []
+| Returns the index of the first elemetn that equals the given value
+| Returns -1 if not found.
 	var found = -1
 	for v,k in enumerable
 		if (v == value) and (found == -1)
@@ -309,17 +310,31 @@
 @end
 
 @function findLike enumerable, predicate
-	var res   = []
+| Returns the index of the first element that matches the given predicate.
+| Returns -1 if not found.
 	# FIXME: This is not consistent
-	var found = None
+	var found = -1
 	for v,k in enumerable
-		if predicate(v) and (found is None)
+		if predicate(v) and (found == -1)
 			# FIXME: Should break the iteration
 			found = k
 			break
 		end
 	end
 	return found
+@end
+
+@function findOneOf enumerable, values
+| Find one of the `values` in the given `enumerable`, returning
+| the matching index.
+	var r = -1
+	for v, i in enumerable
+		if v in values
+			r = i
+			break
+		end
+	end
+	return r
 @end
 
 @function first enumerable, predicate
