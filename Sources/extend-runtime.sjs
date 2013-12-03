@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.4
+@version 2.4.5
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -228,13 +228,49 @@
 	end
 @end
 
+@function equals a, b
+	return cmp (a,b) == 0
+@end
+
+@function greater a, b
+	return cmp (a,b) > 0
+@end
+
+@function smaller a, b
+	return cmp (a,b) < 0
+@end
+
 @function cmp a, b
-	if a is Nothing
-		return True
-	if b is Nothing
-		return False
+	# FIXME: Implement list
+	if isList (a) and isList(b)
+		if len(a) == len(b)
+			var is_same = 0
+			for e in a
+				if not (e in b)
+					is_same = 1
+					return is_same
+				end
+			end
+			return is_same
+		if len(a) > len (b)
+			return 1
+		if len(a) < len (b)
+			return -1
+		end
 	else
-		return a > b
+		if a is b
+			return 0
+		if a == b
+			return 0
+		if a is Nothing
+			return -1
+		if b is Nothing
+			return 1
+		if a > b
+			return 1
+		if a < b
+			return -1
+		end
 	end
 @end
 
