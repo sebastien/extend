@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.5
+@version 2.4.6
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -479,7 +479,14 @@
 # FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
 	@embed JavaScript
-	|return value instanceof Array
+	|return (
+	|value instanceof Array        ||
+	|value instanceof Float32Array ||
+	|value instanceof Float64Array ||
+	|value instanceof Int8Array    ||
+	|value instanceof Int16Array   ||
+	|value instanceof Int32Array
+	|);
 	@end
 @end
 

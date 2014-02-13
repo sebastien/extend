@@ -12,7 +12,7 @@ EXTEND_JS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_JS_SOURCE:=$(EXTEND_JS_SOURCE:%=Sources/extend-%.sjs)
 EXTEND_AS_SOURCE:=oopjs runtime reflection functional pytypes
 EXTEND_AS_SOURCE:=$(EXTEND_AS_SOURCE:%=Sources/extend-%.sjs)
-PRODUCTS=$(EXTEND_JS) $(EXTEND_JS_MIN) $(EXTEND_AS) $(API_DOC)
+PRODUCTS=$(EXTEND_JS) $(EXTEND_JS_MIN) $(EXTEND_AS) #$(API_DOC)
 API_DOC=Distribution/extend-api-$(VERSION).html
 SUGAR=sugar -ONORUNTIME
 PAMELA=pamela
@@ -23,7 +23,7 @@ JSMIN=jsmin
 
 # Generic rules ______________________________________________________________
 
-all: doc dist
+all: dist
 	echo $(PRODUCTS)
 
 functions:
@@ -50,7 +50,7 @@ $(EXTEND_AS): $(EXTEND_AS_SOURCE)
 	$(SUGAR) -clactionscript $^ > $@
 
 $(EXTEND_SWC): $(EXTEND_AS)
-	 compc -compiler.strict=false -source-path Distribution -include-sources $< -o extend.swc
+	compc -compiler.strict=false -source-path Distribution -include-sources $< -o extend.swc
 
 $(API_DOC): $(EXTEND_JS_SOURCE)
 	@mkdir -p `dirname $@`
