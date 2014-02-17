@@ -112,7 +112,12 @@
 				return this_method call (object, a[0], a[1], a[2], a[3])
 			if a length == 5
 				return this_method call (object, a[0], a[1], a[2], a[3], a[4])
+			if a length == 6
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5])
+			if a length == 7
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], a[6])
 			else
+				# FIXME: This does not work
 				var args = [object] concat (arguments)
 				return this_method apply (object, args)
 			end
@@ -135,7 +140,12 @@
 				return this_method call (object, a[0], a[1], a[2], a[3], target)
 			if a length == 5
 				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
+			if a length == 6
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], target)
+			if a length == 7
+				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], a[6], target)
 			else
+				# FIXME: This doesn ot work
 				var args = [object] concat (arguments)
 				return this_method apply (object, args)
 			end

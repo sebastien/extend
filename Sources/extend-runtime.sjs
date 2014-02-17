@@ -479,6 +479,7 @@
 # FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
 	@embed JavaScript
+	|if (typeof(Float32Array)!="undefined") {
 	|return (
 	|value instanceof Array        ||
 	|value instanceof Float32Array ||
@@ -487,6 +488,9 @@
 	|value instanceof Int16Array   ||
 	|value instanceof Int32Array
 	|);
+	|} else {
+	|return (value instanceof Array);
+	|}
 	@end
 @end
 
