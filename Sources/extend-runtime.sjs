@@ -478,8 +478,10 @@
 
 # FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
+	# NOTE: On older iOS Safari versions, Float64 is undefined, while
+	# Float32 is.
 	@embed JavaScript
-	|if (typeof(Float32Array)!="undefined") {
+	|if (typeof(Float64Array)!="undefined") {
 	|return (
 	|value instanceof Array        ||
 	|value instanceof Float32Array ||
