@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.6
+@version 2.4.8
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -192,7 +192,10 @@
 @function keys value
 	if extend isString(value) or extend isNumber(value)
 		return None
+	elif extend isList (value)
+		return extend map (value, {_,i|return i})
 	else
+		# return extend map (value, {_,k|return k})
 		var res = []
 		# FIXME: Use map?
 		@embed JavaScript
@@ -205,9 +208,12 @@
 @function values value
 	if extend isString(value) or extend isNumber(value)
 		return None
+	elif extend isList (value)
+		return [] concat (value)
 	else
-		var res = []
+		#return extend map (value, {v,j|return v})
 		# FIXME: Use map?
+		var res = []
 		@embed JavaScript
 		|for(var k in value) { res.push(value[k]); }
 		@end
@@ -218,13 +224,32 @@
 @function items value
 	if extend isString(value) or extend isNumber(value)
 		return None
+	elif extend isList (value)
+		return extend map (value, {v,i|return {key:i, value:v}})
 	else
+		#return extend map (value, {v,k|return {key:k, value:v}})
 		var res = []
 		# FIXME: Use map?
 		@embed JavaScript
 		|for (var k in value) { res.push({key:k,value:value[k]}); }
 		@end
 		return res
+	end
+@end
+
+@function couples value
+	if extend isString(value) or extend isNumber(value)
+		return None
+	elif extend isList (value)
+		return extend map (value, {v,i|return [i, v]})
+	else
+		return extend map (value, {k,i|return [k, v]})
+		# var res = []
+		# # FIXME: Use map?
+		# @embed JavaScript
+		# |for (var k in value) { res.push({key:k,value:value[k]}); }
+		# @end
+		# return res
 	end
 @end
 
@@ -241,22 +266,40 @@
 @end
 
 @function cmp a, b
+| Compares the given values, with the following semantics:
+|
+| - Arrays: will compare each value, returning the result for the
+|   first non-zero comparison
+| - Strings: use `localeCompare`
 	# FIXME: Implement list
 	if isList (a) and isList(b)
-		if len(a) == len(b)
-			var is_same = 0
-			for e in a
-				if not (e in b)
-					is_same = 1
-					return is_same
-				end
-			end
-			return is_same
-		if len(a) > len (b)
-			return 1
-		if len(a) < len (b)
-			return -1
+		var la  = len(a)
+		var lb  = len(b)
+		var l   = Math max (la, lb)
+		var res = 0
+		var i   = 0
+		while (res == 0) and (i < l)
+			res = cmp (a[i], b[i])
+			i  += 1
 		end
+		return res
+		# FIXME: This was pre 2.4.8
+		# if len(a) == len(b)
+		# 	var is_same = 0
+		# 	# for e in a
+		# 	# 	if not (e in b)
+		# 	# 		is_same = 1
+		# 	# 		return is_same
+		# 	# 	end
+		# 	# end
+		# 	return is_same
+		# if len(a) > len (b)
+		# 	return 1
+		# if len(a) < len (b)
+		# 	return -1
+		# end
+	elif isString (a) and isString (b) and isDefined (a localeCompare)
+		return a localeCompare (b)
 	else
 		if a is b
 			return 0
