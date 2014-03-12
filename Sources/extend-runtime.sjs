@@ -1,5 +1,5 @@
 @module extend
-@version 2.4.8
+@version 2.4.9
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -270,6 +270,7 @@
 |
 | - Arrays: will compare each value, returning the result for the
 |   first non-zero comparison
+| - Maps: will compare all the  values that are defined in both
 | - Strings: use `localeCompare`
 	# FIXME: Implement list
 	if isList (a) and isList(b)
@@ -283,21 +284,21 @@
 			i  += 1
 		end
 		return res
-		# FIXME: This was pre 2.4.8
-		# if len(a) == len(b)
-		# 	var is_same = 0
-		# 	# for e in a
-		# 	# 	if not (e in b)
-		# 	# 		is_same = 1
-		# 	# 		return is_same
-		# 	# 	end
-		# 	# end
-		# 	return is_same
-		# if len(a) > len (b)
-		# 	return 1
-		# if len(a) < len (b)
-		# 	return -1
-		# end
+	elif isMap (a) and isMap (b)
+		var res = 0
+		a :: {va,k|
+			var vb = b[k]
+			if isDefined (va) and isDefined (vb) -> res = cmp (va, vb)
+			if res != 0 -> break
+		}
+		if res == 0
+			b :: {vb,k|
+				var va = a[k]
+				if isDefined (va) and isDefined (vb) -> res = cmp (va, vb)
+				if res != 0 -> break
+			}
+		end
+		return res
 	elif isString (a) and isString (b) and isDefined (a localeCompare)
 		return a localeCompare (b)
 	else
@@ -313,6 +314,12 @@
 			return 1
 		if a < b
 			return -1
+		if not extend isDefined (b)
+			return 1
+		if not extend isDefined (a)
+			return -1
+		else
+			return 0
 		end
 	end
 @end
@@ -426,6 +433,16 @@
 	end
 @end
 
+@function last enumerable, predicate
+| Returns the last value that matches the given predicate
+	var res = None
+	for v,k in enumerable
+		if predicate(v)
+			res = v
+		end
+	end
+	return res
+@end
 
 @function replace container, original, replacement
 	if isString(container)
