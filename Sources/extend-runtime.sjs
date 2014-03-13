@@ -237,13 +237,16 @@
 	end
 @end
 
-@function couples value
+@function pairs value
+| Returns (key, value) pairs
 	if extend isString(value) or extend isNumber(value)
 		return None
 	elif extend isList (value)
 		return extend map (value, {v,i|return [i, v]})
 	else
-		return extend map (value, {k,i|return [k, v]})
+		var res = []
+		value :: {v,i|res push [i, v]}
+		return res
 		# var res = []
 		# # FIXME: Use map?
 		# @embed JavaScript
@@ -325,21 +328,37 @@
 @end
 
 @function sorted value, comparison=cmp, reverse=False
-	if extend isList   (value)
-		value = copy (value)
-		value sort (comparison)
-		if reverse
-			value reverse ()
-		end
-		return value
-	if isMap (value)
-		return sorted (values (value), cmp, reverse)
-	if isNumber (value) or isString (value)
-		return value
-	if not value
-		return value
+	if isList (comparison)
+		var l = len (comparison) - 1
+		# FIXME: Experimental multi-criteria sort
+		var c = {a,b|
+			var total = 0
+			for extractor, i in comparison
+				var va = extractor (a)
+				var vb = extractor (b)
+				var v  = extend cmp (va, vb) * Math pow (10, l - i)
+				total += v
+			end
+			return total
+		}
+		return sorted (value, c, reverse)
 	else
-		raise ("Not implemented")
+		if extend isList   (value)
+			value = copy (value)
+			value sort (comparison)
+			if reverse
+				value reverse ()
+			end
+			return value
+		if isMap (value)
+			return sorted (values (value), cmp, reverse)
+		if isNumber (value) or isString (value)
+			return value
+		if not value
+			return value
+		else
+			raise ("Not implemented")
+		end
 	end
 @end
 
