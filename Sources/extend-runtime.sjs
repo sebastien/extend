@@ -362,13 +362,22 @@
 	end
 @end
 
-@function copy value
+@function copy value, depth=1
+	if depth < 1
+		return value
 	if extend isList   (value)
-		return [] concat (value)
+		if depth <= 1
+			return [] concat (value)
+		else
+			return extend map (value, {_|return copy(_, depth - 1)})
+		end
 	if extend isObject (value)
 		var r = {}
 		@embed JavaScript
-		|for (var k in value) {r[k]=value[k]}
+		|for (var k in value) {
+		|if (depth <= 1) { r[k]=value[k]; }
+		|else            { r[k]=extend.copy(value[k], depth - 1); }
+		|}
 		@end
 		return r
 	else
