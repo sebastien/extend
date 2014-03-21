@@ -1,9 +1,18 @@
 @module extend
 
+@shared Modules  = {}
+
 @shared Counters = {
 	Instances:0
 	Classes:0
 }
+
+@function Module name
+	if not isDefined (Modules [name])
+		Modules [name] = {__name__:name}
+	end
+	return Modules [name]
+@end
 
 @function Class declaration
 | Classes are created using extend by giving a dictionary that contains the

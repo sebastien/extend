@@ -1,10 +1,11 @@
 @module extend
-@version 2.4.9
+@version 2.4.11
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
 
 @shared ErrorCallback
+@shared WarningCallback
 @shared DebugCallback
 @shared PrintCallback
 
@@ -49,7 +50,6 @@
 @function str v
 	return "" + v
 @end
-
 
 @function range:List start:Number, end:Number, step:Number=1
 | Creates a new list composed of elements in the given range, determined by
@@ -705,32 +705,45 @@
 	else
 		PrintCallback (res)
 	end
+	return args
 @end
 
-@function error message
+@function warning message...
+	if WarningCallback
+		WarningCallback apply (extend, message)
+	else
+		print apply (extend, ["[!] "] concat (message))
+	end
+	return message
+@end
+
+@function error message...
 	if ErrorCallback
-		ErrorCallback (message)
+		ErrorCallback apply (extend, message)
 	else
-		print ("[!] " + message)
+		print apply (extend, ["[!] "] concat (message))
 	end
+	return message
 @end
 
-@function debug message
+@function debug message...
 	if DebugCallback
-		DebugCallback (message)
+		DebugCallback apply (extend, message)
 	else
-		print ("[ ] " + message)
+		print apply (extend, ["[!] "] concat (message))
 	end
+	return message
 @end
 
-@function assert predicate, message
+@function assert predicate, message...
 	if not predicate
-		error (message)
+		error apply (extend, message)
 	end
+	return message
 @end
 
-@function fail message
-	error (message)
+@function fail message...
+	error apply (extend, message)
 	return False
 @end
 
