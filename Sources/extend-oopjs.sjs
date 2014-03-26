@@ -162,17 +162,27 @@
 	}
 	class_object getOperation = {name|
 		var this_operation = class_object [name]
-		# FIXME: Throw exception if this_method is not defined
-		return { return this_operation apply (class_object, arguments) }
+		if not this_operation -> return None
+		if not (class_object __operationCache) -> class_object __operationCache = {}
+		# We use a cache so that multiple calls to getMethod will actually
+		# return the same object
+		var o = class_object __operationCache [name]
+		if not o
+			# NOTE: We don't do class_object[name] in the callback as we want
+			# to preserve agains monkey-patching
+			o = { return this_operation apply (class_object, arguments) }
+			class_object __operationCache [name] = o
+		end
+		return o
 	}
 	class_object listMethods   = {o,i|
 		if o is Undefined -> o = True
 		if i is Undefined -> i = True
 		if o and i
 			return class_object _methods all
-		if (not o) and i
+		elif (not o) and i
 			return class_object _methods inherited
-		if o and (not i)
+		elif o and (not i)
 			return class_object _methods own
 		else
 			return {}
@@ -183,9 +193,9 @@
 		if i is Undefined -> i = True
 		if o and i
 			return class_object _operations all
-		if (not o) and i
+		elif (not o) and i
 			return class_object _operations inherited
-		if o and (not i)
+		elif o and (not i)
 			return class_object _operations own
 		else
 			return {}
@@ -322,13 +332,12 @@
 		if not (this_object __methodCache) -> this_object __methodCache = {}
 		# We use a cache so that multiple calls to getMethod will actually
 		# return the same object
-		if this_object __methodCache [methodName]
-			return this_object __methodCache [methodName]
-		else
-			var m = class_object bindMethod(this_object, methodName)
+		var m = this_object __methodCache [methodName]
+		if not m
+			m = class_object bindMethod(this_object, methodName)
 			this_object __methodCache [methodName] = m
-			return m
 		end
+		return m
 	}
 	instance_proto getCallback       = {methodName|
 		var this_object = target
