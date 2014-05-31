@@ -108,11 +108,13 @@
 	var res = initial
 	var i   = 0
 	iterable :: {e,k|
+		var r = Undefined
 		if i == 0 and (not isDefined (res))
-			res = e
+			r = e
 		else
-			res = callback(res, e, k, i)
+			r = callback(res, e, k, i)
 		end
+		if isDefined (r) -> res = r
 		i += 1
 	}
 	return res
@@ -121,7 +123,10 @@
 @function foldl iterable, seed, callback
 	var first  = True
 	var result = seed
-	iterable :: {e,k| result = callback (result, e,k) }
+	iterable :: {e,k|
+		var r = callback (result, e,k)
+		if isDefined (r) -> result = r
+	}
 	return result
 @end
 

@@ -1,5 +1,5 @@
 @module extend
-@version 2.5.0
+@version 2.6.0
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -91,10 +91,10 @@
 @function len:Integer value
 	if isList(value)
 		return value length
-	if isObject(value)
-		if value length
+	elif isObject(value)
+		if isDefined (value length)
 			return value length
-		if value __len__
+		elif isDefined (value __len__)
 			return value __len__ ()
 		else
 			var c = 0
@@ -103,6 +103,8 @@
 			@end
 			return c
 		end
+	elif isString (value)
+		return value length
 	else
 		return None
 	end
@@ -118,11 +120,12 @@
 	@embed JavaScript
 	|  if ( !value ) { return }
 	|  // We use foreach if it's available
+	|  var result      = undefined;
 	|  if ( value.forEach ) {
 	|       try {result=value.forEach(callback)} catch (e) {
 	|           if      ( e === extend.FLOW_CONTINUE ) {}
-	|           else if ( e === extend.FLOW_BREAK    ) {return}
-	|           else if ( e === extend.FLOW_RETURN   ) {return}
+	|           else if ( e === extend.FLOW_BREAK    ) {return e}
+	|           else if ( e === extend.FLOW_RETURN   ) {return e}
 	|           else    {throw e}
 	|       }
 	|  } else if ( value.length != undefined ) {
@@ -131,14 +134,12 @@
 	|    if ( typeof(value.__len__) == "function" && typeof(value.__getitem__) == "function" ) {
 	|      length = value.__len__()
 	|      for ( var i=0 ; i<length ; i++ ) {
-	|          var result = undefined;
 	|          try {result=callback.call(context, value.__getitem__(i), i);} catch (e) {
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
-	|              else if ( e === extend.FLOW_BREAK    ) {return}
-	|              else if ( e === extend.FLOW_RETURN   ) {return}
+	|              else if ( e === extend.FLOW_BREAK    ) {return e}
+	|              else if ( e === extend.FLOW_RETURN   ) {return e}
 	|              else    {throw e}
 	|          }
-	|          if (!(result===undefined)) {return result}
 	|      }
 	|    // Or a plain array ?
 	|    } else {
@@ -147,11 +148,10 @@
 	|          var result = undefined;
 	|          try {result=callback.call(context, value[i], i);} catch (e) {
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
-	|              else if ( e === extend.FLOW_BREAK    ) {return}
-	|              else if ( e === extend.FLOW_RETURN   ) {return}
+	|              else if ( e === extend.FLOW_BREAK    ) {return e}
+	|              else if ( e === extend.FLOW_RETURN   ) {return e}
 	|              else    {throw e}
 	|          }
-	|          if (!(result===undefined)) {return result}
 	|      }
 	|    }
 	|  } else {
@@ -159,13 +159,13 @@
 	|       var result = undefined;
 	|       try {result=callback.call(context, value[k], k);} catch (e) {
 	|          if      ( e === extend.FLOW_CONTINUE ) {}
-	|          else if ( e === extend.FLOW_BREAK    ) {return}
-	|          else if ( e === extend.FLOW_RETURN   ) {return}
+	|          else if ( e === extend.FLOW_BREAK    ) {return e}
+	|          else if ( e === extend.FLOW_RETURN   ) {return e}
 	|          else    {throw e}
 	|       }
-	|       if (!(result===undefined)) {return result}
 	|    }
 	|  }
+	|  if (!(result===undefined)) {return result}
 	@end
 @end
 
@@ -404,6 +404,32 @@
 		error ("extend.merge(a,_) expects a to be a list or a map")
 	end
 	return value
+@end
+
+@function couplesAsMap value
+	if extend isList (value)
+		var r = {}
+		for v,k in value
+			r[v[0]] = v[1]
+		end
+		return r
+	else
+		error ("couplesAsMap: expects [[<key>, <value>]] as input, got", value)
+		return None
+	end
+@end
+
+@function itemsAsMap value
+	if extend isList (value)
+		var r = {}
+		for v,k in value
+			r[v key] = v value
+		end
+		return r
+	else
+		error ("itemsAsMap: expects [[{key:<key>, value:<value>}] as input, got", value)
+		return None
+	end
 @end
 
 # =========================================================================
