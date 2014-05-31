@@ -1,5 +1,7 @@
 @module extend
 
+# TODO: Should sepdn some time refactoring all this, making sure it's fast and sound
+
 @shared Modules  = {}
 
 @shared Counters = {
@@ -12,6 +14,26 @@
 		Modules [name] = {__name__:name}
 	end
 	return Modules [name]
+@end
+
+@function _wrapMethod o, n
+	return {
+		@embed JavaScript
+		|var m = o[n];
+		|var a = arguments;
+		|switch (a.length) {
+		|	case 0:  return (m.call(o));
+		|	case 1:  return (m.call(o, a[0]));
+		|	case 2:  return (m.call(o, a[0], a[1]));
+		|	case 3:  return (m.call(o, a[0], a[1], a[2]));
+		|	case 4:  return (m.call(o, a[0], a[1], a[2], a[3]));
+		|	case 5:  return (m.call(o, a[0], a[1], a[2], a[3], a[4]));
+		|	case 6:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5]));
+		|	case 7:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5], a[6]));
+		|	default: return this_method.apply(object, [object].concat(Array.prototype.slice.call(arguments)));
+		|}
+		@end
+	}
 @end
 
 @function Class declaration
@@ -39,7 +61,6 @@
 | - 'listOperations()' returns a dictionary of *operations* (class methods)
 | - 'listShared()' returns a dictionary of *class attributes*
 | - 'listProperties()' returns a dictionary of *instance attributes*
-| - 'bindMethod(o,n)' binds the method with the given name to the given object
 | - 'proxyWithState(o)' returns a *proxy* that will use the given object as if
 |    it was an instance of this class (useful for implementing 'super')
 |
@@ -92,6 +113,7 @@
 	class_object getName      = {return class_object _name}
 	class_object getParent    = {return class_object _parent}
 	class_object id           = Counters Classes
+	class_object _wrapMethod  = _wrapMethod
 	Counters Classes         += 1
 	class_object isSubclassOf = {c|
 		var parent = this
@@ -104,62 +126,6 @@
 	class_object hasInstance   = {o|
 		return o and (extend isDefined (o getClass)) and (o getClass () isSubclassOf (class_object))
 	}
-	class_object bindMethod = {object, methodName|
-		var this_method = object [methodName]
-		# FIXME: Throw exception if this_method is not defined
-		return {
-			var a = arguments
-			if a length == 0
-				return this_method call (object)
-			if a length == 1
-				return this_method call (object, a[0])
-			if a length == 2
-				return this_method call (object, a[0], a[1])
-			if a length == 3
-				return this_method call (object, a[0], a[1], a[2])
-			if a length == 4
-				return this_method call (object, a[0], a[1], a[2], a[3])
-			if a length == 5
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4])
-			if a length == 6
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5])
-			if a length == 7
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], a[6])
-			else
-				# FIXME: This does not work
-				var args = [object] concat (arguments)
-				return this_method apply (object, args)
-			end
-		}
-	}
-	class_object bindCallback = {object, methodName|
-		var this_method = object [methodName]
-		# FIXME: Throw exception if this_method is not defined
-		return {
-			var a = arguments
-			if a length == 0
-				return this_method call (object, target)
-			if a length == 1
-				return this_method call (object, a[0], target)
-			if a length == 2
-				return this_method call (object, a[0], a[1], target)
-			if a length == 3
-				return this_method call (object, a[0], a[1], a[2], target)
-			if a length == 4
-				return this_method call (object, a[0], a[1], a[2], a[3], target)
-			if a length == 5
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], target)
-			if a length == 6
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], target)
-			if a length == 7
-				return this_method call (object, a[0], a[1], a[2], a[3], a[4], a[5], a[6], target)
-			else
-				# FIXME: This doesn ot work
-				var args = [object] concat (arguments)
-				return this_method apply (object, args)
-			end
-		}
-	}
 	class_object getOperation = {name|
 		var this_operation = class_object [name]
 		if not this_operation -> return None
@@ -169,7 +135,7 @@
 		var o = class_object __operationCache [name]
 		if not o
 			# NOTE: We don't do class_object[name] in the callback as we want
-			# to preserve agains monkey-patching
+			# to preserve against monkey-patching
 			o = { return this_operation apply (class_object, arguments) }
 			class_object __operationCache [name] = o
 		end
@@ -334,7 +300,7 @@
 		# return the same object
 		var m = this_object __methodCache [methodName]
 		if not m
-			m = class_object bindMethod(this_object, methodName)
+			m = class_object _wrapMethod (this_object, methodName)
 			this_object __methodCache [methodName] = m
 		end
 		return m
@@ -349,7 +315,7 @@
 		if this_object __methodCache [callback_name]
 			return this_object __methodCache [callback_name]
 		else
-			var m = class_object bindCallback(this_object, methodName)
+			var m = class_object _wrapMethod (this_object, methodName)
 			this_object __methodCache [callback_name] = m
 			return m
 		end
