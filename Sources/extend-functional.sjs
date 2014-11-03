@@ -132,4 +132,10 @@
 	return res
 @end
 
+@function foldl iterable, seed, callback
+| An alias to reduce, with different parameter ordering. Preserved for
+| compatibility.
+	return extend reduce (iterable, callback, seed)
+@end
+
 # EOF
