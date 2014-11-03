@@ -1,8 +1,9 @@
 // TEST SETUP ________________________________________________________________
 // TODO: Convert to Sugar
+testing.HTMLReporter.Install();
 $(document).ready(function(){$(".VERSION").html("" + extend.__VERSION__)})
 
-Testing.OnTestStart = function(testId, testName) {
+testing.OnTestStart = function(testId, testName) {
 	var test_row = html.tr(
 		{"id":"test_" + testId, "class":"test testRunning"},
 		html.td({"class":"testID"},"#" + testId),
@@ -12,7 +13,7 @@ Testing.OnTestStart = function(testId, testName) {
 	)
 	$("#result").append(test_row)
 }
-Testing.OnTestEnd   = function(testId, test) {
+testing.OnTestEnd   = function(testId, test) {
 	var test_row = $("#test_" + testId)
 	$(test_row).removeClass("testRunning");
 	if ( test.status == "S" ) {
@@ -23,14 +24,14 @@ Testing.OnTestEnd   = function(testId, test) {
 	$(".testTime", test_row).html(test.run + "ms")
 }
 
-Testing.OnFailure = function( testId, num, reason ) {
+testing.OnFailure = function( testId, num, reason ) {
 	$("#test_" + testId +" .assertions").removeClass("empty")
 	$("#test_" + testId +" .assertions").append(html.li({"class":"assertion assertionFailed"},"Assertion #" + num + " failed: " + reason))
 }
 // END SETUP
 
 // TEST 0
-Testing.test("JavaScript Inheritance Basics")
+testing.test("JavaScript Inheritance Basics")
 	// SETUP
 	var A = function(){this.isClass=function(){return false}}
 	var A_proto={
@@ -42,29 +43,29 @@ Testing.test("JavaScript Inheritance Basics")
 	//A.hello=function(){return "Hello"}
 	var a = new A()
 	// TEST
-	Testing.asTrue(A_proto.isClass())
-	Testing.asFalse(a.isClass())
-	Testing.value(A_proto.hello(),"Hello")
-	Testing.value(a.hello(),"Hello")
+	testing.asTrue(A_proto.isClass())
+	testing.asFalse(a.isClass())
+	testing.value(A_proto.hello(),"Hello")
+	testing.value(a.hello(),"Hello")
 	// Now, this is the fun part: when doing a 'new A()', there is no link
 	// between A (or A_proto) and 'a'. When invoking new, it seems like the
 	// given object is actually cloned.
-	Testing.unlike(a,A_proto)
-	Testing.unlike(a,A)
-	Testing.unlike(a.prototype,A_proto)
-	Testing.unlike(a.prototype,A)
+	testing.unlike(a,A_proto)
+	testing.unlike(a,A)
+	testing.unlike(a.prototype,A_proto)
+	testing.unlike(a.prototype,A)
 	// But strangely, we can add 'otherHello' to "A_proto", and automatically,
 	// 'a' will benefit from it.
 	A_proto.otherHello=function(){return "Pouet"}
-	Testing.value(A_proto.otherHello(),"Pouet")
-	Testing.value(a.otherHello(),"Pouet")
+	testing.value(A_proto.otherHello(),"Pouet")
+	testing.value(a.otherHello(),"Pouet")
 	// And we can check that if we modify the 'class', the instance won't be
 	// updated
 	A.pouet = function(){return "Pouet"}
-	Testing.value(A.pouet(),"Pouet")
-	Testing.asUndefined(a.pouet)
+	testing.value(A.pouet(),"Pouet")
+	testing.asUndefined(a.pouet)
 	// But it will if we modify the prototype
 	A.prototype.pouet = A.pouet
-	Testing.asDefined(a.pouet)
-	Testing.asDefined(a.pouet(),"Pouet")
-Testing.end()
+	testing.asDefined(a.pouet)
+	testing.asDefined(a.pouet(),"Pouet")
+testing.end()

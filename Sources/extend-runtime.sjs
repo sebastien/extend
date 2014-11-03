@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.0
+@version 2.6.2
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -15,6 +15,19 @@
 @shared FLOW_CONTINUE = new Object()
 @shared FLOW_BREAK    = new Object()
 @shared FLOW_RETURN   = new Object()
+@shared OPTIONS       = {
+	modulePrefix : "lib/sjs/"
+	moduleSuffix : ".sjs"
+}
+
+@function require module
+	if not extend Modules [module]
+		var head = document getElementByTagName "head" [0]
+		var script = document createElement "script"
+		script setAttribute ("src", OPTIONS modulePrefix + module + OPTIONS moduleSuffix)
+		head appendChild (script)
+	end
+@end
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -562,6 +575,77 @@
 	else
 		return False
 	end
+@end
+
+# =========================================================================
+# SET OPERATIONS
+# =========================================================================
+
+@function difference a, b
+| Returns the difference between a and b. Lists and maps are supported.
+	if (not a) or len (a) == 0 -> return a
+	if (not b) or len (b) == 0 -> return a
+	if isList (a)
+		if isMap (b)
+			b = values (b)
+		end
+		if isList (b)
+			return extend filter (a, {_|return not (_ in b)})
+		else
+			error ("extend.difference: Unsupported type fot b, " + type(b))
+		end
+	elif isMap (a)
+		if   isMap (b)
+			var b_keys = extend keys (b)
+			return extend filter (a, {_,k|return not (k in b keys)})
+		elif isList (b)
+			return extend filter (a, {v|return not (v in b)})
+		else
+			error ("extend.difference: Unsupported type fot b, " + type(b))
+			return None
+		end
+	else
+		error ("extend.difference: Unsupported type fot a, " + type(a))
+		return None
+	end
+@end
+
+@function union a, b
+| Returns the union of a and b. Lists and maps are supported.
+	if (not a) or len (a) == 0 -> return b
+	if (not b) or len (b) == 0 -> return a
+	if isList (a)
+		if isMap (b)
+			b = values (b)
+		end
+		if isList (b)
+			return a concat (b)
+		else
+			error ("extend.union: Unsupported type fot b, " + type(b))
+		end
+	elif isMap (a)
+		if   isMap (b)
+			return extend merge (a, b)
+		elif isList (b)
+			b :: {v,i|
+				if not isDefined (a[i])
+					a[i] = v
+				end
+			}
+			return b
+		else
+			error ("extend.union: Unsupported type fot b, " + type(b))
+			return None
+		end
+	else
+		error ("extend.union: Unsupported type fot a, " + type(a))
+		return None
+	end
+@end
+
+@function intersection a, b
+| Returns the intersection between a and b. Lists and maps are supported.
+	error ("NotImplemented")
 @end
 
 # =========================================================================

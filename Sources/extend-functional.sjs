@@ -58,7 +58,12 @@
 				result push (callback (e,k))
 			end
 		end
-	if extend isIterable (iterable)
+	elif extend isMap (iterable)
+		result = {}
+		for e,k in iterable
+			result[k] = callback (e,k)
+		end
+	elif extend isIterable (iterable)
 		result = []
 		for e,k in iterable
 			result push (callback (e,k))
@@ -85,7 +90,14 @@
 				end
 			end
 		end
-	if extend isIterable (iterable)
+	elif extend isMap (iterable)
+		result = {}
+		for e,k in iterable
+			if callback (e, k)
+				result[k] = e
+			end
+		end
+	elif extend isIterable (iterable)
 		result = []
 		for e,k in iterable
 			if callback (e,k)
@@ -118,16 +130,6 @@
 		i += 1
 	}
 	return res
-@end
-
-@function foldl iterable, seed, callback
-	var first  = True
-	var result = seed
-	iterable :: {e,k|
-		var r = callback (result, e,k)
-		if isDefined (r) -> result = r
-	}
-	return result
 @end
 
 # EOF

@@ -15,7 +15,7 @@ Things you cannot do in JavaScript
 // ===========================================================================
 
 // TEST 1
-Testing.test("C: Single class declaration: A=extend.Class(...)")
+testing.test("C: Single class declaration: A=extend.Class(...)")
 	// SETUP
 	var ClassA = extend.Class({
 		initialize:function(){
@@ -42,62 +42,62 @@ Testing.test("C: Single class declaration: A=extend.Class(...)")
 		name:"ClassA"
 	})
 	// TEST
-	Testing.value(ClassA.getName(), "ClassA")
-	Testing.asUndefined(ClassA.getParent()) 
-	Testing.value(ClassA.isClass(), true) 
-Testing.end()
+	testing.value(ClassA.getName(), "ClassA")
+	testing.asUndefined(ClassA.getParent()) 
+	testing.value(ClassA.isClass(), true) 
+testing.end()
 
 // TEST 2
-Testing.test("C: Class attribute access: A.V")
-	Testing.value(ClassA.Count, 0) 
-Testing.end()
+testing.test("C: Class attribute access: A.V")
+	testing.value(ClassA.Count, 0) 
+testing.end()
 
 // TEST 3
-Testing.test("C: Class operation: A.operation(...)")
-	Testing.value(ClassA.otherHello(), "OtherHello") 
-	Testing.value(ClassA.getCount(), ClassA.Count)
-Testing.end()
+testing.test("C: Class operation: A.operation(...)")
+	testing.value(ClassA.otherHello(), "OtherHello") 
+	testing.value(ClassA.getCount(), ClassA.Count)
+testing.end()
 
 // TEST 4
-Testing.test("C: Class instanciation: var a = new A()")
+testing.test("C: Class instanciation: var a = new A()")
 	var new_a = new ClassA()
-	Testing.value(new_a.getClass(), ClassA) 
-	Testing.value(new_a.isClass(), false) 
-Testing.end()
+	testing.value(new_a.getClass(), ClassA) 
+	testing.value(new_a.isClass(), false) 
+testing.end()
 
 // TEST 5
-Testing.test("C: Instance attribute: a.v")
-	Testing.value(new_a._id,0) 
-Testing.end()
+testing.test("C: Instance attribute: a.v")
+	testing.value(new_a._id,0) 
+testing.end()
 
 // TEST 6
-Testing.test("C: Class attribute from instance: a.getClass().V")
-	Testing.value(ClassA.Count,1) 
-	Testing.value(new_a.getClass().Count,1)
-Testing.end()
+testing.test("C: Class attribute from instance: a.getClass().V")
+	testing.value(ClassA.Count,1) 
+	testing.value(new_a.getClass().Count,1)
+testing.end()
 
 // TEST 7
-Testing.test("C: Instance method: a.method()")
-	Testing.value(new_a._id,0) 
-	Testing.value(new_a.hello(),"Hello:0")
-	Testing.value(new_a.basehello(),"Hello:0")
-	Testing.value(new_a.thishello(),"Hello:0")
-Testing.end()
+testing.test("C: Instance method: a.method()")
+	testing.value(new_a._id,0) 
+	testing.value(new_a.hello(),"Hello:0")
+	testing.value(new_a.basehello(),"Hello:0")
+	testing.value(new_a.thishello(),"Hello:0")
+testing.end()
 
 // TEST 7a
-Testing.test("C: Operation access from instance: a.Operation()")
-	Testing.asDefined(new_a.otherHello)
-	Testing.asDefined(new_a.getCount)
-	Testing.value(new_a.otherHello(), "OtherHello")
-	Testing.value(new_a.getCount(),   1)
-Testing.end()
+testing.test("C: Operation access from instance: a.Operation()")
+	testing.asDefined(new_a.otherHello)
+	testing.asDefined(new_a.getCount)
+	testing.value(new_a.otherHello(), "OtherHello")
+	testing.value(new_a.getCount(),   1)
+testing.end()
 
 // ===========================================================================
 // SUBCLASS TESTING
 // ===========================================================================
 
 // TEST 8
-Testing.test("SC: Subclass declaration: var B=extend.Class({parent:...})")
+testing.test("SC: Subclass declaration: var B=extend.Class({parent:...})")
 	// SETUP
 	var ClassB = extend.Class({
 		name:"ClassB",
@@ -106,60 +106,60 @@ Testing.test("SC: Subclass declaration: var B=extend.Class({parent:...})")
 			hello:function(){return "From B:" + this._id}
 		}
 	})
-	Testing.value(ClassB.getName(), "ClassB")
-	Testing.value(ClassB.getParent(), ClassA) 
-	Testing.value(ClassB.isClass(), true) 
-Testing.end()
+	testing.value(ClassB.getName(), "ClassB")
+	testing.value(ClassB.getParent(), ClassA) 
+	testing.value(ClassB.isClass(), true) 
+testing.end()
 
 // TEST 9
-Testing.test("SC: Inhertied class attribute access: B.V ")
-	Testing.value(ClassA.Count, 1) 
-	Testing.value(ClassB.Count, 0) 
-Testing.end()
+testing.test("SC: Inhertied class attribute access: B.V ")
+	testing.value(ClassA.Count, 1) 
+	testing.value(ClassB.Count, 0) 
+testing.end()
 
 // TEST 10
-Testing.test("SC: Inherited class operation: B.operation(...)")
-	Testing.value(ClassB.otherHello(), "OtherHello") 
-	Testing.value(ClassB.getCount(), 0)
-Testing.end()
+testing.test("SC: Inherited class operation: B.operation(...)")
+	testing.value(ClassB.otherHello(), "OtherHello") 
+	testing.value(ClassB.getCount(), 0)
+testing.end()
 
 // TEST 11
-Testing.test("SC: Subclass instanciation: var b = new B()")
+testing.test("SC: Subclass instanciation: var b = new B()")
 	var new_b = new ClassB()
-	Testing.value(new_b.isClass(), false) 
-	Testing.value(new_b.getClass(), ClassB) 
-Testing.end()
+	testing.value(new_b.isClass(), false) 
+	testing.value(new_b.getClass(), ClassB) 
+testing.end()
 
 // TEST 12
-Testing.test("SC: Subclass instance attribute: b.v")
-	Testing.value(new_b._id,0) 
-Testing.end()
+testing.test("SC: Subclass instance attribute: b.v")
+	testing.value(new_b._id,0) 
+testing.end()
 
 // TEST 13
-Testing.test("SC: Class attribute from instance: b.getClass().V")
-	Testing.value(ClassB.Count,1) 
-	Testing.value(new_b.getClass().Count,1) 
-Testing.end()
+testing.test("SC: Class attribute from instance: b.getClass().V")
+	testing.value(ClassB.Count,1) 
+	testing.value(new_b.getClass().Count,1) 
+testing.end()
 
 // TEST 14
-Testing.test("SC: Instance method: b.method()")
-	Testing.value(new_b.hello(),"From B:0") 
+testing.test("SC: Instance method: b.method()")
+	testing.value(new_b.hello(),"From B:0") 
 
 // TEST 15
-Testing.test("SC: Inherited method: b.inheritedmethod()")
-	Testing.value(new_b.thishello(),"From B:0") 
-	Testing.value(new_b.basehello(),"Hello:0") 
+testing.test("SC: Inherited method: b.inheritedmethod()")
+	testing.value(new_b.thishello(),"From B:0") 
+	testing.value(new_b.basehello(),"Hello:0") 
 	new_b._id=10
-	Testing.value(new_b.thishello(),"From B:10") 
-	Testing.value(new_b.basehello(),"Hello:10") 
-Testing.end()
+	testing.value(new_b.thishello(),"From B:10") 
+	testing.value(new_b.basehello(),"Hello:10") 
+testing.end()
 
 // ===========================================================================
 // SUB/SUB/CLASS TESTING
 // ===========================================================================
 
 // TEST 16
-Testing.test("SSC: Sub-subclass declaration: var C=extend.Class({parent:B,...})")
+testing.test("SSC: Sub-subclass declaration: var C=extend.Class({parent:B,...})")
 	// SETUP
 	var ClassC = extend.Class({
 		name:"ClassC",
@@ -168,62 +168,62 @@ Testing.test("SSC: Sub-subclass declaration: var C=extend.Class({parent:B,...})"
 			hello:function(){return "From C:" + this._id}
 		}
 	})
-	Testing.value(ClassC.getName(), "ClassC")
-	Testing.value(ClassC.getParent(), ClassB) 
-	Testing.value(ClassC.getParent().getParent(), ClassA) 
-	Testing.value(ClassC.isClass(), true) 
-Testing.end()
+	testing.value(ClassC.getName(), "ClassC")
+	testing.value(ClassC.getParent(), ClassB) 
+	testing.value(ClassC.getParent().getParent(), ClassA) 
+	testing.value(ClassC.isClass(), true) 
+testing.end()
 
 // TEST 17
-Testing.test("SSC: Inhertied class attribute access: C.V ")
-	Testing.value(ClassA.Count, 1) 
-	Testing.value(ClassB.Count, 1) 
-	Testing.value(ClassC.Count, 0) 
-Testing.end()
+testing.test("SSC: Inhertied class attribute access: C.V ")
+	testing.value(ClassA.Count, 1) 
+	testing.value(ClassB.Count, 1) 
+	testing.value(ClassC.Count, 0) 
+testing.end()
 
 // TEST 18
-Testing.test("SSC: Inherited class operation: C.operation(...)")
-	Testing.value(ClassC.otherHello(), "OtherHello") 
-	Testing.value(ClassC.getCount(), 0)
-Testing.end()
+testing.test("SSC: Inherited class operation: C.operation(...)")
+	testing.value(ClassC.otherHello(), "OtherHello") 
+	testing.value(ClassC.getCount(), 0)
+testing.end()
 
 // TEST 19
-Testing.test("SSC: Subclass instanciation: var c = new C()")
+testing.test("SSC: Subclass instanciation: var c = new C()")
 	var new_c = new ClassC()
-	Testing.value(new_c.isClass(), false) 
-	Testing.value(new_c.getClass(), ClassC) 
-Testing.end()
+	testing.value(new_c.isClass(), false) 
+	testing.value(new_c.getClass(), ClassC) 
+testing.end()
 
 // TEST 20
-Testing.test("SSC: Subclass instance attribute: c.v")
-	Testing.value(new_c._id,0) 
-Testing.end()
+testing.test("SSC: Subclass instance attribute: c.v")
+	testing.value(new_c._id,0) 
+testing.end()
 
 // TEST 21
-Testing.test("SSC: Class attribute from instance: c.getClass().V")
-	Testing.value(ClassC.Count,1) 
-	Testing.value(new_c.getClass().Count,1) 
-Testing.end()
+testing.test("SSC: Class attribute from instance: c.getClass().V")
+	testing.value(ClassC.Count,1) 
+	testing.value(new_c.getClass().Count,1) 
+testing.end()
 
 // TEST 22
-Testing.test("SSC: Instance method: c.method()")
-	Testing.value(new_c.hello(),"From C:0") 
+testing.test("SSC: Instance method: c.method()")
+	testing.value(new_c.hello(),"From C:0") 
 
 // TEST 23
-Testing.test("SSC: Inherited method: c.inheritedmethod()")
-	Testing.value(new_c.thishello(),"From C:0") 
-	Testing.value(new_c.basehello(),"Hello:0") 
+testing.test("SSC: Inherited method: c.inheritedmethod()")
+	testing.value(new_c.thishello(),"From C:0") 
+	testing.value(new_c.basehello(),"Hello:0") 
 	new_c._id=11
-	Testing.value(new_c.thishello(),"From C:11") 
-	Testing.value(new_c.basehello(),"Hello:11") 
-Testing.end()
+	testing.value(new_c.thishello(),"From C:11") 
+	testing.value(new_c.basehello(),"Hello:11") 
+testing.end()
 
 // ===========================================================================
 // SUPER KEYWORD
 // ===========================================================================
 
 // TEST 24
-Testing.test("S: Super methods: this.SuperClass_method()")
+testing.test("S: Super methods: this.SuperClass_method()")
 	var ClassSA = extend.Class({
 		name:"ClassSA",
 		initialize:function(){this.a="a"},
@@ -247,14 +247,14 @@ Testing.test("S: Super methods: this.SuperClass_method()")
 	var new_sa = new ClassSA()
 	var new_sb = new ClassSB()
 	var new_sc = new ClassSC()
-	Testing.value(new_sa.doThis(), "doThis:SA:a")
-	Testing.value(new_sb.doThis(), "doThis:SA:b:SB")
-	Testing.value(new_sc.doThis(), "doThis:SA:c:SB:SC")
-	Testing.value(new_sc.doThat(), "doThis:SA:c:SC")
-Testing.end()
+	testing.value(new_sa.doThis(), "doThis:SA:a")
+	testing.value(new_sb.doThis(), "doThis:SA:b:SB")
+	testing.value(new_sc.doThis(), "doThis:SA:c:SB:SC")
+	testing.value(new_sc.doThat(), "doThis:SA:c:SC")
+testing.end()
 
 // TEST 25
-Testing.test("S: Super constructor: this.SuperClass_initialize()")
+testing.test("S: Super constructor: this.SuperClass_initialize()")
 	var ClassSA = extend.Class({
 		name:"ClassSA",
 		initialize:function(){this.a="a"}
@@ -282,20 +282,20 @@ Testing.test("S: Super constructor: this.SuperClass_initialize()")
 	var new_sa = new ClassSA()
 	var new_sb = new ClassSB()
 	var new_sc = new ClassSC()
-	Testing.value(new_sa.a, "a")
-	Testing.asUndefined(new_sa.b)
-	Testing.asUndefined(new_sa.c)
-	Testing.value(new_sb.a, "a")
-	Testing.value(new_sb.b, "b")
-	Testing.asUndefined(new_sb.c)
-	Testing.value(new_sc.a, "a")
-	Testing.value(new_sc.b, "b")
-	Testing.value(new_sc.c, "c")
+	testing.value(new_sa.a, "a")
+	testing.asUndefined(new_sa.b)
+	testing.asUndefined(new_sa.c)
+	testing.value(new_sb.a, "a")
+	testing.value(new_sb.b, "b")
+	testing.asUndefined(new_sb.c)
+	testing.value(new_sc.a, "a")
+	testing.value(new_sc.b, "b")
+	testing.value(new_sc.c, "c")
 
-Testing.end()
+testing.end()
 
 // TEST 26
-Testing.test("S: Super constructor: this.getSuper(parentClass)()")
+testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var ClassSA = extend.Class({
 		name:"ClassSA",
 		initialize:function(){this.a="a"}
@@ -319,19 +319,19 @@ Testing.test("S: Super constructor: this.getSuper(parentClass)()")
 	var new_sa = new ClassSA()
 	var new_sb = new ClassSB()
 	var new_sc = new ClassSC()
-	Testing.value(new_sa.a, "a")
-	Testing.asUndefined(new_sa.b)
-	Testing.asUndefined(new_sa.c)
-	Testing.value(new_sb.a, "a")
-	Testing.value(new_sb.b, "b")
-	Testing.asUndefined(new_sb.c)
-	Testing.value(new_sc.a, "a")
-	Testing.value(new_sc.b, "b")
-	Testing.value(new_sc.c, "c")
-Testing.end()
+	testing.value(new_sa.a, "a")
+	testing.asUndefined(new_sa.b)
+	testing.asUndefined(new_sa.c)
+	testing.value(new_sb.a, "a")
+	testing.value(new_sb.b, "b")
+	testing.asUndefined(new_sb.c)
+	testing.value(new_sc.a, "a")
+	testing.value(new_sc.b, "b")
+	testing.value(new_sc.c, "c")
+testing.end()
 
 // TEST 27
-Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
+testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var ClassSA = extend.Class({
 		name:"A",
 		methods:{doThis:function(){return this.getClass().getName() + ":" + "A"}}
@@ -360,15 +360,15 @@ Testing.test("S: Super methods: this.getSuper(parentClass).methods()")
 	var new_sb = new ClassSB()
 	var new_sc = new ClassSC()
 	var new_sd = new ClassSD()
-	Testing.value(new_sa.doThis(),   "A:A")
-	Testing.value(new_sb.doThis(),   "B:AB")
-	Testing.value(new_sc.doThis(),   "C:ABC")
-	Testing.value(new_sd.doThis(),   "D:ABC")
-	Testing.value(new_sd.doA(),      "D:A")
-Testing.end()
+	testing.value(new_sa.doThis(),   "A:A")
+	testing.value(new_sb.doThis(),   "B:AB")
+	testing.value(new_sc.doThis(),   "C:ABC")
+	testing.value(new_sd.doThis(),   "D:ABC")
+	testing.value(new_sd.doA(),      "D:A")
+testing.end()
 
 // TEST 28
-Testing.test("S: Super operations: this.SuperClass_operation()")
+testing.test("S: Super operations: this.SuperClass_operation()")
 	var ClassSA = extend.Class({
 		name:"ClassSA",
 		shared:{V:"A"},
@@ -388,13 +388,13 @@ Testing.test("S: Super operations: this.SuperClass_operation()")
 		operations:{doThat:function(){return this.ClassSB_doThat() +
 		this.doThis();}}
 	})
-	Testing.value(ClassSA.doThis(), "A")
-	Testing.value(ClassSB.doThis(), "B")
-	Testing.value(ClassSC.doThis(), "C")
-	Testing.value(ClassSB.doThat(), "BB")
-	Testing.value(ClassSC.doThat(), "CCC")
+	testing.value(ClassSA.doThis(), "A")
+	testing.value(ClassSB.doThis(), "B")
+	testing.value(ClassSC.doThis(), "C")
+	testing.value(ClassSB.doThat(), "BB")
+	testing.value(ClassSC.doThat(), "CCC")
 
-Testing.end()
+testing.end()
 
 // ===========================================================================
 // INTROSPECTION
@@ -403,30 +403,30 @@ Testing.end()
 // isInstance
 
 // TEST 29
-Testing.test("I: A.hasInstance(a)")
-	Testing.asTrue( ClassA.hasInstance(new_a) )
-	Testing.asTrue( ClassB.hasInstance(new_b) )
-	Testing.asTrue( ClassC.hasInstance(new_c) )
-	Testing.asTrue( ClassA.hasInstance(new_b) )
-	Testing.asTrue( ClassB.hasInstance(new_c) )
-Testing.end()
+testing.test("I: A.hasInstance(a)")
+	testing.asTrue( ClassA.hasInstance(new_a) )
+	testing.asTrue( ClassB.hasInstance(new_b) )
+	testing.asTrue( ClassC.hasInstance(new_c) )
+	testing.asTrue( ClassA.hasInstance(new_b) )
+	testing.asTrue( ClassB.hasInstance(new_c) )
+testing.end()
 
 // TEST 30
-Testing.test("I: a.isInstance(A)")
-	Testing.asTrue( new_a.isInstance(ClassA) )
-	Testing.asTrue( new_b.isInstance(ClassB) )
-	Testing.asTrue( new_c.isInstance(ClassC) )
-	Testing.asTrue( new_b.isInstance(ClassA) )
-	Testing.asTrue( new_c.isInstance(ClassB) )
-	Testing.asTrue( new_c.isInstance(ClassC) )
-Testing.end()
+testing.test("I: a.isInstance(A)")
+	testing.asTrue( new_a.isInstance(ClassA) )
+	testing.asTrue( new_b.isInstance(ClassB) )
+	testing.asTrue( new_c.isInstance(ClassC) )
+	testing.asTrue( new_b.isInstance(ClassA) )
+	testing.asTrue( new_c.isInstance(ClassB) )
+	testing.asTrue( new_c.isInstance(ClassC) )
+testing.end()
 
 // TEST 31
-Testing.test("I: B.isSubclassOf(A)")
-	Testing.asTrue( ClassB.isSubclassOf(ClassA) )
-	Testing.asTrue( ClassC.isSubclassOf(ClassB) )
-	Testing.asTrue( ClassC.isSubclassOf(ClassA) )
-Testing.end()
+testing.test("I: B.isSubclassOf(A)")
+	testing.asTrue( ClassB.isSubclassOf(ClassA) )
+	testing.asTrue( ClassC.isSubclassOf(ClassB) )
+	testing.asTrue( ClassC.isSubclassOf(ClassA) )
+testing.end()
 
 function get_keys(dict) {
 	var res = []
@@ -450,7 +450,7 @@ function same_keys(a,b) {
 }
 
 // TEST 32
-Testing.test("I: a.listMethods(A)")
+testing.test("I: a.listMethods(A)")
 	var ClassA = extend.Class({
 		name:"ClassA",
 		initialize:function(){this.a="a"},
@@ -479,113 +479,113 @@ Testing.test("I: a.listMethods(A)")
 	var a_own = ClassA.listMethods(true,false)
 	var a_inh = ClassA.listMethods(false,true)
 
-	Testing.asDefined( a_all.doA )
-	Testing.asTrue( same_keys(a_all, a_own) )
-	Testing.asTrue( same_keys(a_inh, {}) )
+	testing.asDefined( a_all.doA )
+	testing.asTrue( same_keys(a_all, a_own) )
+	testing.asTrue( same_keys(a_inh, {}) )
 
 	var b_all = ClassB.listMethods()
 	var b_own = ClassB.listMethods(true,false)
 	var b_inh = ClassB.listMethods(false,true)
 
-	Testing.asDefined(   b_all.doB )
-	Testing.asDefined(   b_all.doA )
-	Testing.asUndefined( b_own.doA )
-	Testing.asDefined(   b_own.doB )
-	Testing.asDefined(   b_inh.doA )
-	Testing.asUndefined( b_inh.doB )
+	testing.asDefined(   b_all.doB )
+	testing.asDefined(   b_all.doA )
+	testing.asUndefined( b_own.doA )
+	testing.asDefined(   b_own.doB )
+	testing.asDefined(   b_inh.doA )
+	testing.asUndefined( b_inh.doB )
 
 	var c_all = ClassC.listMethods()
 	var c_own = ClassC.listMethods(true,false)
 	var c_inh = ClassC.listMethods(false,true)
 
-	Testing.asDefined(   c_all.doC )
-	Testing.asDefined(   c_all.doB )
-	Testing.asDefined(   c_all.doA )
-	Testing.asDefined(   c_own.doC )
-	Testing.asUndefined( c_own.doB )
-	Testing.asUndefined( c_own.doA )
-	Testing.asDefined(   c_inh.doA )
-	Testing.asDefined(   c_inh.doB )
-	Testing.asUndefined( c_inh.doC )
+	testing.asDefined(   c_all.doC )
+	testing.asDefined(   c_all.doB )
+	testing.asDefined(   c_all.doA )
+	testing.asDefined(   c_own.doC )
+	testing.asUndefined( c_own.doB )
+	testing.asUndefined( c_own.doA )
+	testing.asDefined(   c_inh.doA )
+	testing.asDefined(   c_inh.doB )
+	testing.asUndefined( c_inh.doC )
 
-Testing.end()
+testing.end()
 
 // TEST 33
-Testing.test("I: a.listShared(A)")
+testing.test("I: a.listShared(A)")
 	var a_all = ClassA.listShared()
 	var a_own = ClassA.listShared(true,false)
 	var a_inh = ClassA.listShared(false,true)
 
-	Testing.asDefined( a_all.A )
-	Testing.value( same_keys(a_all, a_own) )
-	Testing.value( same_keys(a_inh, {}) )
+	testing.asDefined( a_all.A )
+	testing.value( same_keys(a_all, a_own) )
+	testing.value( same_keys(a_inh, {}) )
 
 	var b_all = ClassB.listShared()
 	var b_own = ClassB.listShared(true,false)
 	var b_inh = ClassB.listShared(false,true)
 
-	Testing.asDefined(   b_all.B )
-	Testing.asDefined(   b_all.A )
-	Testing.asDefined(   b_own.B )
-	Testing.asUndefined( b_own.A )
-	Testing.asDefined(   b_inh.A )
-	Testing.asUndefined( b_inh.B )
+	testing.asDefined(   b_all.B )
+	testing.asDefined(   b_all.A )
+	testing.asDefined(   b_own.B )
+	testing.asUndefined( b_own.A )
+	testing.asDefined(   b_inh.A )
+	testing.asUndefined( b_inh.B )
 
 	var c_all = ClassC.listShared()
 	var c_own = ClassC.listShared(true,false)
 	var c_inh = ClassC.listShared(false,true)
 
-	Testing.asDefined(   c_all.C )
-	Testing.asDefined(   c_all.B )
-	Testing.asDefined(   c_all.A )
-	Testing.asDefined(   c_own.C )
-	Testing.asUndefined( c_own.B )
-	Testing.asUndefined( c_own.A )
-	Testing.asDefined(   c_inh.A )
-	Testing.asDefined(   c_inh.B )
-	Testing.asUndefined( c_inh.C )
-Testing.end()
+	testing.asDefined(   c_all.C )
+	testing.asDefined(   c_all.B )
+	testing.asDefined(   c_all.A )
+	testing.asDefined(   c_own.C )
+	testing.asUndefined( c_own.B )
+	testing.asUndefined( c_own.A )
+	testing.asDefined(   c_inh.A )
+	testing.asDefined(   c_inh.B )
+	testing.asUndefined( c_inh.C )
+testing.end()
 
 
 // TEST 34
-Testing.test("I: a.listOperations(A)")
+testing.test("I: a.listOperations(A)")
 	var a_all = ClassA.listOperations()
 	var a_own = ClassA.listOperations(true,false)
 	var a_inh = ClassA.listOperations(false,true)
 
-	Testing.asDefined( a_all.DoA )
-	Testing.value(  same_keys(a_all, a_own) )
-	Testing.value(  same_keys(a_inh, {}) )
+	testing.asDefined( a_all.DoA )
+	testing.value(  same_keys(a_all, a_own) )
+	testing.value(  same_keys(a_inh, {}) )
 
 	var b_all = ClassB.listOperations()
 	var b_own = ClassB.listOperations(true,false)
 	var b_inh = ClassB.listOperations(false,true)
 
-	Testing.asDefined(   b_all.DoB )
-	Testing.asDefined(   b_all.DoA )
-	Testing.asDefined(   b_own.DoB )
-	Testing.asUndefined( b_own.DoA )
-	Testing.asDefined(   b_inh.DoA )
-	Testing.asUndefined( b_inh.DoB )
+	testing.asDefined(   b_all.DoB )
+	testing.asDefined(   b_all.DoA )
+	testing.asDefined(   b_own.DoB )
+	testing.asUndefined( b_own.DoA )
+	testing.asDefined(   b_inh.DoA )
+	testing.asUndefined( b_inh.DoB )
 
 	var c_all = ClassC.listOperations()
 	var c_own = ClassC.listOperations(true,false)
 	var c_inh = ClassC.listOperations(false,true)
 
-	Testing.asDefined(   c_all.DoC )
-	Testing.asDefined(   c_all.DoB )
-	Testing.asDefined(   c_all.DoA )
-	Testing.asDefined(   c_own.DoC )
-	Testing.asUndefined( c_own.DoB )
-	Testing.asUndefined( c_own.DoA )
-	Testing.asDefined(   c_inh.DoA )
-	Testing.asDefined(   c_inh.DoB )
-	Testing.asUndefined( c_inh.DoC )
+	testing.asDefined(   c_all.DoC )
+	testing.asDefined(   c_all.DoB )
+	testing.asDefined(   c_all.DoA )
+	testing.asDefined(   c_own.DoC )
+	testing.asUndefined( c_own.DoB )
+	testing.asUndefined( c_own.DoA )
+	testing.asDefined(   c_inh.DoA )
+	testing.asDefined(   c_inh.DoB )
+	testing.asUndefined( c_inh.DoC )
 
-Testing.end()
+testing.end()
 
 // TEST 35
-Testing.test("I: a.listProperties(A)")
+testing.test("I: a.listProperties(A)")
 	var ClassA = extend.Class({
 		name:"ClassA",
 		initialize:function(){this.check=this.c},
@@ -611,74 +611,74 @@ Testing.test("I: a.listProperties(A)")
 	var a_own = ClassA.listProperties(true,false)
 	var a_inh = ClassA.listProperties(false,true)
 
-	Testing.asDefined( a_all.a )
-	Testing.asDefined( a_all.b )
-	Testing.asDefined( a_all.c )
-	Testing.value(  same_keys(a_all, a_own) )
-	Testing.value(  same_keys(a_inh, {}) )
+	testing.asDefined( a_all.a )
+	testing.asDefined( a_all.b )
+	testing.asDefined( a_all.c )
+	testing.value(  same_keys(a_all, a_own) )
+	testing.value(  same_keys(a_inh, {}) )
 
-	Testing.value(new_a.a, 0)
-	Testing.value(new_a.b, 1)
-	Testing.value(new_a.c, 2)
-	Testing.value(new_a.check, 2)
+	testing.value(new_a.a, 0)
+	testing.value(new_a.b, 1)
+	testing.value(new_a.c, 2)
+	testing.value(new_a.check, 2)
 
 	var b_all = ClassB.listProperties()
 	var b_own = ClassB.listProperties(true,false)
 	var b_inh = ClassB.listProperties(false,true)
 
-	Testing.asDefined( b_all.a )
-	Testing.asDefined( b_all.b )
-	Testing.asDefined( b_all.c )
-	Testing.asDefined( b_all.d )
+	testing.asDefined( b_all.a )
+	testing.asDefined( b_all.b )
+	testing.asDefined( b_all.c )
+	testing.asDefined( b_all.d )
 
-	Testing.asUndefined( b_own.a )
-	Testing.asUndefined( b_own.b )
-	Testing.asUndefined( b_own.c )
-	Testing.asDefined(   b_own.d )
+	testing.asUndefined( b_own.a )
+	testing.asUndefined( b_own.b )
+	testing.asUndefined( b_own.c )
+	testing.asDefined(   b_own.d )
 
-	Testing.asDefined(   b_inh.a )
-	Testing.asDefined(   b_inh.b )
-	Testing.asDefined(   b_inh.c )
-	Testing.asUndefined( b_inh.d )
+	testing.asDefined(   b_inh.a )
+	testing.asDefined(   b_inh.b )
+	testing.asDefined(   b_inh.c )
+	testing.asUndefined( b_inh.d )
 
-	Testing.value(new_b.a, 0)
-	Testing.value(new_b.b, 1)
-	Testing.value(new_b.c, 2)
-	Testing.value(new_b.d, 3)
-	Testing.value(new_b.check, 3)
+	testing.value(new_b.a, 0)
+	testing.value(new_b.b, 1)
+	testing.value(new_b.c, 2)
+	testing.value(new_b.d, 3)
+	testing.value(new_b.check, 3)
 
 	var c_all = ClassC.listProperties()
 	var c_own = ClassC.listProperties(true,false)
 	var c_inh = ClassC.listProperties(false,true)
 
-	Testing.asDefined( c_all.a )
-	Testing.asDefined( c_all.b )
-	Testing.asDefined( c_all.c )
-	Testing.asDefined( c_all.d )
+	testing.asDefined( c_all.a )
+	testing.asDefined( c_all.b )
+	testing.asDefined( c_all.c )
+	testing.asDefined( c_all.d )
 
-	Testing.asUndefined( c_own.a )
-	Testing.asUndefined( c_own.b )
-	Testing.asUndefined( c_own.c )
-	Testing.asUndefined( c_own.d )
-	Testing.asDefined(   c_own.e )
+	testing.asUndefined( c_own.a )
+	testing.asUndefined( c_own.b )
+	testing.asUndefined( c_own.c )
+	testing.asUndefined( c_own.d )
+	testing.asDefined(   c_own.e )
 
-	Testing.asDefined(   c_inh.a )
-	Testing.asDefined(   c_inh.b )
-	Testing.asDefined(   c_inh.c )
-	Testing.asDefined(   c_inh.d )
-	Testing.asUndefined( c_inh.e )
+	testing.asDefined(   c_inh.a )
+	testing.asDefined(   c_inh.b )
+	testing.asDefined(   c_inh.c )
+	testing.asDefined(   c_inh.d )
+	testing.asUndefined( c_inh.e )
 
-	Testing.value(new_c.a, 0)
-	Testing.value(new_c.b, 1)
-	Testing.value(new_c.c, 2)
-	Testing.value(new_c.d, 3)
-	Testing.value(new_c.e, 4)
-	Testing.value(new_c.check, 3)
+	testing.value(new_c.a, 0)
+	testing.value(new_c.b, 1)
+	testing.value(new_c.c, 2)
+	testing.value(new_c.d, 3)
+	testing.value(new_c.e, 4)
+	testing.value(new_c.check, 3)
 
-Testing.end()
+testing.end()
 
 // TEST 36
-Testing.test("I: a.listMethods(A)")
+testing.test("I: a.listMethods(A)")
 	var ClassA = extend.Class({
 		name:"ClassA",
 		initialize:function(){this.a="a"},
@@ -705,65 +705,65 @@ Testing.test("I: a.listMethods(A)")
 
 	var new_a = new ClassA();
 	var new_a_doA = new_a.getMethod("doA")
-	Testing.value(new_a.doA.apply({a:"not a"}, []), "not a")
-	Testing.value(new_a_doA.apply({a:"not a"}, []), "a")
+	testing.value(new_a.doA.apply({a:"not a"}, []), "not a")
+	testing.value(new_a_doA.apply({a:"not a"}, []), "a")
 
-Testing.end()
+testing.end()
 
 // TEST 37
-Testing.test("I: a.getClass(A)")
+testing.test("I: a.getClass(A)")
 	var A     = extend.Class({name:"A" })
-	Testing.identical(A, extend.getClass("A"))
+	testing.identical(A, extend.getClass("A"))
 	var a_A   = extend.Class({name:"a.A" })
-	Testing.identical(a_A, extend.getClass("a.A"))
+	testing.identical(a_A, extend.getClass("a.A"))
 	var a_b_A = extend.Class({name:"a.b.A" })
-	Testing.identical(a_b_A, extend.getClass("a.b.A"))
+	testing.identical(a_b_A, extend.getClass("a.b.A"))
 	//try {
 	//	extend.Class({name:"a.b.A" })
-	//	Testing.fail("Exception should be raised when redefining class")
+	//	testing.fail("Exception should be raised when redefining class")
 	//} catch (e) {
-	//	Testing.succeed()
+	//	testing.succeed()
 	//}
-	Testing.identical(a_b_A, extend.getClass("a.b.A"))
-Testing.end()
+	testing.identical(a_b_A, extend.getClass("a.b.A"))
+testing.end()
 
 // TEST 38
-Testing.test("I: a.getChildrenOf(A)")
+testing.test("I: a.getChildrenOf(A)")
 	var A = extend.Class({name:"A" })
 	var B = extend.Class({name:"B", parent:A })
 	var C = extend.Class({name:"C", parent:B })
 	var D = extend.Class({name:"D", parent:C })
 	var E = extend.Class({name:"E", parent:D })
-	Testing.asUndefined(extend.getChildrenOf(A).A)
-	Testing.identical(extend.getChildrenOf(A).B, B)
-	Testing.identical(extend.getChildrenOf(A).C, C)
-	Testing.identical(extend.getChildrenOf(A).D, D)
-	Testing.identical(extend.getChildrenOf(A).E, E)
+	testing.asUndefined(extend.getChildrenOf(A).A)
+	testing.identical(extend.getChildrenOf(A).B, B)
+	testing.identical(extend.getChildrenOf(A).C, C)
+	testing.identical(extend.getChildrenOf(A).D, D)
+	testing.identical(extend.getChildrenOf(A).E, E)
 
-	Testing.asUndefined(extend.getChildrenOf(B).A)
-	Testing.asUndefined(extend.getChildrenOf(B).B)
-	Testing.identical(  extend.getChildrenOf(B).C, C)
-	Testing.identical(  extend.getChildrenOf(B).D, D)
-	Testing.identical(  extend.getChildrenOf(B).E, E)
+	testing.asUndefined(extend.getChildrenOf(B).A)
+	testing.asUndefined(extend.getChildrenOf(B).B)
+	testing.identical(  extend.getChildrenOf(B).C, C)
+	testing.identical(  extend.getChildrenOf(B).D, D)
+	testing.identical(  extend.getChildrenOf(B).E, E)
 
-	Testing.asUndefined(extend.getChildrenOf(C).A)
-	Testing.asUndefined(extend.getChildrenOf(C).B)
-	Testing.asUndefined(extend.getChildrenOf(C).C)
-	Testing.identical(  extend.getChildrenOf(C).D, D)
-	Testing.identical(  extend.getChildrenOf(C).E, E)
+	testing.asUndefined(extend.getChildrenOf(C).A)
+	testing.asUndefined(extend.getChildrenOf(C).B)
+	testing.asUndefined(extend.getChildrenOf(C).C)
+	testing.identical(  extend.getChildrenOf(C).D, D)
+	testing.identical(  extend.getChildrenOf(C).E, E)
 
-	Testing.asUndefined(extend.getChildrenOf(D).A)
-	Testing.asUndefined(extend.getChildrenOf(D).B)
-	Testing.asUndefined(extend.getChildrenOf(D).C)
-	Testing.asUndefined(extend.getChildrenOf(D).D)
-	Testing.identical(  extend.getChildrenOf(D).E, E)
+	testing.asUndefined(extend.getChildrenOf(D).A)
+	testing.asUndefined(extend.getChildrenOf(D).B)
+	testing.asUndefined(extend.getChildrenOf(D).C)
+	testing.asUndefined(extend.getChildrenOf(D).D)
+	testing.identical(  extend.getChildrenOf(D).E, E)
 
-	Testing.asUndefined(extend.getChildrenOf(E).A)
-	Testing.asUndefined(extend.getChildrenOf(E).B)
-	Testing.asUndefined(extend.getChildrenOf(E).C)
-	Testing.asUndefined(extend.getChildrenOf(E).D)
-	Testing.asUndefined(extend.getChildrenOf(E).E)
+	testing.asUndefined(extend.getChildrenOf(E).A)
+	testing.asUndefined(extend.getChildrenOf(E).B)
+	testing.asUndefined(extend.getChildrenOf(E).C)
+	testing.asUndefined(extend.getChildrenOf(E).D)
+	testing.asUndefined(extend.getChildrenOf(E).E)
 
-Testing.end()
+testing.end()
 
 // EOF

@@ -5,12 +5,11 @@
 # License   : Revised BSD License
 # -----------------------------------------------------------------------------
 # Creation  : 28-Jun-2007
-# Last mod  : 21-Oct-2010
+# Last mod  : 24-Mar-2013
 # -----------------------------------------------------------------------------
 
-@module testing
-@version 0.6.2 (21-Oct-2010)
-@target JavaScript
+@module  testing
+@version 0.6.3
 
 | The testing module implements a simple stateful test engine that allows to
 | quickly setup and run tests.
@@ -21,6 +20,9 @@
 
 # TODO: Add way to count assertion, or at least to refer to the line of the
 # invocation.
+
+# FIXME: Make sure callbacks are called only once, add a on all test
+# end callback and show some message when all the tests are done.
 
 @shared DEFAULT_TEST_TIMEOUT     = 5  * 1000
 @shared DEFAULT_TESTCASE_TIMEOUT = 10 * 1000
@@ -42,7 +44,9 @@
 	OnLog       : Undefined
 }
 
-@shared Options = {
+@shared OPTIONS = {
+	PRECISION         :0.0001
+	FORMAT_PRECISION  :4
 	ExceptionOnFailure:False
 }
 
@@ -51,18 +55,22 @@
 # ------------------------------------------------------------------------------
 
 @function option name, value
-	Options[name] = value
+	OPTIONS[name] = value
 	return testing
 @end
 
 @function enable option
-	Options[option] = True
+	OPTIONS[option] = True
 	return testing
 @end
 
 @function disable option
-	Options[option] = False
+	OPTIONS[option] = False
 	return testing
+@end
+
+@function setPRECISION precision
+	OPTIONS PRECISION = precision
 @end
 
 # ------------------------------------------------------------------------------
@@ -72,17 +80,20 @@
 @function testCase:Integer name, timeout=DEFAULT_TESTCASE_TIMEOUT
 | Creates a new test case with the given name, and returns the identifier of the
 | test case.
+	if isDefined (window)
+		HTMLReporter Install ()
+	end
 	var case_id = CaseCount
 	if CaseCount > 0 -> endCase (case_id - 1)
 	if Callbacks OnCaseStart -> Callbacks OnCaseStart (case_id, name)
-
 	CurrentCase = name
 	return testing
 @end
 
-@function endCase:Integer caseID
+@function endCase:Integer caseID=(CaseCount - 1)
 | Notifies the end of the give test case
 	# TODO: Give name and time for case ending
+	endTest ()
 	if Callbacks OnCaseEnd -> Callbacks OnCaseEnd (caseID)
 	return testing
 @end
@@ -101,7 +112,7 @@
 	var test_id = TestCount
 	# We trigger the callbacks first so that we do not have problems with timing
 	# by introduce the callback execution time
-	if TestCount > 0 -> end(test_id - 1)
+	if TestCount > 0 -> end (test_id - 1)
 	if Callbacks OnTestStart -> Callbacks OnTestStart(test_id, name)
 	CurrentTest = name
 	Results push {
@@ -124,16 +135,21 @@
 # ENDING A TEST
 # ------------------------------------------------------------------------------
 
+@function endTest testID=Undefined
+	return end (testID)
+@end
+
 @function end testID=Undefined
 | Ends the test with the given 'testID' (or the last test if no ID was given).
 | Note that a test can only be ended once.
 	if testID is Undefined -> testID = TestCount - 1
-	var test = Results[testID] 
+	var test = Results[testID]
 	if test ended -> return True
 	test end   = new Date() getTime()
 	test run   = (test end) - (test start)
 	test ended = True
 	if Callbacks OnTestEnd -> Callbacks OnTestEnd(testID, test)
+	endCase ()
 	return testing
 @end
 
@@ -143,16 +159,16 @@
 
 # FIXME: This should take an optional test id parameter
 
-@function fail reason
+@function fail reason, label
 | Fails the current test with the given reason
 	if PredicateStack length == 0
 		var test_id = TestCount - 1
-		Results[ test_id ] tests push {result:"F", reason:reason}
+		Results[ test_id ] tests push {result:"F", reason:reason, label:label}
 		Results[ test_id ] status = "F"
 		# TODO: Remove callback execution time
-		if Callbacks OnFailure -> Callbacks OnFailure(test_id, Results[test_id] tests length - 1, reason)
-		if Options ExceptionOnFailure
-			note ("Test interrupted by exception (see Options ExceptionOnFailure)")
+		if Callbacks OnFailure -> Callbacks OnFailure (test_id, Results[test_id] tests length - 1, reason, label)
+		if OPTIONS ExceptionOnFailure
+			note ("Test interrupted by exception (see OPTIONS ExceptionOnFailure)")
 			raise (reason)
 		end
 		return False
@@ -187,8 +203,8 @@
 	if Callbacks OnNote -> Callbacks OnNote (message)
 @end
 
-@function log arguments...
-	if Callbacks OnLog -> Callbacks OnLog (arguments join " ")
+@function log args...
+	if Callbacks OnLog -> Callbacks OnLog (args join " ")
 @end
 
 # ------------------------------------------------------------------------------
@@ -246,6 +262,7 @@
 	asUndefined:asUndefined
 	unlike:unlike
 	same:same
+	almost:almost
 	value:value
 }
 
@@ -255,25 +272,25 @@
 		if val length > 0
 			return succeed ()
 		else
-			return fail(message or ("Value should not be empty: " + val))
+			return fail(message or ("Value should not be empty: " + format(val)))
 		end
-	if isObject( val ) and isDefined (val length )
+	elif isObject (val) and isDefined (val length)
 		if val length > 0
 			return succeed ()
 		else
-			return fail(message or ("Value should not have length=0: " + val))
+			return fail(message or ("Value should not have length=0: " + format(val)))
 		end
-	if val
+	elif val
 		return succeed ()
 	else
-		return fail(message or ("Value should be true, non-null, got: " val))
+		return fail(message or ("Value should be true, non-null, got: " + format (val)))
 	end
 @end
 
 @function asTrue val, message=Undefined
 | Alias for 'value(val, True)'
 	if not (val is True)
-		return fail (message or ("Value should be 'true', got " + val))
+		return fail (message or ("Value should be 'true', got " + format(val)))
 	else
 		return succeed ()
 	end
@@ -282,7 +299,7 @@
 @function asFalse val, message=Undefined
 | Alias for 'value(val, False)'
 	if not (val is False)
-		return fail (message or ("Value should be 'false', got " + val))
+		return fail (message or ("Value should be 'false', got " + format(val)))
 	else
 		return succeed ()
 	end
@@ -290,7 +307,7 @@
 
 @function asNull val, message=Undefined
 	if not (val is null)
-		return fail (message or ("Value should be 'null', got " + val))
+		return fail (message or ("Value should be 'null', got " + format(val)))
 	else
 		return succeed ()
 	end
@@ -299,7 +316,7 @@
 @function asUndefined val, message=Undefined
 | Alias for 'value(val==Undefined, True)'
 	if not (val is Undefined)
-		return fail (message or ("Value should be 'undefined', got " + val))
+		return fail (message or ("Value should be 'undefined', got " +  format(val)))
 	else
 		return succeed ()
 	end
@@ -308,7 +325,7 @@
 @function asDefined val, message=Undefined
 | Alias for 'value(val==Undefined, False)'
 	if not isDefined (val)
-		return fail (message or ("Value should be defined, got " + val ))
+		return fail (message or ("Value should be defined, got " + format(val)))
 	else
 		return succeed()
 	end
@@ -331,8 +348,10 @@
 	if isList (expected)
 		if isList (val)
 			expected :: {v,i|
-				# TODO: We should break
-				if (i >= val length) or ( (same (val[i], v)) != True) -> result = False
+				if (i >= val length) or ( (same (val[i], v)) != True)
+					result = False
+					break
+				end
 			}
 			if result != True
 				result = "The lists are different"
@@ -340,13 +359,17 @@
 		else
 			result = "A list is expected"
 		end
-	if isMap (expected)
+	elif isMap (expected)
 		if isMap (val)
 			expected :: {v,i|
-				# TODO: We should break
-				if (same (val[i], v) != True) -> result = False
+				if (same (val[i], v) != True)
+					result = False
+					break
+				end
 			}
-			if not result -> result = "The maps are different"
+			if not result
+				result = "The maps are different"
+			end
 		else
 			result =  "A map was expected"
 		end
@@ -361,22 +384,65 @@
 	end
 @end
 
+@function almost value, expected, label=Undefined
+	if isNumber (value) and isNumber (value)
+		var delta =Math abs (value - expected)
+		if delta < OPTIONS PRECISION
+			return succeed ()
+		else
+			return fail ("almost: '" + format(value) + "' != '" + format(expected) + "' precision=" + OPTIONS PRECISION, label)
+		end
+	else
+		return equals (value ,expected)
+	end
+@end
+
+@function equals value, expected
+	if extend cmp (value, expected) == 0
+		return succeed ()
+	else
+		return fail ("equals: '" + format (value) + "' != '" + format (expected) + "'")
+	end
+@end
+
+@function format value
+	console log (value, isList(value))
+	if isString (value)
+		return value
+	elif isNumber (value)
+		var v = ("" + value) split "."
+		var d = v[0]
+		var p = v[1]
+		if p
+			return d + "." + p[0:OPTIONS FORMAT_PRECISION]
+		else
+			return d
+		end
+	elif isList (value)
+		return JSON stringify (extend map (value, {_|return _}))
+	elif isObject (value)
+		return JSON stringify (value)
+	else
+		return "" + value
+	end
+@end
+
 @function value value, expected
 | Succeeds if the given value is non-null or if the given value equals the other
 | expected value.
 	if expected != Undefined
 		if value != expected
-			return fail ("Expected value to be '" + expected + "', got '" + value + "'")
+			return fail ("value: Expected value to be '" + format(expected) + "', got '" + format(value) + "'")
 		else
 			return succeed()
 		end
 	else
 		if value is expected
 			return succeed ()
-		if value is Undefined
-			return fail "Value expected to be defined"
-		if not value
-			return fail "Value expected to be non-null"
+		elif value is Undefined
+			return fail "value: Value expected to be defined"
+		elif not value
+			return fail "value: Value expected to be non-null"
 		else
 			return succeed()
 		end
@@ -392,197 +458,196 @@
 	return called_function
 @end
 
-@specific -NO_OOP
+# --------------------------------------------------------------------------
+#
+# Test Case
+#
+# --------------------------------------------------------------------------
 
-	# --------------------------------------------------------------------------
-	#
-	# Test Case
-	#
-	# --------------------------------------------------------------------------
+@class TestCase
+| A test case is a collection of tests units
 
-	@class TestCase
-	| A test case is a collection of tests units
+	@property name
+	@property tests = []
 
-		@property name
-		@property tests = []
-
-		@constructor name = (self getClass() getName())
-		| Creates a test case with the given name (which is the class name by
-		| default).
-			self name = name
-		@end
-
-		@method add tests...
-		| Adds the given tests to this test case tests list
-			tests :: {t| self tests push (t)}
-		@end
-
-		@method run
-		| Run all the tests registered in this test case.
-			testCase (name)
-			tests :: {t| t run() }
-			endCase ()
-		@end
-
+	@constructor name = (self getClass() getName())
+	| Creates a test case with the given name (which is the class name by
+	| default).
+		self name = name
 	@end
 
-	# --------------------------------------------------------------------------
-	#
-	# Test Unit
-	#
-	# --------------------------------------------------------------------------
+	@method add tests...
+	| Adds the given tests to this test case tests list
+		tests :: {t| self tests push (t)}
+	@end
 
-	@class TestUnit
-	| A test unit is a collection of individual tests exercising one or a
-	| set of strongly related components.
-
-		@shared   ensure = testing
-		@property name
-
-		@constructor name = (self getClass() getName())
-			self name = name
-		@end
-
-		@method run
-			self getClass() listMethods() :: {m,n|
-				if n indexOf "test" == 0
-					runTest (m,n)
-				end
-			}
-		@end
-
-		@method runTest testFunction, name
-			test (name)
-			testFunction()
-			end ()
-		@end
-
+	@method run
+	| Run all the tests registered in this test case.
+		testCase (name)
+		tests :: {t| t run () }
+		endCase ()
 	@end
 
 @end
 
-@specific -NO_HTML_REPORTER
+# --------------------------------------------------------------------------
+#
+# Test Unit
+#
+# --------------------------------------------------------------------------
 
-	# --------------------------------------------------------------------------
-	#
-	# Test Unit
-	#
-	# --------------------------------------------------------------------------
+@class TestUnit
+| A test unit is a collection of individual tests exercising one or a
+| set of strongly related components.
 
-	@class HTMLReporter
+	@shared   ensure = testing
+	@property name
 
-		@property selector
-		@property selector_table
+	@constructor name = (self getClass() getName())
+		self name = name
+	@end
 
-		@property callbacks
+	@method run
+		self getClass() listMethods() :: {m,n|
+			if n indexOf "test" == 0
+				runTest (m,n)
+			end
+		}
+	@end
 
-		@constructor selector="#results"
-			self selector = selector
-			ensureUI ()
-			callbacks = {
-				OnCaseStart: onCaseStart
-				OnCaseEnd:   onCaseEnd
-				OnTestStart: onTestStart
-				OnTestEnd:   onTestEnd
-				OnSuccess:   onSuccess
-				OnFailure:   onFailure
-				OnNote:      onNote
-				OnLog:       onLog
+	@method runTest testFunction, name
+		test (name)
+		testFunction()
+		end ()
+	@end
+
+@end
+
+# --------------------------------------------------------------------------
+#
+# Test Unit
+#
+# --------------------------------------------------------------------------
+
+@class HTMLReporter
+
+	@shared   Instance
+	@property selector
+	@property selector_table
+
+	@property callbacks
+
+	@operation Install context=Undefined
+	| Installs a new 'HTMLReporter' in the testing module. This returns the
+	| newly installed instance
+		if not Instance
+			Instance = new HTMLReporter (context)
+		end
+		testing Callbacks = Instance callbacks
+		return Install
+	@end
+
+
+	@constructor selector="#testing-results"
+		self selector = $ (selector)
+		if len(selector) == 0
+			error "#testing-results div is required"
+		end
+		ensureUI ()
+		callbacks = {
+			OnCaseStart: onCaseStart
+			OnCaseEnd:   onCaseEnd
+			OnTestStart: onTestStart
+			OnTestEnd:   onTestEnd
+			OnSuccess:   onSuccess
+			OnFailure:   onFailure
+			OnNote:      onNote
+			OnLog:       onLog
+		}
+	@end
+
+	@method ensureUI
+	| Ensures that there is the proper HTML node in the document to add the
+	| results, otherwise creates it.
+		if $(selector) length == 0
+			$("body") append "<div id='testing-results'>  </div>"
+		end
+		selector = $(selector)
+		if $("table", selector) length == 0
+			$(selector) append ( html table () )
+		end
+		selector_table = $("table", selector)
+		$(selector) addClass "TestResults"
+		$(selector_table) attr { cellpadding:"0", cellspacing:"0" }
+	@end
+
+	@method onCaseStart caseID, name
+		var test_row = html tr (
+			{ id:"testcase_" + caseID, class:"testcase"}
+			html td  ({class:"testcase-name",colspan:"3"}, "" + name)
+		)
+		$(selector_table) append (test_row)
+	@end
+
+	@method onCaseEnd
+	@end
+
+	@method onNote message
+		var test_row = $("#test_" + currentTest())
+		$(".notes", test_row) append (html li(message)) removeClass "empty"
+	@end
+
+	@method onLog message
+		var test_row = $("#test_" + currentTest())
+		var text = $(".log pre", test_row) text () + message + "\n"
+		$(".log pre", test_row) text (text) removeClass "empty"
+	@end
+
+	@method onTestStart testID, testName
+		var test_row = html tr (
+			{
+				id    : "test_" + testID
+				class : "test test-running"
 			}
-		@end
-
-		@operation Install
-		| Installs a new 'HTMLReporter' in the testing module. This returns the
-		| newly installed instance
-			var new_reporter = new HTMLReporter()
-			testing Callbacks = new_reporter callbacks
-			return new_reporter
-		@end
-
-		@method ensureUI
-		| Ensures that there is the proper HTML node in the document to add the
-		| results, otherwise creates it.
-			if $(selector) length == 0
-				$("body") append "<div id='results'>  </div>"
-			end
-			selector = $(selector)
-			if $("table", selector) length == 0
-				$(selector) append ( html table () )
-			end
-			selector_table = $("table", selector)
-			$(selector) addClass "TestResults"
-			$(selector_table) attr { cellpadding:"0", cellspacing:"0" }
-		@end
-
-		@method onCaseStart caseID, name
-			var test_row = html tr (
-				{ id:"testcase_" + caseID, class:"testcase"}
-				html td  ({class:"testcase-name",colspan:"3"}, "" + name)
-			)
-			$(selector_table) append (test_row)
-		@end
-
-		@method onCaseEnd
-		@end
-
-		@method onNote message
-			var test_row = $("#test_" + currentTest())
-			$(".notes", test_row) append (html li(message)) removeClass "empty"
-		@end
-
-		@method onLog message
-			var test_row = $("#test_" + currentTest())
-			var text = $(".log pre", test_row) text () + message + "\n"
-			$(".log pre", test_row) text (text) removeClass "empty"
-		@end
-
-		@method onTestStart testID, testName
-			var test_row = html tr (
-				{
-					id    : "test_" + testID
-					class : "test test-running"
-				}
-				html td  ({class:"test-id"},"#" + testID )
-				html td  (
-					{class:"test-name"}
-					"" + testName
-					html div (
-						html ul {class:"assertions empty"}
-					)
-					html div (
-						html ul {class:"notes empty"}
-					)
-					html div ({class:"log empty"},html pre ())
+			html td  ({class:"test-id"},"#" + testID )
+			html td  (
+				{class:"test-name"}
+				"" + testName
+				html div (
+					html ul {class:"assertions empty"}
 				)
-				html td({class:"test-time"}, "running...")
-			)
-			$(selector_table) append (test_row)
-		@end
-
-		@method onTestEnd testID, test
-			var test_row = $("#test_" + testID)
-			$ (test_row) removeClass "test-running"
-			if test status == "S"
-				$(test_row) addClass "test-succeeded"
-			else
-				$(test_row) addClass "test-failed"
-			end
-			$(".test-time", test_row) html ( test run + "ms" )
-		@end
-
-		@method onSuccess
-		@end
-
-		@method onFailure testID, num, reason
-			$ ("#test_" + testID +" .assertions") removeClass "empty" 
-			$ ("#test_" + testID +" .assertions") append (
-				html li (
-					{class:"assertion assertion-failed"}
-					"Assertion #" + num + " failed: " + reason
+				html div (
+					html ul {class:"notes empty"}
 				)
+				html div ({class:"log empty"},html pre ())
 			)
-		@end
+			html td({class:"test-time"}, "running...")
+		)
+		$(selector_table) append (test_row)
+	@end
 
+	@method onTestEnd testID, test
+		var test_row = $("#test_" + testID)
+		$ (test_row) removeClass "test-running"
+		if test status == "S"
+			$(test_row) addClass "test-succeeded"
+		else
+			$(test_row) addClass "test-failed"
+		end
+		$(".test-time", test_row) html ( test run + "ms" )
+	@end
+
+	@method onSuccess
+	@end
+
+	@method onFailure testID, num, reason, label
+		$ ("#test_" + testID +" .assertions") removeClass "empty"
+		$ ("#test_" + testID +" .assertions") append (
+			html li (
+				{class:"assertion assertion-failed"}
+				"Assertion #" + (num + 1) + (label and (" [" + label + "]") or "") + " failed: " + reason
+			)
+		)
 	@end
 
 @end

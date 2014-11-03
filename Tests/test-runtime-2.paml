@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html(lang=en)
+	<head
+		<link(rel="stylesheet",type="text/css",href="lib/testing.ccss")
+		<script(type="text/javascript",src="extend.js")
+		<script(type="text/javascript",src="lib/jquery-1.2.6.min.js")
+		<script(type="text/javascript",src="lib/html.js")
+		<script(type="text/javascript",src="lib/testing.sjs")
+	<body.reset.use-testing
+		<div.TestPage
+			<div#testing-results
+		<script@sugar
+			@shared T = testing
+			T testCase "Set operations"
+
+			T test "R: extend.difference"
+			T same (extend difference (None, None)         , None)
+			T same (extend difference ([], None)           , [])
+			T same (extend difference ([], [])             , [])
+			T same (extend difference ([1,2,3], [])        , [1,2,3])
+			T same (extend difference ([1,2,3], [1])       , [2,3])
+			T same (extend difference ([1,2,3], [1,2])     , [3])
+			T same (extend difference ([1,2,3], [1,2,3])   , [])
+			T same (extend difference ([1,2,3], [1,2,3,4]) , [])
+			T end ()
+# EOF
