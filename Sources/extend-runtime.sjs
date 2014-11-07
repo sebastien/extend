@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.2
+@version 2.6.3
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -380,7 +380,11 @@
 		return value
 	if extend isList   (value)
 		if depth <= 1
-			return [] concat (value)
+			if value and value concat
+				return [] concat (value)
+			else
+				return extend map (value, {_|return _})
+			end
 		else
 			return extend map (value, {_|return copy(_, depth - 1)})
 		end
