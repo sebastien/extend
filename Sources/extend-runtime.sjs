@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.4
+@version 2.6.5
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -624,12 +624,21 @@
 			b = values (b)
 		end
 		if isList (b)
-			return a concat (b)
+			var r = [] concat (a)
+			for e in b
+				if not (e in a)
+					r push (e)
+				end
+			end
+			return r
 		else
 			error ("extend.union: Unsupported type fot b, " + type(b))
 		end
 	elif isMap (a)
+		a = extend copy (a)
 		if   isMap (b)
+			# NOTE: Should check wether the keys are the same, otherwise should
+			# raise a union conflict or return items
 			return extend merge (a, b)
 		elif isList (b)
 			b :: {v,i|
@@ -637,7 +646,7 @@
 					a[i] = v
 				end
 			}
-			return b
+			return a
 		else
 			error ("extend.union: Unsupported type fot b, " + type(b))
 			return None
