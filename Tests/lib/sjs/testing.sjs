@@ -5,11 +5,11 @@
 # License   : Revised BSD License
 # -----------------------------------------------------------------------------
 # Creation  : 28-Jun-2007
-# Last mod  : 24-Mar-2013
+# Last mod  : 16-Feb-2015
 # -----------------------------------------------------------------------------
 
 @module  testing
-@version 0.6.3
+@version 0.6.4
 
 | The testing module implements a simple stateful test engine that allows to
 | quickly setup and run tests.
@@ -109,11 +109,12 @@
 |
 | If there is a previous test, and it was not ended, this will also end the
 | previous test.
+	HTMLReporter Install ()
 	var test_id = TestCount
 	# We trigger the callbacks first so that we do not have problems with timing
 	# by introduce the callback execution time
 	if TestCount > 0 -> end (test_id - 1)
-	if Callbacks OnTestStart -> Callbacks OnTestStart(test_id, name)
+	if Callbacks OnTestStart -> Callbacks OnTestStart (test_id, name)
 	CurrentTest = name
 	Results push {
 		tid    : test_id
@@ -148,6 +149,7 @@
 	test end   = new Date() getTime()
 	test run   = (test end) - (test start)
 	test ended = True
+	console log ("TEST", test, test start, test end, "=", test run)
 	if Callbacks OnTestEnd -> Callbacks OnTestEnd(testID, test)
 	endCase ()
 	return testing
@@ -348,10 +350,8 @@
 	if isList (expected)
 		if isList (val)
 			expected :: {v,i|
-				if (i >= val length) or ( (same (val[i], v)) != True)
-					result = False
-					break
-				end
+				# TODO: We should break
+				if (i >= val length) or ( (same (val[i], v)) != True) -> result = False
 			}
 			if result != True
 				result = "The lists are different"
@@ -362,10 +362,8 @@
 	elif isMap (expected)
 		if isMap (val)
 			expected :: {v,i|
-				if (same (val[i], v) != True)
-					result = False
-					break
-				end
+				# TODO: We should break
+				if (same (val[i], v) != True) -> result = False
 			}
 			if not result
 				result = "The maps are different"
@@ -394,6 +392,14 @@
 		end
 	else
 		return equals (value ,expected)
+	end
+@end
+
+@function identical value, expected
+	if value is expected
+		return succeed ()
+	else
+		return fail ("identical: '" + format (value) + "' !== '" + format (expected) + "'")
 	end
 @end
 
@@ -532,8 +538,10 @@
 @class HTMLReporter
 
 	@shared   Instance
-	@property selector
-	@property selector_table
+	@property ui
+	@property uis = {
+		table : Undefined
+	}
 
 	@property callbacks
 
@@ -548,11 +556,8 @@
 	@end
 
 
-	@constructor selector="#testing-results"
-		self selector = $ (selector)
-		if len(selector) == 0
-			error "#testing-results div is required"
-		end
+	@constructor ui="#testing-results"
+		self ui = $ (ui)
 		ensureUI ()
 		callbacks = {
 			OnCaseStart: onCaseStart
@@ -569,16 +574,20 @@
 	@method ensureUI
 	| Ensures that there is the proper HTML node in the document to add the
 	| results, otherwise creates it.
-		if $(selector) length == 0
-			$("body") append "<div id='testing-results'>  </div>"
+		if (not ui) or (ui length == 0) or (not uis table) or (uis talbe length == 0)
+			if not ui or ui length == 0
+				ui = html div {id:"testing-results"}
+				document appendChild (ui)
+				ui = $ (ui)
+			end
+			uis table = ui find ".table"
+			if (not uis table) or (uis table length == 0)
+				uis table = $ (html table ())
+				ui append (uis table)
+			end
+			ui addClass "TestResults"
+			uis table attr { cellpadding:"0", cellspacing:"0" }
 		end
-		selector = $(selector)
-		if $("table", selector) length == 0
-			$(selector) append ( html table () )
-		end
-		selector_table = $("table", selector)
-		$(selector) addClass "TestResults"
-		$(selector_table) attr { cellpadding:"0", cellspacing:"0" }
 	@end
 
 	@method onCaseStart caseID, name
@@ -586,7 +595,7 @@
 			{ id:"testcase_" + caseID, class:"testcase"}
 			html td  ({class:"testcase-name",colspan:"3"}, "" + name)
 		)
-		$(selector_table) append (test_row)
+		uis table append (test_row)
 	@end
 
 	@method onCaseEnd
@@ -623,7 +632,7 @@
 			)
 			html td({class:"test-time"}, "running...")
 		)
-		$(selector_table) append (test_row)
+		uis table append (test_row)
 	@end
 
 	@method onTestEnd testID, test

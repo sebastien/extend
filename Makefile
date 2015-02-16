@@ -34,7 +34,7 @@ doc: $(API_DOC) $(DOC_HTML)
 
 dist: $(PRODUCTS)
 	@echo "Distribution ready."
-	@cd Tests && ln -sf ../$(EXTEND_JS) extend.js
+	@cd Tests/lib/js && ln -sf ../../../$(EXTEND_JS) extend.js
 
 clean:
 	rm $(PRODUCTS)

@@ -1,10 +1,65 @@
 <html
-	<head>
-		<title>Extend 2 Test Suite</title>
-		<link rel="Stylesheet" type="text/css" href="lib/testing.css" />
-		<script(src="lib/jquery-1.2.6.min.js")
-		<script(src="lib/html.js")
-		<script(src="lib/testing.js")
-		<script(src="extend.js")
-		<script(src="setup.js")
+	<head
+		<link(rel="Stylesheet",type="text/css",href="lib/ccss/testing.ccss")
+		<link(rel="Stylesheet",type="text/css",href="lib/ccss/texto.ccss")
+		<script(src="lib/js/extend.js")
+		<script(src="lib/js/jquery-2.1.3.js")
+		<script(src="lib/js/html-5.0.4.js")
+		<script(src="lib/sjs/testing.sjs")
+	<body.use-texto.use-testing
+		<div.document
+			<h1:Extend <span.VERSION:2.0>
+			<div#testing-results
+			<script@sugar
+				@shared T = testing
+
+				var iterations = 5000000
+				T testCase "For loop (5M iterations)"
+
+				# Array creation
+				var array = extend map (0..iterations, {return 1})
+				T test "Array"
+				T equals (len (array), iterations)
+
+				# Raw JavaScript
+				testing test "Raw JavaScript for"
+				var sum   = 0
+				@embed JavaScript
+				|	for (var i=0;i<array.length;i++) {
+				|		sum += array[i];
+				|	}
+				@end
+				T equals (sum, len(array))
+
+				# Raw JavaScript
+				testing test "Raw JavaScript while"
+				var sum   = 0
+				@embed JavaScript
+				|	var i = 0;
+				|	while (i<array.length) {
+				|		sum += array[i];
+				|		i += 1;
+				|	}
+				@end
+				T equals (sum, len(array))
+
+				# Raw JavaScript
+				# NOTE: Weird, on FF when adding this test case, the
+				# whole length of the case increases
+				testing test "Array forEach"
+				var sum   = 0
+				@embed JavaScript
+				|	array.forEach(function(v){sum+=v;});
+				@end
+				T equals (sum, len(array))
+
+				# Extend map
+				testing test "Extend map"
+				var sum   = 0
+				array :: {v|sum += 1}
+				T equals (sum, len(array))
+
+				# END
+				T end ()
+# EOF
 

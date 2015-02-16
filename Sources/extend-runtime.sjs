@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.5
+@version 2.6.7
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -72,7 +72,10 @@
 	# TODO: Create a big array (1...100) and use subsets instead
 	var result = []
 	@embed JavaScript
-	| if (!extend.isDefined(end)) {end=start;start=0;}
+	| if (!extend.isDefined(end)) {
+	|   if (extend.isList(start)) {end=start[1];start=start[0];}
+	|   else                      {end=start;start=0;}
+	| }
 	| if (start < end ) {
 	|   for ( var i=start ; i<end ; i+=step ) {
 	|     result.push(i);

@@ -49,6 +49,10 @@
 
 @function map iterable, callback
 	var result = None
+	if not isFunction(callback)
+		var v = callback
+		callback = {return v}
+	end
 	if extend isList(iterable)
 		if iterable map
 			result = iterable map (callback)

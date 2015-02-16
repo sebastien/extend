@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html(lang=en)
+	<head
+		<link(rel="Stylesheet",type="text/css",href="lib/ccss/testing.ccss")
+		<link(rel="Stylesheet",type="text/css",href="lib/ccss/texto.ccss")
+		<script(src="lib/js/extend.js")
+		<script(src="lib/js/jquery-2.1.3.js")
+		<script(src="lib/js/html-5.0.4.js")
+		<script(src="lib/sjs/testing.sjs")
+	<body.reset.use-testing.use-texto
+		<div.document
+			<div#testing-results
+		<script@sugar
+			@shared T = testing
+			T testCase "Set operations"
+			testing test "R: extend.isString"
+			testing asFalse (extend isString([]))
+			testing asFalse (extend isString([1,2,3,4]))
+			testing asFalse (extend isString(1))
+			testing asTrue  (extend isString(""))
+			testing asTrue  (extend isString("hello"))
+			testing asTrue  (extend isString("1"))
+			testing asFalse (extend isString({}))
+			testing asFalse (extend isString({(0):0,(1):1,(2):2}))
+			testing asFalse (extend isString(True))
+			testing asFalse (extend isString(False))
+			testing asFalse (extend isString(None))
+			testing asFalse (extend isString(Undefined))
+			testing end ()
+
+			testing test("R: extend.isList")
+			testing asTrue (extend isList([]))
+			testing asTrue (extend isList([1,2,3,4]))
+			testing asFalse(extend isList(1))
+			testing asFalse(extend isList(""))
+			testing asFalse(extend isList("hello"))
+			testing asFalse(extend isList("1"))
+			testing asFalse(extend isList({}))
+			testing asFalse(extend isList({(0):0,(1):1,(2):2}))
+			testing asFalse(extend isList(True))
+			testing asFalse(extend isList(False))
+			testing asFalse(extend isList(None))
+			testing asFalse(extend isList(Undefined))
+			testing end()
+
+			testing test("R: extend.isMap")
+			testing asFalse(extend isMap([]))
+			testing asFalse(extend isMap([1,2,3,4]))
+			testing asFalse(extend isMap(1))
+			testing asFalse(extend isMap(""))
+			testing asFalse(extend isMap("hello"))
+			testing asFalse(extend isMap("1"))
+			testing asTrue (extend isMap({}))
+			testing asTrue (extend isMap({(0):0,(1):1,(2):2}))
+			testing asFalse(extend isMap(true))
+			testing asFalse(extend isMap(false))
+			testing asFalse(extend isMap(null))
+			testing asFalse(extend isMap(undefined))
+			testing end()
+
+			testing test("R: extend.slice for strings")
+			testing same(extend slice(""), "")
+			testing same(extend slice("hello"), "hello")
+			testing same(extend slice("hello", 0),    "hello")
+			testing same(extend slice("hello", 0, 1), "h")
+			testing same(extend slice("hello", 0, 2), "he")
+			testing same(extend slice("hello", 1, 2), "e")
+			testing same(extend slice("hello", 0, 5), "hello")
+			testing same(extend slice("hello", -1),    "o")
+			testing same(extend slice("hello", -2),    "lo")
+			testing same(extend slice("hello", -2, -1),"l")
+			testing same(extend slice("hello", -2, 5),"lo")
+			testing end ()
+
+			testing test("R: extend.createMapFromItems")
+			testing same(extend createMapFromItems(), {})
+			testing same(extend createMapFromItems(["a",1]), {a:1})
+			testing same(extend createMapFromItems(["a",1],["b",2]),{a:1,b:2})
+			testing end()
+
+			testing test "R: extend.isIn"
+			testing asTrue (extend isIn(0,[0]))
+			testing asTrue (extend isIn(0,[1,0]))
+			testing asTrue (extend isIn(0,[1,0,0]))
+			testing asFalse(extend isIn(9,[1,0,0]))
+			testing end()
+
+
+			T test "R: extend.difference"
+			T same (extend difference (None, None)         , None)
+			T same (extend difference ([], None)           , [])
+			T same (extend difference ([], [])             , [])
+			T same (extend difference ([1,2,3], [])        , [1,2,3])
+			T same (extend difference ([1,2,3], [1])       , [2,3])
+			T same (extend difference ([1,2,3], [1,2])     , [3])
+			T same (extend difference ([1,2,3], [1,2,3])   , [])
+			T same (extend difference ([1,2,3], [1,2,3,4]) , [])
+			T end ()
+# EOF
