@@ -4,6 +4,7 @@
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
 
+@shared ExceptionCallback
 @shared ErrorCallback
 @shared WarningCallback
 @shared DebugCallback
@@ -143,7 +144,7 @@
 	|           if      ( e === extend.FLOW_CONTINUE ) {}
 	|           else if ( e === extend.FLOW_BREAK    ) {return e}
 	|           else if ( e === extend.FLOW_RETURN   ) {return e}
-	|           else    {throw e}
+	|           else    { extend.exception(e) ; throw e}
 	|       }
 	|  } else if ( value.length != undefined ) {
 	|    var length = undefined;
@@ -155,7 +156,7 @@
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
 	|              else if ( e === extend.FLOW_BREAK    ) {return e}
 	|              else if ( e === extend.FLOW_RETURN   ) {return e}
-	|              else    {throw e}
+	|              else    { extend.exception(e) ; throw e}
 	|          }
 	|      }
 	|    // Or a plain array ?
@@ -167,7 +168,7 @@
 	|              if      ( e === extend.FLOW_CONTINUE ) {}
 	|              else if ( e === extend.FLOW_BREAK    ) {return e}
 	|              else if ( e === extend.FLOW_RETURN   ) {return e}
-	|              else    {throw e}
+	|              else    { extend.exception(e) ; throw e}
 	|          }
 	|      }
 	|    }
@@ -178,7 +179,7 @@
 	|          if      ( e === extend.FLOW_CONTINUE ) {}
 	|          else if ( e === extend.FLOW_BREAK    ) {return e}
 	|          else if ( e === extend.FLOW_RETURN   ) {return e}
-	|          else    {throw e}
+	|          else    { extend.exception(e) ; throw e}
 	|       }
 	|    }
 	|  }
@@ -873,6 +874,17 @@
 		console debug apply (console, message)
 	else
 		print apply (extend, ["[!] "] concat (message))
+	end
+	return message
+@end
+
+@function exception e
+	if ExceptionCallback
+		ExceptionCallback apply (extend, e)
+	elif isDefined (console)
+		console error apply (console, "Extend: exception intercepted", e)
+	else
+		print apply (extend, ["[!] Extend: exception intercepted"] concat (message))
 	end
 	return message
 @end
