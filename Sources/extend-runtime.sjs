@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.7
+@version 2.6.8
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -834,7 +834,7 @@
 	@end
 	if PrintCallback is Undefined
 		if typeof(console) != "undefined"
-			console log (res)
+			console log apply (console, args)
 		if typeof(document) == "undefined" and typeof(pr_func) != "undefined"
 			pr_func (res)
 		end
@@ -847,6 +847,8 @@
 @function warning message...
 	if WarningCallback
 		WarningCallback apply (extend, message)
+	elif isDefined (console)
+		console warn apply (console, message)
 	else
 		print apply (extend, ["[!] "] concat (message))
 	end
@@ -856,6 +858,8 @@
 @function error message...
 	if ErrorCallback
 		ErrorCallback apply (extend, message)
+	elif isDefined (console)
+		console error apply (console, message)
 	else
 		print apply (extend, ["[!] "] concat (message))
 	end
@@ -865,6 +869,8 @@
 @function debug message...
 	if DebugCallback
 		DebugCallback apply (extend, message)
+	elif isDefined (console)
+		console debug apply (console, message)
 	else
 		print apply (extend, ["[!] "] concat (message))
 	end
