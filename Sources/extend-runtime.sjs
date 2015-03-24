@@ -882,11 +882,11 @@
 	if ExceptionCallback
 		ExceptionCallback apply (extend, e)
 	elif isDefined (console)
-		console error apply (console, "Extend: exception intercepted", e)
+		console error apply (console, ["Extend: exception intercepted", e])
 	else
-		print apply (extend, ["[!] Extend: exception intercepted"] concat (message))
+		print apply (extend, ["[!] Extend: exception intercepted", e])
 	end
-	return message
+	return e
 @end
 
 @function assert predicate, message...
