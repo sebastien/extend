@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.8
+@version 2.6.11
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -21,14 +21,25 @@
 	moduleSuffix : ".sjs"
 }
 
-@function require module
-	if not extend Modules [module]
-		var head = document getElementByTagName "head" [0]
+@function require module, callback
+	if not extend modules [module]
+		extend modules [module] = Nothing
+		var head   = document getElementByTagName "head" [0]
 		var script = document createElement "script"
 		script setAttribute ("src", OPTIONS modulePrefix + module + OPTIONS moduleSuffix)
 		head appendChild (script)
+		# FIXME: Rendez-vous for when all the moduels are loaded... or document ready?
+		# if extend modules _expected == 0
+		# 	window setTimeout
+		# end
+	else
+		return extend modules [module]
 	end
 @end
+
+# @function ready callback
+# 	extend modules _ready (callback)
+# @end
 
 @function invoke t, f, args, extra
 | The 'invoke' method allows advanced invocation (supporting by name, as list
@@ -107,6 +118,8 @@
 # =========================================================================
 
 @function len:Integer value
+	if not value
+		return 0
 	if isList(value)
 		return value length
 	elif isObject(value)
@@ -294,32 +307,56 @@
 | - Maps: will compare all the  values that are defined in both
 | - Strings: use `localeCompare`
 	# FIXME: Implement list
-	if isList (a) and isList(b)
-		var la  = len(a)
-		var lb  = len(b)
-		var l   = Math max (la, lb)
-		var res = 0
-		var i   = 0
-		while (res == 0) and (i < l)
-			res = cmp (a[i], b[i])
-			i  += 1
+	if isList (a)
+		if isList (b)
+			var la  = len(a)
+			var lb  = len(b)
+			var l   = Math max (la, lb)
+			var res = 0
+			var i   = 0
+			while (res == 0) and (i < l)
+				res = cmp (a[i], b[i])
+				i  += 1
+			end
+			return res
+		elif len(a) > len(b)
+			return 1
+		else
+			return -1
 		end
-		return res
-	elif isMap (a) and isMap (b)
-		var res = 0
-		a :: {va,k|
-			var vb = b[k]
-			if isDefined (va) and isDefined (vb) -> res = cmp (va, vb)
-			if res != 0 -> break
-		}
-		if res == 0
-			b :: {vb,k|
-				var va = a[k]
-				if isDefined (va) and isDefined (vb) -> res = cmp (va, vb)
+	elif isMap (a)
+		if isMap (b)
+			var res = 0
+			a :: {va,k|
+				var vb = b[k]
+				if not isDefined (va)
+					res = -1
+				if not isDefined (vb)
+					res = 1
+				else
+					res = cmp (va, vb)
+				end
 				if res != 0 -> break
 			}
+			if res == 0
+				b :: {vb,k|
+					var va = a[k]
+					if not isDefined (va)
+						res = -1
+					if not isDefined (vb)
+						res = 1
+					else
+						res = cmp (va, vb)
+					end
+					if res != 0 -> break
+				}
+			end
+			return res
+		elif len(a) > len(b)
+			return 1
+		else
+			return -1
 		end
-		return res
 	elif isString (a) and isString (b) and isDefined (a localeCompare)
 		return a localeCompare (b)
 	else
@@ -502,7 +539,7 @@
 @function first enumerable, predicate
 | Returns the first value that matches the given predicate
 	var i = findLike(enumerable, predicate)
-	if i is None
+	if (i is None) or (not enumerable)
 		return None
 	else
 		return enumerable[i]
@@ -606,7 +643,7 @@
 	elif isMap (a)
 		if   isMap (b)
 			var b_keys = extend keys (b)
-			return extend filter (a, {_,k|return not (k in b keys)})
+			return extend filter (a, {_,k|return not (k in b_keys)})
 		elif isList (b)
 			return extend filter (a, {v|return not (v in b)})
 		else
@@ -878,13 +915,19 @@
 	return message
 @end
 
-@function exception e
+@function exception e, message...
+	var m = []
+	message :: {_|m push (_)}
+	if len(m) == 0
+		m push ("Extend. exception intercepted")
+	end
+	m push (e)
 	if ExceptionCallback
-		ExceptionCallback apply (extend, e)
+		ExceptionCallback apply (extend, m)
 	elif isDefined (console)
-		console error apply (console, ["Extend: exception intercepted", e])
+		console error apply (console, m)
 	else
-		print apply (extend, ["[!] Extend: exception intercepted", e])
+		print apply (extend, m)
 	end
 	return e
 @end

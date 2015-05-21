@@ -2,18 +2,21 @@
 
 # TODO: Should sepdn some time refactoring all this, making sure it's fast and sound
 
-@shared Modules  = {}
+@shared modules  = {
+	_expected : 0
+	_ready    : []
+}
 
 @shared Counters = {
 	Instances:0
 	Classes:0
 }
 
-@function Module name
-	if not isDefined (Modules [name])
-		Modules [name] = {__name__:name}
+@function module name
+	if not isDefined (modules [name])
+		modules [name] = {__name__:name}
 	end
-	return Modules [name]
+	return modules [name]
 @end
 
 @function _wrapMethod o, n
