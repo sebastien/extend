@@ -258,7 +258,6 @@
 	|		class_object[name] = operation
 	|		class_object[full_name + "_" + name] = operation
 	|		class_object._operations.all[name] = operation
-	|		class_object._operations.all[name] = operation
 	|		class_object._operations.own[name] = operation
 	|		class_object._operations.fullname[full_name + "_" + name] = operation
 	|	}

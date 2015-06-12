@@ -872,7 +872,11 @@
 	@end
 	if PrintCallback is Undefined
 		if typeof(console) != "undefined"
-			console log apply (console, args)
+			if isDefined (console log apply)
+				console log apply (console, args)
+			else
+				console log (args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7])
+			end
 		if typeof(document) == "undefined" and typeof(pr_func) != "undefined"
 			pr_func (res)
 		end
@@ -886,7 +890,11 @@
 	if WarningCallback
 		WarningCallback apply (extend, message)
 	elif isDefined (console)
-		console warn apply (console, message)
+		if isDefined (console warn apply)
+			console warn apply (console, message)
+		else
+			console warn (message[0], message[1], message[2], message[3], message[4], message[5], message[6], message[7])
+		end
 	else
 		print apply (extend, ["[!] "] concat (message))
 	end
@@ -897,7 +905,11 @@
 	if ErrorCallback
 		ErrorCallback apply (extend, message)
 	elif isDefined (console)
-		console error apply (console, message)
+		if isDefined (console error apply)
+			console error apply (console, message)
+		else
+			console error (message[0], message[1], message[2], message[3], message[4], message[5], message[6], message[7])
+		end
 	else
 		print apply (extend, ["[!] "] concat (message))
 	end
@@ -919,13 +931,17 @@
 	var m = []
 	message :: {_|m push (_)}
 	if len(m) == 0
-		m push ("Extend. exception intercepted")
+		m push ("Extend: exception intercepted")
 	end
 	m push (e)
 	if ExceptionCallback
 		ExceptionCallback apply (extend, m)
 	elif isDefined (console)
-		console error apply (console, m)
+		if isDefined (console error apply)
+			console error apply (console, m)
+		else
+			console error (m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7])
+		end
 	else
 		print apply (extend, m)
 	end
