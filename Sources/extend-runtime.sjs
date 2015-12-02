@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.11
+@version 2.6.14
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -359,6 +359,20 @@
 		end
 	elif isString (a) and isString (b) and isDefined (a localeCompare)
 		return a localeCompare (b)
+	elif a is None
+		if b is None
+			return 0
+		elif b is Undefined
+			return 1
+		else
+			return -1
+		end
+	elif a is Undefined
+		if b is Undefined
+			return 0
+		else
+			return -1
+		end
 	else
 		if a is b
 			return 0
@@ -459,7 +473,7 @@
 				value[k] = v
 			end
 		end
-	else
+	elif (value)
 		error ("extend.merge(a,_) expects a to be a list or a map")
 	end
 	return value
@@ -639,6 +653,7 @@
 			return extend filter (a, {_|return not (_ in b)})
 		else
 			error ("extend.difference: Unsupported type fot b, " + type(b))
+			return None
 		end
 	elif isMap (a)
 		if   isMap (b)
@@ -700,7 +715,17 @@
 
 @function intersection a, b
 | Returns the intersection between a and b. Lists and maps are supported.
-	error ("NotImplemented")
+	if (not a) or len(a) == 0
+		return None
+	elif isList (a)
+		if isMap (b)
+			return filter (a, {_,i|return isDefined (b[k])})
+		else
+			return filter (a, {_,i|return _ in b})
+		end
+	else
+		return error ("NotImplemented")
+	end
 @end
 
 # =========================================================================
