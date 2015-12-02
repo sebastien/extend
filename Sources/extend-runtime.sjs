@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.14
+@version 2.6.15
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -724,17 +724,13 @@
 			return filter (a, {_,i|return _ in b})
 		end
 	elif isMap (a)
-		var c = {}
-		var ks = []
 		if isMap (b)
-			ks = keys (b)
+			return reduce (b, {r,v,k|if isDefined(a[k]) -> r[k] = v}, {})
 		elif isList (b)
-			ks = b
+			return reduce (b, {r,k|var v=a[k];if isDefined(v) -> r[k] = v}, {})
+		else
+			error ("extend.intersection: Type for b not supported", type(b))
 		end
-		for k in ks
-			if a[k] -> c[k] = a[k]
-		end
-		return c
 	else
 		return error ("NotImplemented")
 	end
