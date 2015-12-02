@@ -723,6 +723,18 @@
 		else
 			return filter (a, {_,i|return _ in b})
 		end
+	elif isMap (a)
+		var c = {}
+		var ks = []
+		if isMap (b)
+			ks = keys (b)
+		elif isList (b)
+			ks = b
+		end
+		for k in ks
+			if a[k] -> c[k] = a[k]
+		end
+		return c
 	else
 		return error ("NotImplemented")
 	end
