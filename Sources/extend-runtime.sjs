@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.15
+@version 2.6.16
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface

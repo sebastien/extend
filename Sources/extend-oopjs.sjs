@@ -33,7 +33,7 @@
 		|	case 5:  return (m.call(o, a[0], a[1], a[2], a[3], a[4]));
 		|	case 6:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5]));
 		|	case 7:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5], a[6]));
-		|	default: return this_method.apply(object, [object].concat(Array.prototype.slice.call(arguments)));
+		|	default: return m.apply(o, [o].concat(Array.prototype.slice.call(a)));
 		|}
 		@end
 	}
