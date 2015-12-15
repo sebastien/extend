@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.16
+@version 2.6.17
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -391,7 +391,8 @@
 		if not extend isDefined (a)
 			return -1
 		else
-			return 0
+			# We return -2 in that unsupported case
+			return -2
 		end
 	end
 @end
