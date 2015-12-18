@@ -73,7 +73,11 @@
 @end
 
 @function str v
-	return "" + v
+	if isString (v)
+		return v
+	else
+		return JSON stringify (v)
+	end
 @end
 
 @function range:List start:Number, end:Number, step:Number=1
@@ -763,6 +767,10 @@
 	return not (value is Undefined)
 @end
 
+@function isUndefined value
+	return (value is Undefined)
+@end
+
 # FIXME: There should be a different between isList and isListLike/isIterable
 @function isList value
 	# NOTE: On older iOS Safari versions, Float64 is undefined, while
@@ -800,7 +808,7 @@
 @function isIterable value
 | The value needs to be an array or an object with
 	@embed JavaScript
-	| return extend.isList(value) || value && typeof (value.length) == "number";
+	| return extend.isList(value) || extend.isMap(value) || value && typeof (value.length) == "number";
 	@end
 @end
 
