@@ -1,1 +1,1 @@
-../../../Distribution/extend-2.6.17.js
+../../../Distribution/extend-2.6.18.js

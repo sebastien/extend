@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.17
+@version 2.6.18
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -399,6 +399,15 @@
 			return -2
 		end
 	end
+@end
+
+@function reverse value
+	var l = value length
+	var r = new Array ()
+	for v,i in value
+		r[l - i] = v
+	end
+	return r
 @end
 
 @function sorted value, comparison=cmp, reverse=False
