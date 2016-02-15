@@ -81,6 +81,18 @@
 	return result
 @end
 
+@function map0 iterable, callback
+	return map (iterable, {return callback ()})
+@end
+
+@function map1 iterable, callback
+	return map (iterable, {_|return callback (_)})
+@end
+
+@function map2 iterable, callback
+	return map (iterable, {a,b|return callback (a,b)})
+@end
+
 @function filter iterable, callback
 	var result = None
 	if extend isList (iterable)

@@ -309,15 +309,15 @@
 	}
 	instance_proto getCallback       = {methodName|
 		var this_object = target
-		var this_object = target
 		if not (this_object __methodCache) -> this_object __methodCache = {}
 		var callback_name = methodName + "_k"
 		# We use a cache so that multiple calls to getMethod will actually
 		# return the same object
-		if this_object __methodCache [callback_name]
-			return this_object __methodCache [callback_name]
+		var m = this_object __methodCache [methodName]
+		if m
+			m
 		else
-			var m = class_object _wrapMethod (this_object, methodName)
+			m = class_object _wrapMethod (this_object, methodName)
 			this_object __methodCache [callback_name] = m
 			return m
 		end
