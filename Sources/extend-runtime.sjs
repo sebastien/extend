@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.19
+@version 2.6.20
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -217,6 +217,14 @@
 		else
 			raise ("extend.access:Type not supported:" + value)
 		end
+	end
+@end
+
+@function offset value, index
+	if index >= 0
+		return index
+	else
+		return len(value) + index
 	end
 @end
 
