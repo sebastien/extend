@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.20
+@version 2.6.21
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -532,7 +532,7 @@
 # =========================================================================
 
 @function find enumerable, value
-| Returns the index of the first elemetn that equals the given value
+| Returns the index of the first element that equals the given value
 | Returns -1 if not found.
 	var found = -1
 	for v,k in enumerable
@@ -542,6 +542,29 @@
 		end
 	end
 	return found
+@end
+
+@function remove enumerable, value
+| Removes the given value from the list or map
+	if isList (enumerable)
+		var index = find(enumerable, value)
+		if index >= 0
+			enumerable splice (index, 1)
+		end
+		return enumerable
+	elif isMap (enumerable)
+		var k = keys (enumerable)
+		for _ in k
+			if v == value
+				@embed JavaScript
+				|delete enumerable[_];
+				@end
+			end
+		end
+		return enumerable
+	else
+		return enumerable
+	end
 @end
 
 @function findLike enumerable, predicate
