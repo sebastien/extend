@@ -454,6 +454,8 @@
 @end
 
 @function copy value, depth=1
+	if (not isDefined (value)) or (value is False) or (value is True) or (value is None)
+		return value
 	if depth < 1
 		return value
 	if extend isList   (value)
