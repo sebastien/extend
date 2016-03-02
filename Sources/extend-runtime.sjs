@@ -1,5 +1,5 @@
 @module extend
-@version 2.6.21
+@version 2.7.1
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -546,6 +546,26 @@
 	return found
 @end
 
+@function insert enumerable, position, value
+	if isList (enumerable)
+		enumerable splice (position, 0, value)
+		return enumerable
+	else
+		error ("extend.add: Type not supported", enumerable)
+		return None
+	end
+@end
+
+@function add enumerable, value
+	if isList (enumerable)
+		enumerable push (value)
+		return enumerable
+	else
+		error ("extend.add: Type not supported", enumerable)
+		return None
+	end
+@end
+
 @function remove enumerable, value
 | Removes the given value from the list or map
 	if isList (enumerable)
@@ -563,6 +583,23 @@
 				@end
 			end
 		end
+		return enumerable
+	else
+		return enumerable
+	end
+@end
+
+@function removeAt enumerable, index
+| Removes the element at the given index, returning the updated enumerable.
+	if isList (enumerable)
+		if index >= 0 and index < len (enumerable)
+			enumerable splice (index, 1)
+		end
+		return enumerable
+	elif isMap (enumerable)
+		@embed JavaScript
+		|delete enumerable[index];
+		@end
 		return enumerable
 	else
 		return enumerable
