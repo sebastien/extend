@@ -1,5 +1,5 @@
 @module extend
-@version 2.7.1
+@version 2.7.2
 @import flash.utils.getDefinitionByName
 @import flash.utils.getQualifiedSuperclassName
 @import flash.external.ExternalInterface
@@ -577,7 +577,7 @@
 	elif isMap (enumerable)
 		var k = keys (enumerable)
 		for _ in k
-			if v == value
+			if _ == value
 				@embed JavaScript
 				|delete enumerable[_];
 				@end
