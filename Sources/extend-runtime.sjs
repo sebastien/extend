@@ -736,7 +736,7 @@
 		if isList (b)
 			return extend filter (a, {_|return not (_ in b)})
 		else
-			error ("extend.difference: Unsupported type fot b, " + type(b))
+			error ("extend.difference: Unsupported type for b, " + type(b))
 			return None
 		end
 	elif isMap (a)
@@ -746,11 +746,11 @@
 		elif isList (b)
 			return extend filter (a, {v|return not (v in b)})
 		else
-			error ("extend.difference: Unsupported type fot b, " + type(b))
+			error ("extend.difference: Unsupported type for b, " + type(b))
 			return None
 		end
 	else
-		error ("extend.difference: Unsupported type fot a, " + type(a))
+		error ("extend.difference: Unsupported type for a, " + type(a))
 		return None
 	end
 @end
@@ -772,7 +772,7 @@
 			end
 			return r
 		else
-			error ("extend.union: Unsupported type fot b, " + type(b))
+			error ("extend.union: Unsupported type for b, " + type(b))
 		end
 	elif isMap (a)
 		a = extend copy (a)
@@ -788,11 +788,11 @@
 			}
 			return a
 		else
-			error ("extend.union: Unsupported type fot b, " + type(b))
+			error ("extend.union: Unsupported type for b, " + type(b))
 			return None
 		end
 	else
-		error ("extend.union: Unsupported type fot a, " + type(a))
+		error ("extend.union: Unsupported type for a, " + type(a))
 		return None
 	end
 @end
