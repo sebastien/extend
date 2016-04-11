@@ -8,8 +8,8 @@
 }
 
 @shared Counters = {
-	Instances:0
-	Classes:0
+	Instances :0
+	Classes   :0
 }
 
 @function module name
@@ -23,18 +23,7 @@
 	return {
 		@embed JavaScript
 		|var m = o[n];
-		|var a = arguments;
-		|switch (a.length) {
-		|	case 0:  return (m.call(o));
-		|	case 1:  return (m.call(o, a[0]));
-		|	case 2:  return (m.call(o, a[0], a[1]));
-		|	case 3:  return (m.call(o, a[0], a[1], a[2]));
-		|	case 4:  return (m.call(o, a[0], a[1], a[2], a[3]));
-		|	case 5:  return (m.call(o, a[0], a[1], a[2], a[3], a[4]));
-		|	case 6:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5]));
-		|	case 7:  return (m.call(o, a[0], a[1], a[2], a[3], a[4], a[5], a[6]));
-		|	default: return m.apply(o, [o].concat(Array.prototype.slice.call(a)));
-		|}
+		|return m.apply(o,arguments);
 		@end
 	}
 @end

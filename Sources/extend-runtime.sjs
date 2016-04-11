@@ -1,8 +1,5 @@
-@module extend
-@version 2.7.2
-@import flash.utils.getDefinitionByName
-@import flash.utils.getQualifiedSuperclassName
-@import flash.external.ExternalInterface
+@module  extend
+@version 3.0.0
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -13,9 +10,19 @@
 @shared Nothing       = new Object()
 @shared Timeout       = new Object()
 @shared Error         = new Object()
-@shared FLOW_CONTINUE = new Object()
-@shared FLOW_BREAK    = new Object()
-@shared FLOW_RETURN   = new Object()
+@shared Type          = {
+	Undefined : "undefined"
+	None      : "none"
+	Number    : "number"
+	String    : "string"
+	List      : "list"
+	Map       : "map"
+	Object    : "object"
+	Function  : "function"
+	Instance  : "instance"
+	Unknown   : "unknown"
+}
+
 @shared OPTIONS       = {
 	modulePrefix : "lib/sjs/"
 	moduleSuffix : ".sjs"
@@ -122,85 +129,8 @@
 # =========================================================================
 
 @function len:Integer value
-	if not value
-		return 0
-	if isList(value)
-		return value length
-	elif isObject(value)
-		if isDefined (value length)
-			return value length
-		elif isDefined (value __len__)
-			return value __len__ ()
-		else
-			var c = 0
-			@embed JavaScript
-			|for (var _ in value) {c += 1};
-			@end
-			return c
-		end
-	elif isString (value)
-		return value length
-	else
-		return None
-	end
-@end
-
-@function iterate value, callback:Function, context:Object
-| Iterates on the given values. If 'value' is an array, the _callback_ will be
-| invoked on each item (giving the 'value[i], i' as argument) until the callback
-| returns 'false'. If 'value' is a dictionary, the callback will be applied
-| on the values (giving 'value[k], k' as argument). Otherwise the object is
-| expected to define both '__len__' and '__item__' to
-| enable the iteration.
 	@embed JavaScript
-	|  if ( !value ) { return }
-	|  // We use foreach if it's available
-	|  var result      = undefined;
-	|  if ( value.forEach ) {
-	|       try {result=value.forEach(callback)} catch (e) {
-	|           if      ( e === extend.FLOW_CONTINUE ) {}
-	|           else if ( e === extend.FLOW_BREAK    ) {return e}
-	|           else if ( e === extend.FLOW_RETURN   ) {return e}
-	|           else    { extend.exception(e) ; throw e}
-	|       }
-	|  } else if ( value.length != undefined ) {
-	|    var length = undefined;
-	|    // Is it an object with the length() and get() protocol ?
-	|    if ( typeof(value.__len__) == "function" && typeof(value.__getitem__) == "function" ) {
-	|      length = value.__len__()
-	|      for ( var i=0 ; i<length ; i++ ) {
-	|          try {result=callback.call(context, value.__getitem__(i), i);} catch (e) {
-	|              if      ( e === extend.FLOW_CONTINUE ) {}
-	|              else if ( e === extend.FLOW_BREAK    ) {return e}
-	|              else if ( e === extend.FLOW_RETURN   ) {return e}
-	|              else    { extend.exception(e) ; throw e}
-	|          }
-	|      }
-	|    // Or a plain array ?
-	|    } else {
-	|      length = value.length;
-	|      for ( var i=0 ; i<length ; i++ ) {
-	|          var result = undefined;
-	|          try {result=callback.call(context, value[i], i);} catch (e) {
-	|              if      ( e === extend.FLOW_CONTINUE ) {}
-	|              else if ( e === extend.FLOW_BREAK    ) {return e}
-	|              else if ( e === extend.FLOW_RETURN   ) {return e}
-	|              else    { extend.exception(e) ; throw e}
-	|          }
-	|      }
-	|    }
-	|  } else {
-	|    for ( var k in value ) {
-	|       var result = undefined;
-	|       try {result=callback.call(context, value[k], k);} catch (e) {
-	|          if      ( e === extend.FLOW_CONTINUE ) {}
-	|          else if ( e === extend.FLOW_BREAK    ) {return e}
-	|          else if ( e === extend.FLOW_RETURN   ) {return e}
-	|          else    { extend.exception(e) ; throw e}
-	|       }
-	|    }
-	|  }
-	|  if (!(result===undefined)) {return result}
+	|return  value && value != "" && (value instanceof Array ? value.length : (value.length || Object.getOwnPropertyNames(value).length)) || 0;
 	@end
 @end
 
@@ -233,18 +163,19 @@
 # =========================================================================
 
 @function keys value
-	if extend isString(value) or extend isNumber(value)
+	if (value is None) or (value is Undefined) or (value is True) or (value is False or extend isString(value) or extend isNumber(value)
 		return None
 	elif extend isList (value)
-		return extend map (value, {_,i|return i})
+		var l = value length
+		var i = 0
+		var r = new Array (value length)
+		while i < l
+			r[i] = i
+			i += 1
+		end
+		return r
 	else
-		# return extend map (value, {_,k|return k})
-		var res = []
-		# FIXME: Use map?
-		@embed JavaScript
-		|for(var k in value) { res.push(k); }
-		@end
-		return res
+		return Object getOwnPropertyNames (value)
 	end
 @end
 
@@ -921,27 +852,27 @@
 @function getType value
 | Returns the type of the given value
 	if not isDefined(value)
-		return "undefined"
-	if value is None
-		return "none"
-	if isNumber(value)
-		return "number"
-	if isString(value)
-		return "string"
-	if isList(value)
-		return "list"
-	if isMap(value)
-		return "map"
-	if isFunction(value)
-		return "function"
-	if isObject(value)
+		return Type Undefined
+	elif value is None
+		return Type None
+	elif isNumber(value)
+		return Type Number
+	elif isString(value)
+		return Type String
+	elif isList(value)
+		return Type List
+	elif isMap(value)
+		return Type Map
+	elif isFunction(value)
+		return Type Function
+	elif isObject(value)
 		if isFunction(value getClass)
-			return "instance"
+			return Type Instance
 		else
-			return "object"
+			return Type Object
 		end
 	else
-		return "unknown"
+		return Type Unknown
 	end
 @end
 
