@@ -163,7 +163,7 @@
 # =========================================================================
 
 @function keys value
-	if (value is None) or (value is Undefined) or (value is True) or (value is False or extend isString(value) or extend isNumber(value)
+	if (value is None) or (value is Undefined) or (value is True) or (value is False or extend isString(value)) or extend isNumber(value)
 		return None
 	elif extend isList (value)
 		var l = value length

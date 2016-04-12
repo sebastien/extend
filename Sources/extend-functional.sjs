@@ -46,36 +46,17 @@
 	return res
 @end
 
-
 @function map iterable, callback
 	var result = None
-	if not isFunction(callback)
-		var v = callback
-		callback = {return v}
-	end
-	if extend isList(iterable)
-		if iterable map
-			result = iterable map (callback)
-		else
-			result = []
-			for e,k in iterable
-				result push (callback (e,k))
-			end
-		end
-	elif extend isMap (iterable)
-		result = {}
-		for e,k in iterable
-			result[k] = callback (e,k)
-		end
-	elif extend isIterable (iterable)
-		result = []
-		for e,k in iterable
-			result push (callback (e,k))
+	if isList(iterable)
+		result = new Array (len (iterable))
+		for v,i in iterable
+			result append (callback (v, i))
 		end
 	else
 		result = {}
-		for e,k in iterable
-			result[k] = (callback (e,k))
+		for v,k in iterable
+			result[k] = (callback (v, k))
 		end
 	end
 	return result
@@ -93,15 +74,18 @@
 	return map (iterable, {a,b|return callback (a,b)})
 @end
 
-@function filter iterable, callback
+@function filter iterable, callback, processor
 	var result = None
 	if extend isList (iterable)
-		if iterable filter
+		if (not processor) and (iterable filter)
 			result = iterable filter (callback)
 		else
 			result = []
 			for e,k in iterable
 				if callback (e,k)
+					if processor
+						e = processor (e,k)
+					end
 					result push (e)
 				end
 			end
@@ -110,6 +94,7 @@
 		result = {}
 		for e,k in iterable
 			if callback (e, k)
+				if processor -> e = processor (e,k)
 				result[k] = e
 			end
 		end
@@ -117,6 +102,7 @@
 		result = []
 		for e,k in iterable
 			if callback (e,k)
+				if processor -> e = processor (e,k)
 				result push (e)
 			end
 		end
@@ -124,6 +110,7 @@
 		result = {}
 		for e,k in iterable
 			if callback (e,k)
+				if processor -> e = processor (e,k)
 				result[k] = e
 			end
 		end
