@@ -51,12 +51,12 @@
 	if isList(iterable)
 		result = new Array (len (iterable))
 		for v,i in iterable
-			result append (callback (v, i))
+			result[i] = callback (v, i, iterable)
 		end
 	else
 		result = {}
 		for v,k in iterable
-			result[k] = (callback (v, k))
+			result[k] = callback (v, k, iterable)
 		end
 	end
 	return result
@@ -72,6 +72,10 @@
 
 @function map2 iterable, callback
 	return map (iterable, {a,b|return callback (a,b)})
+@end
+
+@function map3 iterable, callback
+	return map (iterable, {a,b|return callback (a,b, iterable)})
 @end
 
 @function filter iterable, callback, processor
@@ -122,7 +126,7 @@
 	# FIXME: Use reduce function if available
 	var res = initial
 	var i   = 0
-	iterable :: {e,k|
+	for e,k in iterable
 		var r = Undefined
 		if i == 0 and (not isDefined (res))
 			r = e
@@ -131,7 +135,7 @@
 		end
 		if isDefined (r) -> res = r
 		i += 1
-	}
+	end
 	return res
 @end
 

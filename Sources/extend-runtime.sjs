@@ -7,6 +7,10 @@
 @shared DebugCallback
 @shared PrintCallback
 
+@shared FLOW_BREAK    = 1
+@shared FLOW_CONTINUE = 2
+@shared FLOW_RETURN   = 3
+
 @shared Nothing       = new Object()
 @shared Timeout       = new Object()
 @shared Error         = new Object()
@@ -156,6 +160,65 @@
 	else
 		return len(value) + index
 	end
+@end
+
+@function iterate value, callback:Function, context:Object
+| Iterates on the given values. If 'value' is an array, the _callback_ will be
+| invoked on each item (giving the 'value[i], i' as argument) until the callback
+| returns 'false'. If 'value' is a dictionary, the callback will be applied
+| on the values (giving 'value[k], k' as argument). Otherwise the object is
+| expected to define both '__len__' and '__item__' to
+| enable the iteration.
+	@embed JavaScript
+	|  if ( !value ) { return }
+	|  // We use foreach if it's available
+	|  var result      = undefined;
+	|  if ( value.forEach ) {
+	|       try {result=value.forEach(callback)} catch (e) {
+	|           if      ( e === extend.FLOW_CONTINUE ) {}
+	|           else if ( e === extend.FLOW_BREAK    ) {return e}
+	|           else if ( e === extend.FLOW_RETURN   ) {return e}
+	|           else    { extend.exception(e) ; throw e}
+	|       }
+	|  } else if ( value.length != undefined ) {
+	|    var length = undefined;
+	|    // Is it an object with the length() and get() protocol ?
+	|    if ( typeof(value.__len__) == "function" && typeof(value.__getitem__) == "function" ) {
+	|      length = value.__len__()
+	|      for ( var i=0 ; i<length ; i++ ) {
+	|          try {result=callback.call(context, value.__getitem__(i), i);} catch (e) {
+	|              if      ( e === extend.FLOW_CONTINUE ) {}
+	|              else if ( e === extend.FLOW_BREAK    ) {return e}
+	|              else if ( e === extend.FLOW_RETURN   ) {return e}
+	|              else    { extend.exception(e) ; throw e}
+	|          }
+	|      }
+	|    // Or a plain array ?
+	|    } else {
+	|      length = value.length;
+	|      for ( var i=0 ; i<length ; i++ ) {
+	|          var result = undefined;
+	|          try {result=callback.call(context, value[i], i);} catch (e) {
+	|              if      ( e === extend.FLOW_CONTINUE ) {}
+	|              else if ( e === extend.FLOW_BREAK    ) {return e}
+	|              else if ( e === extend.FLOW_RETURN   ) {return e}
+	|              else    { extend.exception(e) ; throw e}
+	|          }
+	|      }
+	|    }
+	|  } else {
+	|    for ( var k in value ) {
+	|       var result = undefined;
+	|       try {result=callback.call(context, value[k], k);} catch (e) {
+	|          if      ( e === extend.FLOW_CONTINUE ) {}
+	|          else if ( e === extend.FLOW_BREAK    ) {return e}
+	|          else if ( e === extend.FLOW_RETURN   ) {return e}
+	|          else    { extend.exception(e) ; throw e}
+	|       }
+	|    }
+	|  }
+	|  if (!(result===undefined)) {return result}
+	@end
 @end
 
 # =========================================================================
