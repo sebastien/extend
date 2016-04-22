@@ -286,6 +286,7 @@
 	instance_proto _methodCache    = Undefined
 	instance_proto getMethod       = {methodName|
 		var this_object = target
+		if this_object[methodName] is Undefined -> return None
 		if not (this_object __methodCache) -> this_object __methodCache = {}
 		# We use a cache so that multiple calls to getMethod will actually
 		# return the same object
@@ -298,6 +299,7 @@
 	}
 	instance_proto getCallback       = {methodName|
 		var this_object = target
+		if this_object[methodName] is Undefined -> return None
 		if not (this_object __methodCache) -> this_object __methodCache = {}
 		var callback_name = methodName + "_k"
 		# We use a cache so that multiple calls to getMethod will actually

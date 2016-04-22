@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.0
+@version 3.0.2
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -865,7 +865,7 @@
 @end
 
 @function isNumber value
-	return typeof (value) == "number"
+	return (not (value is NaN)) and  (typeof (value) == "number")
 @end
 
 @function isString value
@@ -906,9 +906,9 @@
 		@embed JavaScript
 		|is_instance = value instanceof ofClass;
 		@end
-		return isDefined (value getClass) and value isInstance (ofClass) or is_instance
+		return value and isDefined (value getClass) and value isInstance (ofClass) or is_instance
 	else
-		return isDefined (value getClass)
+		return value and isDefined (value getClass)
 	end
 @end
 
