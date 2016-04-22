@@ -865,7 +865,7 @@
 @end
 
 @function isNumber value
-	return (not (value is NaN)) and  (typeof (value) == "number")
+	return (not isNaN (value)) and (typeof (value) == "number")
 @end
 
 @function isString value
