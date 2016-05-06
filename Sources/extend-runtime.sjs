@@ -138,7 +138,7 @@
 	@end
 @end
 
-@function access value, indexg
+@function access value, index
 	if index >= 0
 		@embed JavaScript
 		|return value[index]
