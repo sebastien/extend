@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.2
+@version 3.0.3
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -134,11 +134,11 @@
 
 @function len:Integer value
 	@embed JavaScript
-	|return  value && value != "" && (value instanceof Array ? value.length : (value.length || Object.getOwnPropertyNames(value).length)) || 0;
+	|return  value && value !== "" && (value instanceof Array ? value.length : (value.length !== undefined ? value.length : Object.getOwnPropertyNames(value).length)) || 0;
 	@end
 @end
 
-@function access value, index
+@function access value, indexg
 	if index >= 0
 		@embed JavaScript
 		|return value[index]
