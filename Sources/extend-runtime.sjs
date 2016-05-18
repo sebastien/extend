@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.3
+@version 3.0.4
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -89,6 +89,10 @@
 	else
 		return JSON stringify (v)
 	end
+@end
+
+@function bool v
+	return if v -> True | False
 @end
 
 @function range:List start:Number, end:Number, step:Number=1
