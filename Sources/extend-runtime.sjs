@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.4
+@version 3.0.5
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -717,6 +717,39 @@
 	else
 		return False
 	end
+@end
+
+
+@function strip value, chars=" "
+	if not value
+		return value
+	elif isString(value)
+		var i = 0
+		while i < value length and chars indexOf (value[i]) >= 0
+			i += 1
+		end
+		var j = value length - 1
+		var l = j
+		while j > i and chars indexOf (value[j]) >= 0
+			j -= 1
+		end
+		if i !=0 or j != l
+			return value[i:j+1]
+		else
+			return value
+		end
+	else
+		error (__scope__, "not implemented")
+		return value
+	end
+@end
+
+@function json value
+	return JSON stringify (value)
+@end
+
+@function unjson value
+	return JSON parse (value)
 @end
 
 # =========================================================================

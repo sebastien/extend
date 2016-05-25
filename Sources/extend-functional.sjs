@@ -4,14 +4,6 @@
 # TODO: asList
 # TODO: unique
 
-@function strip value
-	# TODO: Implement strip for arrays and objects
-	@embed JavaScript
-	|return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-	@end
-@end
-
-
 @function car list
 	if list length > 0
 		return list[0]
