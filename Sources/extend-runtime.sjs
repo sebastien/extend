@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.6
+@version 3.0.7
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -544,8 +544,22 @@
 	if isList (enumerable)
 		enumerable splice (position, 0, value)
 		return enumerable
+	elif isString (enumerable)
+		var l = len(enumerable)
+		if position < 0
+			position = l + position
+		end
+		if position >= l
+			while l < position
+				enumerable += " "
+				l += 1
+			end
+			return enumerable + value
+		else
+			return enumerable[0:position] + value + enumerable[position:]
+		end
 	else
-		error ("extend.add: Type not supported", enumerable)
+		error ("extend.insert: Type not supported", enumerable)
 		return None
 	end
 @end
