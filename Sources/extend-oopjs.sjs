@@ -12,12 +12,20 @@
 	Classes   :0
 }
 
-@function module name
-	if not isDefined (modules [name])
-		modules [name] = {__name__:name}
+@function module name, definition=Undefined, dependencies=Undefined
+	if not isDefined (definition) and not isDefined (dependencies)
+		# We're in read-only mode
+		if not isDefined (modules [name])
+			modules [name] = {__name__:name}
+		end
+		return modules [name]
+	else
+		error "Not implemented for now"
 	end
-	return modules [name]
 @end
+
+@function loadModule name
+| Loads the given modules
 
 @function _wrapMethod o, n
 	return {

@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.7
+@version 3.0.8
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -84,14 +84,21 @@
 @end
 
 @function str v
+| Converts the given element to a string.
 	if isString (v)
 		return v
+	elif isNumber (v) or v is Undefined or v is None or isNaN (v)
+		return "" + v
 	else
 		return JSON stringify (v)
 	end
 @end
 
 @function bool v
+| Returns `true` for `v === true`, `false` for `v === false`,
+| `true` if `v` evaluates to a true condition, `false` otherwise.
+	if v == "true"  -> return True
+	if v == "false" -> return False
 	return if v -> True | False
 @end
 
@@ -173,6 +180,9 @@
 | on the values (giving 'value[k], k' as argument). Otherwise the object is
 | expected to define both '__len__' and '__item__' to
 | enable the iteration.
+|
+| NOTE: Iterate should not be necessary anymore and is there for compatilibity
+| with extend 2.X versions.
 	@embed JavaScript
 	|  if ( !value ) { return }
 	|  // We use foreach if it's available
@@ -859,6 +869,13 @@
 	else
 		return error ("NotImplemented")
 	end
+@end
+
+@function xor a, b
+| Returns the elements  that are either in `a` or in `b`, but not in both.
+	# NOTE: this implementation is compact but probably not very fast, which
+	# is OK as the xor function is not needed very often.
+	return difference (union(a,b), intersection(a,b))
 @end
 
 # =========================================================================
