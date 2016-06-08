@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.8
+@version 3.0.9
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -91,6 +91,41 @@
 		return "" + v
 	else
 		return JSON stringify (v)
+	end
+@end
+
+@function lower v
+| Returns the given string as lowercase
+	if isString (v)
+		return v toLowerCase ()
+	else
+		return v
+	end
+@end
+
+@function upper v
+| Returns the given string as uppercase
+	if isString (v)
+		return v toUpperCase ()
+	else
+		return v
+	end
+@end
+
+@function capitalize v
+| Returns the given string as capitalized
+	if isString (v)
+		return upper (v[0]) + v[1:]
+	else
+		return v
+	end
+@end
+
+@function words v
+	if isString (v)
+		return filter (map (v split " ", {strip(_)}), {len(_)>0})
+	else
+		return v
 	end
 @end
 

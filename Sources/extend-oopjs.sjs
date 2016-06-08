@@ -24,9 +24,6 @@
 	end
 @end
 
-@function loadModule name
-| Loads the given modules
-
 @function _wrapMethod o, n
 	return {
 		@embed JavaScript
