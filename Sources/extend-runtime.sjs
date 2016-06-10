@@ -1182,9 +1182,13 @@
 	|  if (m = /^[^\x25]+/.exec(f)) o.push(m[0]);
 	|  else if (m = /^\x25{2}/.exec(f)) o.push('%');
 	|  else if (m = /^\x25(?:(\d+)\$)?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(f)) {
-	|    if (((a = arguments[m[1] || i++]) == null) || (a == undefined)) throw("Too few arguments.");
-	|    if (/[^s]/.test(m[7]) && (typeof(a) != 'number'))
+	|    if (((a = arguments[m[1] || i++]) == null) || (a == undefined)) {
+	|        return extend.error("extend.sprintf: too few arguments, expected ", arguments.length, "got", i - 1, "in", arguments[0]);
+	|    }
+	|    if (/[^s]/.test(m[7]) && (typeof(a) != 'number')) {
 	|      throw("Expecting number but found " + typeof(a));
+	|        return extend.error("extend.sprintf: expected number at", i - 1, "got",a, "in", arguments[0]);
+	|    }
 	|    switch (m[7]) {
 	|      case 'b': a = a.toString(2); break;
 	|      case 'c': a = String.fromCharCode(a); break;
