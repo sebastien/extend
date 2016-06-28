@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.9
+@version 3.0.11
 
 @shared ExceptionCallback
 @shared ErrorCallback
@@ -665,7 +665,7 @@
 	# FIXME: This is not consistent
 	var found = -1
 	for v,k in enumerable
-		if predicate(v) and (found == -1)
+		if predicate(v, k) and (found == -1)
 			# FIXME: Should break the iteration
 			found = k
 			break
@@ -701,7 +701,7 @@
 | Returns the last value that matches the given predicate
 	var res = None
 	for v,k in enumerable
-		if predicate(v)
+		if predicate(v, k)
 			res = v
 		end
 	end
@@ -794,7 +794,7 @@
 			return value
 		end
 	else
-		error (__scope__, "not implemented")
+		error (__scope__, "not implemented for value", value)
 		return value
 	end
 @end
@@ -839,6 +839,15 @@
 		error ("extend.difference: Unsupported type for a, " + type(a))
 		return None
 	end
+@end
+
+@function diff a, b
+| Returns {same:[],added:[],removed:[]}
+	return {
+		same    : intersection (a, b)
+		added   : difference   (b, a)
+		removed : difference   (a, b)
+	}
 @end
 
 @function union a, b
@@ -925,6 +934,14 @@
 	| }
 	| return result
 	@end
+@end
+
+@function createMapFromKeys keys, init=None
+	return extend reduce (keys, {r,k,i|
+		var v = if extend isFunction (init) -> init (k,i) | init
+		r[k] = v
+		r
+	}, {})
 @end
 
 # =========================================================================
