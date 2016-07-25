@@ -1,5 +1,5 @@
 @module  extend
-@version 3.0.11
+@version 3.1.0
 
 @shared ExceptionCallback
 @shared ErrorCallback

@@ -377,4 +377,10 @@
 @function Singleton sdata
 @end
 
+# @init
+# 	if not window extend
+# 		window extend = __module__
+# 	end
+# @end
+
 # EOF
